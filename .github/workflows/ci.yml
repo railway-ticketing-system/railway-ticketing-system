@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [test, main]
+  pull_request:
+    branches: [test, main]
+
+jobs:
+  build-and-test:
+    name: Build, unit tests, coverage
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install tools
+        run: sudo apt-get update && sudo apt-get install -y cmake g++ libssl-dev gcovr
+      - name: Configure (coverage on)
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DRTRS_COVERAGE=ON
+      - name: Build
+        run: cmake --build build -j"$(nproc)"
+      - name: Run unit tests
+        run: ctest --test-dir build --output-on-failure
+      - name: Coverage report (line + branch)
+        run: |
+          mkdir -p coverage
+          gcovr -r . --filter 'src/' --exclude 'src/main.cpp' --txt --print-summary \
+                --html-details coverage/index.html --branches --txt-metric branch \
+                > coverage/summary.txt || true
+          gcovr -r . --filter 'src/' --exclude 'src/main.cpp' --print-summary
+          gcovr -r . --filter 'src/' --exclude 'src/main.cpp' --txt-metric branch --print-summary
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+
+  static-analysis:
+    name: Static analysis (cppcheck)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y cppcheck
+      - name: cppcheck
+        run: cppcheck --enable=warning,performance,portability --std=c++17 --error-exitcode=1 --inline-suppr -I src src tests
+
+  docker-build:
+    name: Docker image builds
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t rtrs:ci .
+      - name: Smoke test container
+        run: |
+          docker run -d --name rtrs -p 8080:8080 rtrs:ci
+          for i in $(seq 1 20); do curl -fsS localhost:8080/api/health && exit 0; sleep 1; done
+          docker logs rtrs; exit 1
