@@ -1,4 +1,5 @@
 #pragma once
+#include <optional>
 #include <string>
 
 #include "auth/PasswordHasher.h"
@@ -24,6 +25,10 @@ public:
 
     // RTS-F-001: create a passenger account. Email is stored lower-case and must be unique.
     RegisterResult registerUser(RegistrationInput input);
+
+    std::optional<User> findById(long long id);
+    // Returns the user together with the stored password hash, or nullopt if the email is unknown.
+    std::optional<std::pair<User, std::string>> findCredentials(const std::string& email);
 
 private:
     bool emailExists(const std::string& email);

@@ -20,5 +20,6 @@ private:
 
 std::string toHex(const unsigned char* data, size_t len);
 std::string randomHex(size_t bytes);
+std::string sha256Hex(const std::string& data);
 
 }  // namespace rtrs
