@@ -55,6 +55,14 @@ std::string randomHex(size_t bytes) {
     return toHex(buf.data(), buf.size());
 }
 
+std::string sha256Hex(const std::string& data) {
+    unsigned char md[EVP_MAX_MD_SIZE];
+    unsigned int len = 0;
+    if (EVP_Digest(data.data(), data.size(), md, &len, EVP_sha256(), nullptr) != 1)
+        throw std::runtime_error("digest failed");
+    return toHex(md, len);
+}
+
 std::string PasswordHasher::hash(const std::string& password) const {
     std::vector<unsigned char> salt(kSaltLen);
     if (RAND_bytes(salt.data(), static_cast<int>(salt.size())) != 1) throw std::runtime_error("random generation failed");

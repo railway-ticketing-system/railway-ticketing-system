@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "db/Schema.h"
+#include "services/AuthService.h"
 #include "services/UserService.h"
 
 namespace rtrs {
@@ -48,6 +49,7 @@ json userJson(const User& u) {
 void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations) {
     initSchema(db);
     auto users = std::make_shared<UserService>(db, PasswordHasher(pbkdf2Iterations));
+    auto auth = std::make_shared<AuthService>(db, *users, PasswordHasher(pbkdf2Iterations));
 
     server.set_payload_max_length(64 * 1024);
     // RTS-NF-003: never leak internals in error responses.
@@ -74,6 +76,23 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations)
                 break;
             default:
                 sendError(res, 400, "Please correct the highlighted fields.", result.errors);
+        }
+    });
+
+    // RTRS-10 / RTS-F-002
+    server.Post("/api/auth/login", [auth](const httplib::Request& req, httplib::Response& res) {
+        json body;
+        if (!parseBody(req, res, body)) return;
+        auto r = auth->login(str(body, "email"), str(body, "password"));
+        switch (r.status) {
+            case LoginResult::Status::Ok:
+                sendJson(res, 200, {{"token", r.token}, {"expiresAt", r.expiresAt}, {"user", userJson(r.user)}});
+                break;
+            case LoginResult::Status::Locked:
+                sendError(res, 429, "Too many failed attempts. Try again in a few minutes.");
+                break;
+            default:  // deliberately identical for unknown email and wrong password
+                sendError(res, 401, "Invalid email or password.");
         }
     });
 }
