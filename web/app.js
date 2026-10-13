@@ -105,8 +105,13 @@ function loginView() {
 }
 
 function homeView(user) {
-  const view = el('<div class="card"><h2></h2><p class="muted">You are logged in.</p></div>');
+  const view = el('<div class="card"><h2></h2><p class="muted">You are logged in.</p><button id="logout">Log out</button><div id="status"></div></div>');
   view.querySelector('h2').textContent = 'Welcome, ' + user.name;
+  view.querySelector('#logout').addEventListener('click', async () => {
+    await api('POST', '/api/auth/logout');
+    session.token = null;  // clear locally even if the server already dropped the session
+    show('login');
+  });
   return view;
 }
 

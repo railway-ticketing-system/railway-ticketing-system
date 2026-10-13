@@ -39,6 +39,13 @@ std::string str(const json& j, const char* key) {
     return (it != j.end() && it->is_string()) ? it->get<std::string>() : std::string();
 }
 
+// Extracts the token from "Authorization: Bearer <token>"; empty if absent or malformed.
+std::string bearerToken(const httplib::Request& req) {
+    const std::string prefix = "Bearer ";
+    std::string h = req.get_header_value("Authorization");
+    return h.rfind(prefix, 0) == 0 ? h.substr(prefix.size()) : std::string();
+}
+
 json userJson(const User& u) {
     return {{"id", u.id}, {"name", u.name}, {"email", u.email}, {"phone", u.phone}, {"role", u.role},
             {"createdAt", u.createdAt}};
@@ -94,6 +101,15 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations)
             default:  // deliberately identical for unknown email and wrong password
                 sendError(res, 401, "Invalid email or password.");
         }
+    });
+
+    // RTRS-11
+    server.Post("/api/auth/logout", [auth](const httplib::Request& req, httplib::Response& res) {
+        if (!auth->logout(bearerToken(req))) {
+            sendError(res, 401, "You are not logged in.");
+            return;
+        }
+        sendJson(res, 200, {{"message", "Logged out."}});
     });
 }
 

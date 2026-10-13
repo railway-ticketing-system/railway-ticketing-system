@@ -31,6 +31,9 @@ public:
     // Resolves a raw bearer token to its user if the session exists and has not expired.
     std::optional<User> authenticate(const std::string& token);
 
+    // RTS-F-002 (session end): invalidates the session immediately. Returns false if it did not exist.
+    bool logout(const std::string& token);
+
 private:
     struct Attempts {
         int failures = 0;
