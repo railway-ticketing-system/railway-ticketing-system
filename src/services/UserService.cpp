@@ -61,4 +61,42 @@ std::optional<std::pair<User, std::string>> UserService::findCredentials(const s
     return std::make_pair(userFromRow(rows[0]), rows[0][6]);
 }
 
+ProfileResult UserService::updateProfile(long long userId, ProfileUpdate in) {
+    ProfileResult r;
+    in.name = trim(in.name);
+    in.phone = trim(in.phone);
+    r.errors = validateProfileUpdate(in);
+    if (!r.errors.empty()) return r;
+    db_.execute("UPDATE users SET name = ?, phone = ? WHERE id = ?", {in.name, in.phone, std::to_string(userId)});
+    auto u = findById(userId);
+    if (!u) {
+        r.errors["user"] = "Account not found.";
+        return r;
+    }
+    r.user = *u;
+    r.ok = true;
+    return r;
+}
+
+ProfileResult UserService::changePassword(long long userId, const std::string& current, const std::string& next) {
+    ProfileResult r;
+    auto rows = db_.query("SELECT password_hash FROM users WHERE id = ?", {std::to_string(userId)});
+    if (rows.empty()) {
+        r.errors["user"] = "Account not found.";
+        return r;
+    }
+    if (!hasher_.verify(current, rows[0][0])) {
+        r.errors["currentPassword"] = "Current password is incorrect.";
+        return r;
+    }
+    if (!isValidPassword(next)) {
+        r.errors["newPassword"] = "Password must be 8-128 characters with at least one letter and one digit.";
+        return r;
+    }
+    db_.execute("UPDATE users SET password_hash = ? WHERE id = ?", {hasher_.hash(next), std::to_string(userId)});
+    r.user = *findById(userId);
+    r.ok = true;
+    return r;
+}
+
 }  // namespace rtrs

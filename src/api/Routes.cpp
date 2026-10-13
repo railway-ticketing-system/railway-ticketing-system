@@ -46,6 +46,13 @@ std::string bearerToken(const httplib::Request& req) {
     return h.rfind(prefix, 0) == 0 ? h.substr(prefix.size()) : std::string();
 }
 
+// Resolves the caller from the bearer token; writes a 401 and returns nullopt if not logged in.
+std::optional<User> requireUser(AuthService& auth, const httplib::Request& req, httplib::Response& res) {
+    auto u = auth.authenticate(bearerToken(req));
+    if (!u) sendError(res, 401, "You are not logged in.");
+    return u;
+}
+
 json userJson(const User& u) {
     return {{"id", u.id}, {"name", u.name}, {"email", u.email}, {"phone", u.phone}, {"role", u.role},
             {"createdAt", u.createdAt}};
@@ -110,6 +117,41 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations)
             return;
         }
         sendJson(res, 200, {{"message", "Logged out."}});
+    });
+
+    // RTRS-12: view / edit own profile. The user id always comes from the session, never from the request,
+    // so one passenger can never read or change another's account.
+    server.Get("/api/users/me", [auth](const httplib::Request& req, httplib::Response& res) {
+        auto u = requireUser(*auth, req, res);
+        if (!u) return;
+        sendJson(res, 200, {{"user", userJson(*u)}});
+    });
+
+    server.Put("/api/users/me", [auth, users](const httplib::Request& req, httplib::Response& res) {
+        auto u = requireUser(*auth, req, res);
+        if (!u) return;
+        json body;
+        if (!parseBody(req, res, body)) return;
+        auto r = users->updateProfile(u->id, {str(body, "name"), str(body, "phone")});
+        if (!r.ok) {
+            sendError(res, 400, "Please correct the highlighted fields.", r.errors);
+            return;
+        }
+        sendJson(res, 200, {{"user", userJson(r.user)}});
+    });
+
+    server.Put("/api/users/me/password", [auth, users](const httplib::Request& req, httplib::Response& res) {
+        auto u = requireUser(*auth, req, res);
+        if (!u) return;
+        json body;
+        if (!parseBody(req, res, body)) return;
+        auto r = users->changePassword(u->id, str(body, "currentPassword"), str(body, "newPassword"));
+        if (!r.ok) {
+            sendError(res, 400, "Password was not changed.", r.errors);
+            return;
+        }
+        auth->revokeOtherSessions(u->id, bearerToken(req));
+        sendJson(res, 200, {{"message", "Password changed."}});
     });
 }
 
