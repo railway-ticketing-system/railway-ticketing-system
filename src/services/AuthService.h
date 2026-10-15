@@ -34,6 +34,9 @@ public:
     // RTS-F-002 (session end): invalidates the session immediately. Returns false if it did not exist.
     bool logout(const std::string& token);
 
+    // Ends every session of the user except the one identified by keepToken (used after a password change).
+    void revokeOtherSessions(long long userId, const std::string& keepToken);
+
 private:
     struct Attempts {
         int failures = 0;

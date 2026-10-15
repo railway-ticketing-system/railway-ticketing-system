@@ -65,4 +65,9 @@ bool AuthService::logout(const std::string& token) {
     return true;
 }
 
+void AuthService::revokeOtherSessions(long long userId, const std::string& keepToken) {
+    db_.execute("DELETE FROM sessions WHERE user_id = ? AND token_hash != ?",
+                {std::to_string(userId), sha256Hex(keepToken)});
+}
+
 }  // namespace rtrs

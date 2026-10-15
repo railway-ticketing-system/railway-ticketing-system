@@ -20,4 +20,10 @@ struct RegistrationInput {
 
 FieldErrors validateRegistration(const RegistrationInput& in);
 
+struct ProfileUpdate {
+    std::string name, phone;
+};
+
+FieldErrors validateProfileUpdate(const ProfileUpdate& in);
+
 }  // namespace rtrs

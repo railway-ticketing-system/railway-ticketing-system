@@ -104,9 +104,61 @@ function loginView() {
   return view;
 }
 
+function profileView(user) {
+  const view = el(`
+    <div class="card">
+      <h2>My profile</h2>
+      <form id="profile" novalidate>
+        <label>Email<input name="email" disabled></label>
+        <label>Full name<input name="name"><span class="err" data-err="name"></span></label>
+        <label>Phone<input name="phone" inputmode="numeric" maxlength="10"><span class="err" data-err="phone"></span></label>
+        <button type="submit">Save changes</button>
+        <div id="status"></div>
+      </form>
+      <h2 style="margin-top:24px">Change password</h2>
+      <form id="pw" novalidate>
+        <label>Current password<input name="currentPassword" type="password" autocomplete="current-password"><span class="err" data-err="currentPassword"></span></label>
+        <label>New password<input name="newPassword" type="password" autocomplete="new-password"><span class="err" data-err="newPassword"></span></label>
+        <button type="submit">Change password</button>
+        <div id="status"></div>
+      </form>
+      <p class="muted"><a id="back">Back</a></p>
+    </div>`);
+  const pf = view.querySelector('#profile');
+  pf.email.value = user.email;
+  pf.name.value = user.name;
+  pf.phone.value = user.phone;
+  view.querySelector('#back').addEventListener('click', () => show('home', user));
+
+  function notify(form, ok, text) {
+    const m = el(`<div class="msg ${ok ? 'ok' : 'bad'}"></div>`);
+    m.textContent = text;
+    form.querySelector('#status').replaceChildren(m);
+  }
+  pf.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const r = await api('PUT', '/api/users/me', { name: pf.name.value, phone: pf.phone.value });
+    showFieldErrors(pf, r.data.fields);
+    if (r.ok) { user = r.data.user; notify(pf, true, 'Profile updated.'); }
+    else if (r.status === 401) show('login');
+    else notify(pf, false, r.data.error || 'Update failed.');
+  });
+  const pw = view.querySelector('#pw');
+  pw.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const r = await api('PUT', '/api/users/me/password', Object.fromEntries(new FormData(pw)));
+    showFieldErrors(pw, r.data.fields);
+    if (r.ok) { pw.reset(); notify(pw, true, 'Password changed. Other devices were logged out.'); }
+    else if (r.status === 401) show('login');
+    else notify(pw, false, r.data.error || 'Password was not changed.');
+  });
+  return view;
+}
+
 function homeView(user) {
-  const view = el('<div class="card"><h2></h2><p class="muted">You are logged in.</p><button id="logout">Log out</button><div id="status"></div></div>');
+  const view = el('<div class="card"><h2></h2><p class="muted">You are logged in.</p><button id="profile-btn">My profile</button><button id="logout">Log out</button><div id="status"></div></div>');
   view.querySelector('h2').textContent = 'Welcome, ' + user.name;
+  view.querySelector('#profile-btn').addEventListener('click', () => show('profile', user));
   view.querySelector('#logout').addEventListener('click', async () => {
     await api('POST', '/api/auth/logout');
     session.token = null;  // clear locally even if the server already dropped the session
@@ -116,7 +168,7 @@ function homeView(user) {
 }
 
 function show(name, data) {
-  const views = { login: loginView, register: registerView, home: () => homeView(data) };
+  const views = { login: loginView, register: registerView, home: () => homeView(data), profile: () => profileView(data) };
   app.replaceChildren(views[name]());
 }
 show('login');

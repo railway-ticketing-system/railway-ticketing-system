@@ -55,4 +55,11 @@ FieldErrors validateRegistration(const RegistrationInput& in) {
     return errs;
 }
 
+FieldErrors validateProfileUpdate(const ProfileUpdate& in) {
+    FieldErrors errs;
+    if (!isValidName(in.name)) errs["name"] = "Name must be 2-60 characters (letters, spaces, . ' -).";
+    if (!isValidPhone(in.phone)) errs["phone"] = "Phone must be 10 digits starting with 6-9.";
+    return errs;
+}
+
 }  // namespace rtrs
