@@ -75,3 +75,19 @@ TEST_F(AuthServiceTest, LockExpiresAndSuccessResetsCounter) {
     for (int i = 0; i < AuthService::kMaxFailures - 1; ++i) auth.login("asha@example.com", "badpass123");
     EXPECT_EQ(auth.login("asha@example.com", "secret123").status, Status::Ok);
 }
+
+TEST_F(AuthServiceTest, LogoutInvalidatesOnlyThatSession) {
+    auto a = auth.login("asha@example.com", "secret123");
+    auto b = auth.login("asha@example.com", "secret123");  // second device
+    EXPECT_TRUE(auth.logout(a.token));
+    EXPECT_FALSE(auth.authenticate(a.token));
+    EXPECT_TRUE(auth.authenticate(b.token));
+}
+
+TEST_F(AuthServiceTest, LogoutTwiceOrWithGarbageFails) {
+    auto a = auth.login("asha@example.com", "secret123");
+    EXPECT_TRUE(auth.logout(a.token));
+    EXPECT_FALSE(auth.logout(a.token));
+    EXPECT_FALSE(auth.logout("garbage"));
+    EXPECT_FALSE(auth.logout(""));
+}

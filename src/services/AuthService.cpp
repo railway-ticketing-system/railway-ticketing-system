@@ -59,4 +59,10 @@ std::optional<User> AuthService::authenticate(const std::string& token) {
     return users_.findById(std::stoll(rows[0][0]));
 }
 
+bool AuthService::logout(const std::string& token) {
+    if (!authenticate(token)) return false;
+    db_.execute("DELETE FROM sessions WHERE token_hash = ?", {sha256Hex(token)});
+    return true;
+}
+
 }  // namespace rtrs
