@@ -1,0 +1,26 @@
+name: CodeQL security scan
+
+on:
+  push:
+    branches: [test, main]
+  pull_request:
+    branches: [test, main]
+  schedule:
+    - cron: '0 3 * * 1'
+
+jobs:
+  analyze:
+    runs-on: ubuntu-24.04
+    permissions:
+      security-events: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y cmake g++ libssl-dev
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: c-cpp
+      - run: |
+          cmake -S . -B build -DRTRS_BUILD_TESTS=OFF
+          cmake --build build -j"$(nproc)"
+      - uses: github/codeql-action/analyze@v3
