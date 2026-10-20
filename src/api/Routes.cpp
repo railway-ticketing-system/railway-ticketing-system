@@ -120,6 +120,30 @@ json bookingPreviewJson(const BookingPreview& p) {
             {"totalFare", p.totalFare},     {"availableSeats", p.availableSeats}};
 }
 
+json bookingJson(const Booking& b) {
+    json passengers = json::array();
+    for (const auto& p : b.passengers) {
+        passengers.push_back({{"name", p.name},
+                              {"age", p.age},
+                              {"gender", p.gender},
+                              {"seatNumber", p.seatNumber}});
+    }
+    return {{"id", b.id},
+            {"pnr", b.pnr},
+            {"status", b.status},
+            {"trainId", b.trainId},
+            {"trainNumber", b.trainNumber},
+            {"trainName", b.trainName},
+            {"date", b.travelDate},
+            {"class", b.classCode},
+            {"className", b.className},
+            {"farePerPassenger", b.farePerPassenger},
+            {"passengerCount", b.passengerCount},
+            {"totalFare", b.totalFare},
+            {"createdAt", b.createdAt},
+            {"passengers", passengers}};
+}
+
 }  // namespace
 
 void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations) {
@@ -235,6 +259,25 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations)
             return;
         }
         sendJson(res, 200, {{"preview", bookingPreviewJson(result.preview)}});
+    });
+
+    // RTRS-21 / RTS-F-007
+    server.Post("/api/bookings", [auth, bookings](const httplib::Request& req, httplib::Response& res) {
+        auto user = requireUser(*auth, req, res);
+        if (!user) return;
+        json body;
+        if (!parseBody(req, res, body)) return;
+        auto input = parseBooking(body);
+        input.userId = user->id;
+        auto result = bookings->confirm(input);
+        if (!result.ok) {
+            bool soldOut = result.conflict == "sold_out";
+            sendError(res, soldOut ? 409 : 400,
+                      soldOut ? "Not enough seats are available." : "Please correct the highlighted fields.",
+                      result.errors);
+            return;
+        }
+        sendJson(res, 201, {{"booking", bookingJson(result.booking)}});
     });
 
     // RTRS-9 / RTS-F-001

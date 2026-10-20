@@ -32,6 +32,8 @@ FieldErrors validatePassengers(const std::vector<PassengerInput>& passengers) {
     return errors;
 }
 
+struct SoldOut {};
+
 FieldErrors validateInput(const BookingInput& input) {
     FieldErrors errors;
     if (input.trainId <= 0) errors["trainId"] = "Choose a train.";
@@ -96,6 +98,116 @@ PreviewResult BookingService::preview(const BookingInput& input) {
 
     result.ok = result.errors.empty() && result.conflict.empty();
     return result;
+}
+
+ConfirmResult BookingService::confirm(const BookingInput& input) {
+    ConfirmResult result;
+    auto checked = preview(input);
+    result.errors = checked.errors;
+    result.conflict = checked.conflict;
+    if (!checked.ok) return result;
+
+    const auto& draft = checked.preview;
+    long long bookingId = 0;
+
+    try {
+        db_.transaction([&] {
+            auto rows = db_.query(
+                "SELECT c.total_seats,"
+                " COALESCE((SELECT SUM(r.seats) FROM seat_reservations r"
+                "  WHERE r.train_id = c.train_id AND r.class_code = c.class_code"
+                "  AND r.travel_date = ?), 0)"
+                " FROM train_classes c WHERE c.train_id = ? AND c.class_code = ?",
+                {draft.travelDate, std::to_string(input.trainId), draft.classCode});
+            if (rows.empty()) throw SoldOut{};
+
+            int totalSeats = std::stoi(rows[0][0]);
+            int bookedSeats = std::stoi(rows[0][1]);
+            int count = draft.passengerCount;
+            if (bookedSeats + count > totalSeats) throw SoldOut{};
+
+            auto next = db_.query("SELECT COALESCE(MAX(id), 0) + 1 FROM bookings");
+            std::string pnr = std::to_string(1000000000LL + std::stoll(next[0][0]));
+
+            db_.execute(
+                "INSERT INTO bookings"
+                " (pnr, user_id, train_id, travel_date, class_code, fare, passenger_count)"
+                " VALUES (?, ?, ?, ?, ?, ?, ?)",
+                {pnr, std::to_string(input.userId), std::to_string(input.trainId), draft.travelDate,
+                 draft.classCode, std::to_string(draft.farePerPassenger), std::to_string(count)});
+            bookingId = db_.lastInsertId();
+
+            for (int i = 0; i < count; ++i) {
+                const auto& passenger = input.passengers[i];
+                std::string seat = draft.classCode + "-" + std::to_string(bookedSeats + i + 1);
+                db_.execute(
+                    "INSERT INTO passengers (booking_id, name, age, gender, seat_number)"
+                    " VALUES (?, ?, ?, ?, ?)",
+                    {std::to_string(bookingId), trimValue(passenger.name),
+                     std::to_string(std::stoi(trimValue(passenger.age))), trimValue(passenger.gender), seat});
+            }
+
+            db_.execute(
+                "INSERT INTO seat_reservations (train_id, travel_date, class_code, seats, booking_id)"
+                " VALUES (?, ?, ?, ?, ?)",
+                {std::to_string(input.trainId), draft.travelDate, draft.classCode, std::to_string(count),
+                 std::to_string(bookingId)});
+        });
+    } catch (const SoldOut&) {
+        result.conflict = "sold_out";
+        result.errors["passengers"] = "Not enough seats are available.";
+        return result;
+    }
+
+    auto booking = loadBooking(bookingId);
+    if (!booking) {
+        result.errors["booking"] = "Booking could not be loaded.";
+        return result;
+    }
+    result.booking = *booking;
+    result.ok = true;
+    return result;
+}
+
+std::optional<Booking> BookingService::loadBooking(long long id) {
+    auto rows = db_.query(
+        "SELECT b.id, b.pnr, b.user_id, b.train_id, b.travel_date, b.class_code, b.fare,"
+        " b.passenger_count, b.status, b.created_at, t.number, t.name, c.class_name"
+        " FROM bookings b"
+        " JOIN trains t ON t.id = b.train_id"
+        " JOIN train_classes c ON c.train_id = b.train_id AND c.class_code = b.class_code"
+        " WHERE b.id = ?",
+        {std::to_string(id)});
+    if (rows.empty()) return std::nullopt;
+
+    Booking booking;
+    booking.id = std::stoll(rows[0][0]);
+    booking.pnr = rows[0][1];
+    booking.userId = std::stoll(rows[0][2]);
+    booking.trainId = std::stoll(rows[0][3]);
+    booking.travelDate = rows[0][4];
+    booking.classCode = rows[0][5];
+    booking.farePerPassenger = std::stoi(rows[0][6]);
+    booking.passengerCount = std::stoi(rows[0][7]);
+    booking.status = rows[0][8];
+    booking.createdAt = rows[0][9];
+    booking.trainNumber = rows[0][10];
+    booking.trainName = rows[0][11];
+    booking.className = rows[0][12];
+    booking.totalFare = booking.farePerPassenger * booking.passengerCount;
+
+    auto passengers = db_.query(
+        "SELECT name, age, gender, seat_number FROM passengers WHERE booking_id = ? ORDER BY id",
+        {std::to_string(id)});
+    for (const auto& row : passengers) {
+        Passenger passenger;
+        passenger.name = row[0];
+        passenger.age = std::stoi(row[1]);
+        passenger.gender = row[2];
+        passenger.seatNumber = row[3];
+        booking.passengers.push_back(std::move(passenger));
+    }
+    return booking;
 }
 
 }  // namespace rtrs

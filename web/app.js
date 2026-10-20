@@ -414,7 +414,29 @@ function showSchedule(train, date, user) {
     const box = el('<div class="msg ok"></div>');
     box.textContent = p.className + ': Rs ' + p.farePerPassenger + ' x ' + p.passengerCount +
       ' = Rs ' + p.totalFare + '. ' + p.availableSeats + ' seats available.';
-    preview.replaceChildren(box);
+    const confirmButton = el('<button type="button">Confirm booking</button>');
+    preview.replaceChildren(box, confirmButton);
+
+    confirmButton.addEventListener('click', async () => {
+      confirmButton.disabled = true;
+      const c = await api('POST', '/api/bookings', bookingPayload(bookingForm, train, date));
+      if (!c.ok) {
+        confirmButton.disabled = false;
+        showBookingErrors(bookingForm, c.data.fields);
+        const message = el('<div class="msg bad"></div>');
+        message.textContent = c.data.error || 'Could not confirm the booking.';
+        status.replaceChildren(message);
+        return;
+      }
+      const booking = c.data.booking;
+      const done = el('<div class="msg ok"></div>');
+      done.textContent = 'Booking confirmed. PNR ' + booking.pnr + '.';
+      status.replaceChildren(done);
+      bookingForm.reset();
+      passengerBox.replaceChildren();
+      addPassengerRow(passengerBox);
+      preview.replaceChildren();
+    });
   });
 }
 
