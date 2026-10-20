@@ -15,6 +15,10 @@ select.invalid { border-color:var(--error); }
 .err { color:var(--error); font-size:.82rem; min-height:1em; }
 button { margin-top:16px; width:100%; padding:10px; border:0; border-radius:6px; background:var(--accent); color:#fff; font-size:1rem; cursor:pointer; }
 button:disabled { opacity:.6; cursor:default; }
+button.secondary { background:#e8eef4; color:var(--text); border:1px solid var(--border); }
+button.remove { width:auto; padding:6px 10px; margin-top:10px; font-size:.85rem; }
+fieldset.passenger { border:1px solid var(--border); border-radius:8px; padding:12px; margin:14px 0 0; }
+fieldset.passenger legend { font-size:.85rem; color:var(--muted); padding:0 4px; }
 .msg { margin-top:12px; padding:10px; border-radius:6px; font-size:.9rem; }
 .msg.ok { background:#e3f4e7; color:#1b5e20; }
 .msg.bad { background:#fdecea; color:var(--error); }

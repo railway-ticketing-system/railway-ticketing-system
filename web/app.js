@@ -283,6 +283,16 @@ function showSchedule(train, date, user) {
       <div id="availability"><p class="muted">Loading availability...</p></div>
       <h3>Fares</h3>
       <div id="fares"><p class="muted">Loading fares...</p></div>
+      <h3>Book tickets</h3>
+      <form id="booking" novalidate>
+        <label>Class<select name="class"></select><span class="err" data-err="class"></span></label>
+        <div id="passengers"></div>
+        <button type="button" id="add-passenger" class="secondary">Add passenger</button>
+        <button type="submit">Review booking</button>
+        <span class="err" data-err="passengers"></span>
+        <div id="booking-status"></div>
+        <div id="preview"></div>
+      </form>
       <p class="muted"><a id="back">Back to search</a></p>
     </div>`);
   view.querySelector('h2').textContent = train.name + ' #' + train.number;
@@ -347,7 +357,86 @@ function showSchedule(train, date, user) {
       list.appendChild(row);
     }
     box.replaceChildren(list);
+
+    const classSelect = view.querySelector('#booking select[name="class"]');
+    classSelect.replaceChildren(...r.data.classes.map((cls) => {
+      const option = document.createElement('option');
+      option.value = cls.code;
+      option.textContent = cls.name + ' (' + cls.code + ') - Rs ' + cls.fare;
+      return option;
+    }));
   });
+
+  const bookingForm = view.querySelector('#booking');
+  const passengerBox = view.querySelector('#passengers');
+  addPassengerRow(passengerBox);
+  view.querySelector('#add-passenger').addEventListener('click', () => addPassengerRow(passengerBox));
+  bookingForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const status = view.querySelector('#booking-status');
+    const preview = view.querySelector('#preview');
+    status.replaceChildren();
+    preview.replaceChildren();
+    const r = await api('POST', '/api/bookings/preview', bookingPayload(bookingForm, train, date));
+    if (!r.ok) {
+      const message = el('<div class="msg bad"></div>');
+      message.textContent = r.data.error || 'Could not review the booking.';
+      status.replaceChildren(message);
+      return;
+    }
+    const p = r.data.preview;
+    const box = el('<div class="msg ok"></div>');
+    box.textContent = p.className + ': Rs ' + p.farePerPassenger + ' x ' + p.passengerCount +
+      ' = Rs ' + p.totalFare + '. ' + p.availableSeats + ' seats available.';
+    preview.replaceChildren(box);
+  });
+}
+
+function addPassengerRow(container) {
+  const row = el(`
+    <fieldset class="passenger">
+      <legend></legend>
+      <label>Name<input class="p-name" autocomplete="off"><span class="err" data-perr="name"></span></label>
+      <div class="row">
+        <label>Age<input class="p-age" type="number" min="1" max="120"><span class="err" data-perr="age"></span></label>
+        <label>Gender
+          <select class="p-gender">
+            <option value="">Select</option>
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+            <option value="O">Other</option>
+          </select>
+          <span class="err" data-perr="gender"></span>
+        </label>
+      </div>
+      <button type="button" class="remove secondary">Remove</button>
+    </fieldset>`);
+  row.querySelector('.remove').addEventListener('click', () => {
+    row.remove();
+    renumberPassengers(container);
+  });
+  container.appendChild(row);
+  renumberPassengers(container);
+}
+
+function renumberPassengers(container) {
+  [...container.querySelectorAll('.passenger')].forEach((row, index) => {
+    row.querySelector('legend').textContent = 'Passenger ' + (index + 1);
+  });
+}
+
+function bookingPayload(form, train, date) {
+  const passengers = [...form.querySelectorAll('.passenger')].map((row) => ({
+    name: row.querySelector('.p-name').value,
+    age: row.querySelector('.p-age').value,
+    gender: row.querySelector('.p-gender').value,
+  }));
+  return {
+    trainId: train.id,
+    date,
+    class: form.querySelector('[name="class"]').value,
+    passengers,
+  };
 }
 
 function show(name, data) {

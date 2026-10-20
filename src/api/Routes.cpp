@@ -6,6 +6,7 @@
 #include "db/Schema.h"
 #include "db/Seed.h"
 #include "services/AuthService.h"
+#include "services/BookingService.h"
 #include "services/TrainService.h"
 #include "services/UserService.h"
 
@@ -67,6 +68,58 @@ json trainSummaryJson(const TrainSummary& t) {
             {"durationMinutes", t.durationMinutes}, {"fromFare", t.fromFare}};
 }
 
+long long intField(const json& body, const char* key) {
+    auto it = body.find(key);
+    if (it == body.end()) return 0;
+    if (it->is_number_integer()) return it->get<long long>();
+    if (it->is_string()) {
+        try {
+            return std::stoll(it->get<std::string>());
+        } catch (...) {
+            return 0;
+        }
+    }
+    return 0;
+}
+
+std::vector<PassengerInput> parsePassengers(const json& body) {
+    std::vector<PassengerInput> passengers;
+    auto it = body.find("passengers");
+    if (it == body.end() || !it->is_array()) return passengers;
+    for (const auto& item : *it) {
+        PassengerInput passenger;
+        if (item.is_object()) {
+            passenger.name = str(item, "name");
+            passenger.gender = str(item, "gender");
+            auto age = item.find("age");
+            if (age != item.end()) {
+                if (age->is_number_integer()) passenger.age = std::to_string(age->get<long long>());
+                else if (age->is_string()) passenger.age = age->get<std::string>();
+            }
+        }
+        passengers.push_back(std::move(passenger));
+    }
+    return passengers;
+}
+
+BookingInput parseBooking(const json& body) {
+    BookingInput input;
+    input.trainId = intField(body, "trainId");
+    input.travelDate = str(body, "date");
+    input.classCode = str(body, "class");
+    input.passengers = parsePassengers(body);
+    return input;
+}
+
+json bookingPreviewJson(const BookingPreview& p) {
+    return {{"trainId", p.trainId},         {"trainNumber", p.trainNumber},
+            {"trainName", p.trainName},     {"date", p.travelDate},
+            {"class", p.classCode},         {"className", p.className},
+            {"farePerPassenger", p.farePerPassenger},
+            {"passengerCount", p.passengerCount},
+            {"totalFare", p.totalFare},     {"availableSeats", p.availableSeats}};
+}
+
 }  // namespace
 
 void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations) {
@@ -75,6 +128,7 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations)
     auto users = std::make_shared<UserService>(db, PasswordHasher(pbkdf2Iterations));
     auto auth = std::make_shared<AuthService>(db, *users, PasswordHasher(pbkdf2Iterations));
     auto trains = std::make_shared<TrainService>(db);
+    auto bookings = std::make_shared<BookingService>(db, *trains);
 
     server.set_payload_max_length(64 * 1024);
     // RTS-NF-003: never leak internals in error responses.
@@ -162,6 +216,22 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations)
             list.push_back({{"code", cls.code}, {"name", cls.name}, {"fare", cls.fare}});
         }
         sendJson(res, 200, {{"classes", list}});
+    });
+
+    // RTRS-18 / RTS-F-007
+    server.Post("/api/bookings/preview", [auth, bookings](const httplib::Request& req, httplib::Response& res) {
+        auto user = requireUser(*auth, req, res);
+        if (!user) return;
+        json body;
+        if (!parseBody(req, res, body)) return;
+        auto input = parseBooking(body);
+        input.userId = user->id;
+        auto result = bookings->preview(input);
+        if (!result.ok) {
+            sendError(res, 400, "Please correct the highlighted fields.", result.errors);
+            return;
+        }
+        sendJson(res, 200, {{"preview", bookingPreviewJson(result.preview)}});
     });
 
     // RTRS-9 / RTS-F-001
