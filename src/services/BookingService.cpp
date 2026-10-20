@@ -88,7 +88,13 @@ PreviewResult BookingService::preview(const BookingInput& input) {
         }
     }
 
-    result.ok = result.errors.empty();
+    if (result.errors.empty() && result.preview.availableSeats < result.preview.passengerCount) {
+        result.conflict = "sold_out";
+        result.errors["passengers"] = "Only " + std::to_string(result.preview.availableSeats) +
+                                      " seat(s) available in " + result.preview.className + ".";
+    }
+
+    result.ok = result.errors.empty() && result.conflict.empty();
     return result;
 }
 

@@ -228,7 +228,10 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations)
         input.userId = user->id;
         auto result = bookings->preview(input);
         if (!result.ok) {
-            sendError(res, 400, "Please correct the highlighted fields.", result.errors);
+            bool soldOut = result.conflict == "sold_out";
+            sendError(res, soldOut ? 409 : 400,
+                      soldOut ? "Not enough seats are available." : "Please correct the highlighted fields.",
+                      result.errors);
             return;
         }
         sendJson(res, 200, {{"preview", bookingPreviewJson(result.preview)}});
