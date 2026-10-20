@@ -271,10 +271,13 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations)
         input.userId = user->id;
         auto result = bookings->confirm(input);
         if (!result.ok) {
-            bool soldOut = result.conflict == "sold_out";
-            sendError(res, soldOut ? 409 : 400,
-                      soldOut ? "Not enough seats are available." : "Please correct the highlighted fields.",
-                      result.errors);
+            if (result.conflict == "sold_out") {
+                sendError(res, 409, "Not enough seats are available.", result.errors);
+            } else if (result.conflict == "pnr_unavailable") {
+                sendError(res, 409, "Could not generate a PNR. Please try again.", result.errors);
+            } else {
+                sendError(res, 400, "Please correct the highlighted fields.", result.errors);
+            }
             return;
         }
         sendJson(res, 201, {{"booking", bookingJson(result.booking)}});

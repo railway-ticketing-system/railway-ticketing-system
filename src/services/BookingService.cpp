@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <random>
 
 namespace rtrs {
 
@@ -33,6 +34,13 @@ FieldErrors validatePassengers(const std::vector<PassengerInput>& passengers) {
 }
 
 struct SoldOut {};
+struct PnrUnavailable {};
+
+std::string randomPnr() {
+    static thread_local std::mt19937_64 rng(std::random_device{}());
+    std::uniform_int_distribution<long long> digits(1000000000LL, 9999999999LL);
+    return std::to_string(digits(rng));
+}
 
 FieldErrors validateInput(const BookingInput& input) {
     FieldErrors errors;
@@ -126,8 +134,13 @@ ConfirmResult BookingService::confirm(const BookingInput& input) {
             int count = draft.passengerCount;
             if (bookedSeats + count > totalSeats) throw SoldOut{};
 
-            auto next = db_.query("SELECT COALESCE(MAX(id), 0) + 1 FROM bookings");
-            std::string pnr = std::to_string(1000000000LL + std::stoll(next[0][0]));
+            std::string pnr;
+            for (int attempt = 0; attempt < 20 && pnr.empty(); ++attempt) {
+                std::string candidate = randomPnr();
+                if (db_.query("SELECT 1 FROM bookings WHERE pnr = ?", {candidate}).empty())
+                    pnr = candidate;
+            }
+            if (pnr.empty()) throw PnrUnavailable{};
 
             db_.execute(
                 "INSERT INTO bookings"
@@ -156,6 +169,10 @@ ConfirmResult BookingService::confirm(const BookingInput& input) {
     } catch (const SoldOut&) {
         result.conflict = "sold_out";
         result.errors["passengers"] = "Not enough seats are available.";
+        return result;
+    } catch (const PnrUnavailable&) {
+        result.conflict = "pnr_unavailable";
+        result.errors["booking"] = "Could not generate a PNR. Please try again.";
         return result;
     }
 
