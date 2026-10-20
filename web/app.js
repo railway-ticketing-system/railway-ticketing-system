@@ -156,8 +156,9 @@ function profileView(user) {
 }
 
 function homeView(user) {
-  const view = el('<div class="card"><h2></h2><p class="muted">You are logged in.</p><button id="profile-btn">My profile</button><button id="logout">Log out</button><div id="status"></div></div>');
+  const view = el('<div class="card"><h2></h2><p class="muted">You are logged in.</p><button id="search-btn">Search trains</button><button id="profile-btn">My profile</button><button id="logout">Log out</button><div id="status"></div></div>');
   view.querySelector('h2').textContent = 'Welcome, ' + user.name;
+  view.querySelector('#search-btn').addEventListener('click', () => show('search', user));
   view.querySelector('#profile-btn').addEventListener('click', () => show('profile', user));
   view.querySelector('#logout').addEventListener('click', async () => {
     await api('POST', '/api/auth/logout');
@@ -167,8 +168,77 @@ function homeView(user) {
   return view;
 }
 
+function formatDuration(minutes) {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return h + 'h ' + String(m).padStart(2, '0') + 'm';
+}
+
+function searchView(user) {
+  const today = new Date().toISOString().slice(0, 10);
+  const view = el(`
+    <div class="card">
+      <h2>Search trains</h2>
+      <form id="search" novalidate>
+        <label>From<input name="source" placeholder="Pune Jn"><span class="err" data-err="source"></span></label>
+        <label>To<input name="destination" placeholder="Mumbai CSMT"><span class="err" data-err="destination"></span></label>
+        <label>Travel date<input name="date" type="date" value="${today}"><span class="err" data-err="date"></span></label>
+        <button type="submit">Search</button>
+        <div id="status"></div>
+      </form>
+      <div id="results"></div>
+      <p class="muted"><a id="back">Back</a></p>
+    </div>`);
+  view.querySelector('#back').addEventListener('click', () => show('home', user));
+
+  const form = view.querySelector('#search');
+  const results = view.querySelector('#results');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    form.querySelector('#status').replaceChildren();
+    results.replaceChildren();
+    const params = new URLSearchParams(Object.fromEntries(new FormData(form)));
+    const r = await api('GET', '/api/trains/search?' + params.toString());
+    showFieldErrors(form, r.data.fields);
+    if (!r.ok) {
+      const message = el('<div class="msg bad"></div>');
+      message.textContent = r.data.error || 'Search failed.';
+      form.querySelector('#status').replaceChildren(message);
+      return;
+    }
+    if (!r.data.trains.length) {
+      results.appendChild(el('<p class="muted">No trains found for this route and date.</p>'));
+      return;
+    }
+    const list = el('<div class="results"></div>');
+    for (const train of r.data.trains) {
+      const item = el(`
+        <div class="result">
+          <div class="result-head"><strong></strong><span class="num"></span></div>
+          <div class="times"><span class="dep"></span><span class="arrow">to</span><span class="arr"></span></div>
+          <div class="meta"><span class="dur"></span><span class="fare"></span></div>
+        </div>`);
+      item.querySelector('strong').textContent = train.name;
+      item.querySelector('.num').textContent = '#' + train.number;
+      item.querySelector('.dep').textContent = train.departure + ' ' + train.source;
+      item.querySelector('.arr').textContent = train.arrival + ' ' + train.destination;
+      item.querySelector('.dur').textContent = formatDuration(train.durationMinutes);
+      item.querySelector('.fare').textContent = 'from Rs ' + train.fromFare;
+      list.appendChild(item);
+    }
+    results.appendChild(list);
+  });
+  return view;
+}
+
 function show(name, data) {
-  const views = { login: loginView, register: registerView, home: () => homeView(data), profile: () => profileView(data) };
+  const views = {
+    login: loginView,
+    register: registerView,
+    home: () => homeView(data),
+    profile: () => profileView(data),
+    search: () => searchView(data),
+  };
   app.replaceChildren(views[name]());
 }
 show('login');

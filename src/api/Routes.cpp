@@ -4,7 +4,9 @@
 #include <memory>
 
 #include "db/Schema.h"
+#include "db/Seed.h"
 #include "services/AuthService.h"
+#include "services/TrainService.h"
 #include "services/UserService.h"
 
 namespace rtrs {
@@ -58,12 +60,21 @@ json userJson(const User& u) {
             {"createdAt", u.createdAt}};
 }
 
+json trainSummaryJson(const TrainSummary& t) {
+    return {{"id", t.id},       {"number", t.number}, {"name", t.name},
+            {"source", t.source}, {"destination", t.destination},
+            {"departure", t.departure}, {"arrival", t.arrival},
+            {"durationMinutes", t.durationMinutes}, {"fromFare", t.fromFare}};
+}
+
 }  // namespace
 
 void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations) {
     initSchema(db);
+    seedDemoData(db);
     auto users = std::make_shared<UserService>(db, PasswordHasher(pbkdf2Iterations));
     auto auth = std::make_shared<AuthService>(db, *users, PasswordHasher(pbkdf2Iterations));
+    auto trains = std::make_shared<TrainService>(db);
 
     server.set_payload_max_length(64 * 1024);
     // RTS-NF-003: never leak internals in error responses.
@@ -73,6 +84,22 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations)
 
     server.Get("/api/health", [](const httplib::Request&, httplib::Response& res) {
         sendJson(res, 200, {{"status", "ok"}});
+    });
+
+    // RTRS-13 / RTS-F-003
+    server.Get("/api/trains/search", [trains](const httplib::Request& req, httplib::Response& res) {
+        SearchQuery query;
+        query.source = req.get_param_value("source");
+        query.destination = req.get_param_value("destination");
+        query.date = req.get_param_value("date");
+        auto result = trains->search(query);
+        if (!result.ok()) {
+            sendError(res, 400, "Please correct the highlighted fields.", result.errors);
+            return;
+        }
+        json list = json::array();
+        for (const auto& train : result.trains) list.push_back(trainSummaryJson(train));
+        sendJson(res, 200, {{"date", trim(query.date)}, {"count", list.size()}, {"trains", list}});
     });
 
     // RTRS-9 / RTS-F-001

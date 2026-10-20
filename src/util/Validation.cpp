@@ -45,6 +45,51 @@ bool isValidPassword(const std::string& pw) {
     return letter && digit;
 }
 
+bool isValidStation(const std::string& station) {
+    if (station.size() < 2 || station.size() > 60) return false;
+    bool hasLetter = false;
+    for (unsigned char c : station) {
+        if (std::isalpha(c)) hasLetter = true;
+        else if (c != ' ' && c != '.' && c != '\'' && c != '-' && c != '&' && c != '(' && c != ')')
+            return false;
+    }
+    return hasLetter;
+}
+
+bool isValidDate(const std::string& date) {
+    if (date.size() != 10 || date[4] != '-' || date[7] != '-') return false;
+    for (size_t i : {0, 1, 2, 3, 5, 6, 8, 9})
+        if (!std::isdigit(static_cast<unsigned char>(date[i]))) return false;
+
+    int year = std::stoi(date.substr(0, 4));
+    int month = std::stoi(date.substr(5, 2));
+    int day = std::stoi(date.substr(8, 2));
+    if (year < 1900 || year > 2200 || month < 1 || month > 12 || day < 1) return false;
+
+    static const int daysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    int limit = daysInMonth[month - 1];
+    bool leap = (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
+    if (month == 2 && leap) limit = 29;
+    return day <= limit;
+}
+
+bool isValidTime(const std::string& time) {
+    if (time.size() != 5 || time[2] != ':') return false;
+    for (size_t i : {0, 1, 3, 4})
+        if (!std::isdigit(static_cast<unsigned char>(time[i]))) return false;
+    int hour = std::stoi(time.substr(0, 2));
+    int minute = std::stoi(time.substr(3, 2));
+    return hour <= 23 && minute <= 59;
+}
+
+bool isValidClassCode(const std::string& code) {
+    return code == "SL" || code == "3A" || code == "2A" || code == "1A" || code == "CC" || code == "EC";
+}
+
+bool isValidSortField(const std::string& field) {
+    return field == "departure" || field == "price" || field == "duration";
+}
+
 FieldErrors validateRegistration(const RegistrationInput& in) {
     FieldErrors errs;
     if (!isValidName(in.name)) errs["name"] = "Name must be 2-60 characters (letters, spaces, . ' -).";

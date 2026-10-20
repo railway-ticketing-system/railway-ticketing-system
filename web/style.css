@@ -3,7 +3,7 @@
 body { margin:0; font-family: system-ui, sans-serif; background:var(--bg); color:var(--text); }
 header { background:var(--accent); color:#fff; padding:14px 16px; }
 header h1 { margin:0; font-size:1.2rem; }
-main { max-width:420px; margin:24px auto; padding:0 16px; }
+main { max-width:640px; margin:24px auto; padding:0 16px; }
 .card { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:20px; }
 label { display:block; margin-top:12px; font-size:.9rem; font-weight:600; }
 input { width:100%; padding:9px; margin-top:4px; border:1px solid var(--border); border-radius:6px; font-size:1rem; }
@@ -16,3 +16,10 @@ button:disabled { opacity:.6; cursor:default; }
 .msg.bad { background:#fdecea; color:var(--error); }
 a { color:var(--accent); cursor:pointer; }
 .muted { color:var(--muted); font-size:.9rem; margin-top:14px; }
+.results { margin-top:18px; display:grid; gap:10px; }
+.result { border:1px solid var(--border); border-radius:8px; padding:12px 14px; background:#fbfcfd; }
+.result-head { display:flex; justify-content:space-between; gap:12px; align-items:baseline; }
+.result-head .num { color:var(--muted); font-size:.85rem; }
+.times { margin-top:6px; display:flex; gap:8px; font-size:.95rem; }
+.times .arrow { color:var(--muted); }
+.meta { margin-top:8px; display:flex; justify-content:space-between; color:var(--muted); font-size:.88rem; }
