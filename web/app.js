@@ -240,6 +240,8 @@ function showSchedule(train, date, user) {
       <p class="muted" id="route"></p>
       <h3>Schedule</h3>
       <div id="schedule"><p class="muted">Loading schedule...</p></div>
+      <h3>Seat availability</h3>
+      <div id="availability"><p class="muted">Loading availability...</p></div>
       <p class="muted"><a id="back">Back to search</a></p>
     </div>`);
   view.querySelector('h2').textContent = train.name + ' #' + train.number;
@@ -264,6 +266,26 @@ function showSchedule(train, date, user) {
       if (stop.departure) times.push('dep ' + stop.departure);
       if (stop.dayOffset) times.push('+' + stop.dayOffset + 'd');
       row.querySelector('.time').textContent = times.join(' / ');
+      list.appendChild(row);
+    }
+    box.replaceChildren(list);
+  });
+
+  api('GET', '/api/trains/' + train.id + '/availability?date=' + encodeURIComponent(date)).then((r) => {
+    const box = view.querySelector('#availability');
+    if (!r.ok) {
+      const message = el('<div class="msg bad"></div>');
+      message.textContent = r.data.error || 'Could not load seat availability.';
+      box.replaceChildren(message);
+      return;
+    }
+    const list = el('<div class="classes"></div>');
+    for (const cls of r.data.classes) {
+      const row = el('<div class="class-row"><span class="cname"></span><span class="avail"></span><span class="cfare"></span></div>');
+      row.querySelector('.cname').textContent = cls.name + ' (' + cls.code + ')';
+      row.querySelector('.avail').textContent = cls.availableSeats + ' / ' + cls.totalSeats + ' available';
+      row.querySelector('.cfare').textContent = 'Rs ' + cls.fare;
+      if (cls.availableSeats === 0) row.classList.add('soldout');
       list.appendChild(row);
     }
     box.replaceChildren(list);

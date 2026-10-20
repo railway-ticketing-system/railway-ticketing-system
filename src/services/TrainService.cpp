@@ -102,4 +102,26 @@ std::optional<TrainSchedule> TrainService::findById(long long id) {
     return schedule;
 }
 
+std::vector<AvailabilityEntry> TrainService::availability(long long id, const std::string& date) {
+    auto rows = db_.query(
+        "SELECT c.class_code, c.class_name, c.total_seats, c.fare,"
+        " COALESCE((SELECT SUM(r.seats) FROM seat_reservations r"
+        "  WHERE r.train_id = c.train_id AND r.class_code = c.class_code AND r.travel_date = ?), 0)"
+        " FROM train_classes c WHERE c.train_id = ? ORDER BY c.fare",
+        {date, std::to_string(id)});
+
+    std::vector<AvailabilityEntry> entries;
+    for (const auto& row : rows) {
+        AvailabilityEntry entry;
+        entry.code = row[0];
+        entry.name = row[1];
+        entry.totalSeats = std::stoi(row[2]);
+        entry.fare = std::stoi(row[3]);
+        entry.bookedSeats = std::stoi(row[4]);
+        entry.availableSeats = std::max(0, entry.totalSeats - entry.bookedSeats);
+        entries.push_back(std::move(entry));
+    }
+    return entries;
+}
+
 }  // namespace rtrs

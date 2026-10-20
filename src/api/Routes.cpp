@@ -119,6 +119,31 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations)
                   {"stops", stops}});
     });
 
+    // RTRS-15 / RTS-F-005
+    server.Get(R"(/api/trains/(\d+)/availability)", [trains](const httplib::Request& req, httplib::Response& res) {
+        long long id = std::stoll(req.matches[1].str());
+        if (!trains->findById(id)) {
+            sendError(res, 404, "Train not found.");
+            return;
+        }
+        std::string date = trim(req.get_param_value("date"));
+        if (!isValidDate(date)) {
+            sendError(res, 400, "Enter a valid travel date (YYYY-MM-DD).",
+                      {{"date", "Enter a valid travel date (YYYY-MM-DD)."}});
+            return;
+        }
+        json list = json::array();
+        for (const auto& entry : trains->availability(id, date)) {
+            list.push_back({{"code", entry.code},
+                            {"name", entry.name},
+                            {"totalSeats", entry.totalSeats},
+                            {"bookedSeats", entry.bookedSeats},
+                            {"availableSeats", entry.availableSeats},
+                            {"fare", entry.fare}});
+        }
+        sendJson(res, 200, {{"date", date}, {"classes", list}});
+    });
+
     // RTRS-9 / RTS-F-001
     server.Post("/api/auth/register", [users](const httplib::Request& req, httplib::Response& res) {
         json body;

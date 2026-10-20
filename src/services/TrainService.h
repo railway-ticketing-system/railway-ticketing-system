@@ -41,12 +41,18 @@ struct TrainSchedule {
     std::vector<Stop> stops;
 };
 
+struct AvailabilityEntry {
+    std::string code, name;
+    int totalSeats = 0, bookedSeats = 0, availableSeats = 0, fare = 0;
+};
+
 class TrainService {
 public:
     explicit TrainService(Database& db) : db_(db) {}
 
     SearchResult search(const SearchQuery& query);
     std::optional<TrainSchedule> findById(long long id);
+    std::vector<AvailabilityEntry> availability(long long id, const std::string& date);
 
 private:
     Database& db_;
