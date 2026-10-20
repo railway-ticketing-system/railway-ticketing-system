@@ -242,6 +242,8 @@ function showSchedule(train, date, user) {
       <div id="schedule"><p class="muted">Loading schedule...</p></div>
       <h3>Seat availability</h3>
       <div id="availability"><p class="muted">Loading availability...</p></div>
+      <h3>Fares</h3>
+      <div id="fares"><p class="muted">Loading fares...</p></div>
       <p class="muted"><a id="back">Back to search</a></p>
     </div>`);
   view.querySelector('h2').textContent = train.name + ' #' + train.number;
@@ -281,11 +283,28 @@ function showSchedule(train, date, user) {
     }
     const list = el('<div class="classes"></div>');
     for (const cls of r.data.classes) {
-      const row = el('<div class="class-row"><span class="cname"></span><span class="avail"></span><span class="cfare"></span></div>');
+      const row = el('<div class="class-row"><span class="cname"></span><span class="avail"></span></div>');
       row.querySelector('.cname').textContent = cls.name + ' (' + cls.code + ')';
       row.querySelector('.avail').textContent = cls.availableSeats + ' / ' + cls.totalSeats + ' available';
-      row.querySelector('.cfare').textContent = 'Rs ' + cls.fare;
       if (cls.availableSeats === 0) row.classList.add('soldout');
+      list.appendChild(row);
+    }
+    box.replaceChildren(list);
+  });
+
+  api('GET', '/api/trains/' + train.id + '/fares').then((r) => {
+    const box = view.querySelector('#fares');
+    if (!r.ok) {
+      const message = el('<div class="msg bad"></div>');
+      message.textContent = r.data.error || 'Could not load fares.';
+      box.replaceChildren(message);
+      return;
+    }
+    const list = el('<div class="classes"></div>');
+    for (const cls of r.data.classes) {
+      const row = el('<div class="class-row"><span class="cname"></span><span class="cfare"></span></div>');
+      row.querySelector('.cname').textContent = cls.name + ' (' + cls.code + ')';
+      row.querySelector('.cfare').textContent = 'Rs ' + cls.fare;
       list.appendChild(row);
     }
     box.replaceChildren(list);

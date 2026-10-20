@@ -124,4 +124,22 @@ std::vector<AvailabilityEntry> TrainService::availability(long long id, const st
     return entries;
 }
 
+std::vector<TrainClass> TrainService::fares(long long id) {
+    auto rows = db_.query(
+        "SELECT class_code, class_name, fare, total_seats FROM train_classes"
+        " WHERE train_id = ? ORDER BY fare",
+        {std::to_string(id)});
+
+    std::vector<TrainClass> classes;
+    for (const auto& row : rows) {
+        TrainClass cls;
+        cls.code = row[0];
+        cls.name = row[1];
+        cls.fare = std::stoi(row[2]);
+        cls.totalSeats = std::stoi(row[3]);
+        classes.push_back(std::move(cls));
+    }
+    return classes;
+}
+
 }  // namespace rtrs
