@@ -27,6 +27,34 @@ FieldErrors validateQuery(const SearchQuery& query) {
     if (errors.empty() && lower(source) == lower(destination))
         errors["destination"] = "Destination must be different from source.";
     if (!isValidDate(trim(query.date))) errors["date"] = "Enter a valid travel date (YYYY-MM-DD).";
+
+    std::string travelClass = trim(query.travelClass);
+    if (!travelClass.empty() && !isValidClassCode(travelClass))
+        errors["class"] = "Choose a valid travel class.";
+
+    std::string maxFare = trim(query.maxFare);
+    if (!maxFare.empty()) {
+        bool digits = std::all_of(maxFare.begin(), maxFare.end(),
+                                  [](unsigned char c) { return std::isdigit(c) != 0; });
+        if (!digits || maxFare.size() > 7 || std::stoi(maxFare) <= 0)
+            errors["maxFare"] = "Enter a maximum fare in rupees.";
+    }
+
+    std::string departureFrom = trim(query.departureFrom);
+    std::string departureTo = trim(query.departureTo);
+    if (!departureFrom.empty() && !isValidTime(departureFrom))
+        errors["departureFrom"] = "Enter a valid time (HH:MM).";
+    if (!departureTo.empty() && !isValidTime(departureTo))
+        errors["departureTo"] = "Enter a valid time (HH:MM).";
+    if (isValidTime(departureFrom) && isValidTime(departureTo) && departureFrom > departureTo)
+        errors["departureTo"] = "End time must be after the start time.";
+
+    std::string sort = trim(query.sort);
+    if (!sort.empty() && !isValidSortField(sort))
+        errors["sort"] = "Sort by departure, price or duration.";
+    std::string order = trim(query.order);
+    if (!order.empty() && order != "asc" && order != "desc")
+        errors["order"] = "Order must be asc or desc.";
     return errors;
 }
 
@@ -39,17 +67,45 @@ SearchResult TrainService::search(const SearchQuery& query) {
 
     std::string source = trim(query.source);
     std::string destination = trim(query.destination);
+    std::string travelClass = trim(query.travelClass);
+    std::string maxFare = trim(query.maxFare);
+    std::string departureFrom = trim(query.departureFrom);
+    std::string departureTo = trim(query.departureTo);
 
-    auto rows = db_.query(
+    std::string sql =
         "SELECT t.id, t.number, t.name, src.station, dst.station, src.departure_time, dst.arrival_time,"
         " src.day_offset, dst.day_offset,"
-        " (SELECT MIN(tc.fare) FROM train_classes tc WHERE tc.train_id = t.id) AS min_fare"
+        " (SELECT MIN(tc.fare) FROM train_classes tc WHERE tc.train_id = t.id"
+        "  AND (? = '' OR tc.class_code = ?)) AS min_fare"
         " FROM trains t"
         " JOIN train_stops src ON src.train_id = t.id AND lower(src.station) = lower(?)"
         "  AND COALESCE(src.departure_time, '') <> ''"
         " JOIN train_stops dst ON dst.train_id = t.id AND lower(dst.station) = lower(?)"
-        "  AND dst.seq > src.seq AND COALESCE(dst.arrival_time, '') <> ''",
-        {source, destination});
+        "  AND dst.seq > src.seq AND COALESCE(dst.arrival_time, '') <> ''"
+        " WHERE 1 = 1";
+
+    std::vector<Database::Param> params{travelClass, travelClass, source, destination};
+    if (!travelClass.empty()) {
+        sql += " AND EXISTS (SELECT 1 FROM train_classes c1 WHERE c1.train_id = t.id AND c1.class_code = ?)";
+        params.push_back(travelClass);
+    }
+    if (!maxFare.empty()) {
+        sql += " AND EXISTS (SELECT 1 FROM train_classes c2 WHERE c2.train_id = t.id AND c2.fare <= ?"
+               "  AND (? = '' OR c2.class_code = ?))";
+        params.push_back(maxFare);
+        params.push_back(travelClass);
+        params.push_back(travelClass);
+    }
+    if (!departureFrom.empty()) {
+        sql += " AND src.departure_time >= ?";
+        params.push_back(departureFrom);
+    }
+    if (!departureTo.empty()) {
+        sql += " AND src.departure_time <= ?";
+        params.push_back(departureTo);
+    }
+
+    auto rows = db_.query(sql, params);
 
     for (const auto& row : rows) {
         TrainSummary train;
@@ -70,11 +126,17 @@ SearchResult TrainService::search(const SearchQuery& query) {
         result.trains.push_back(std::move(train));
     }
 
+    std::string sort = trim(query.sort).empty() ? "departure" : trim(query.sort);
+    std::string order = trim(query.order).empty() ? "asc" : trim(query.order);
     std::stable_sort(result.trains.begin(), result.trains.end(),
-                     [](const TrainSummary& a, const TrainSummary& b) {
+                     [&sort](const TrainSummary& a, const TrainSummary& b) {
+                         if (sort == "price" && a.fromFare != b.fromFare) return a.fromFare < b.fromFare;
+                         if (sort == "duration" && a.durationMinutes != b.durationMinutes)
+                             return a.durationMinutes < b.durationMinutes;
                          if (a.departure != b.departure) return a.departure < b.departure;
                          return a.name < b.name;
                      });
+    if (order == "desc") std::reverse(result.trains.begin(), result.trains.end());
     return result;
 }
 

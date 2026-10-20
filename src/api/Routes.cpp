@@ -92,6 +92,12 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations)
         query.source = req.get_param_value("source");
         query.destination = req.get_param_value("destination");
         query.date = req.get_param_value("date");
+        query.travelClass = req.get_param_value("class");
+        query.maxFare = req.get_param_value("maxFare");
+        query.departureFrom = req.get_param_value("departureFrom");
+        query.departureTo = req.get_param_value("departureTo");
+        query.sort = req.get_param_value("sort");
+        query.order = req.get_param_value("order");
         auto result = trains->search(query);
         if (!result.ok()) {
             sendError(res, 400, "Please correct the highlighted fields.", result.errors);

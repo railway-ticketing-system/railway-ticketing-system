@@ -26,7 +26,7 @@ function el(html) {
 }
 
 function showFieldErrors(form, fields) {
-  form.querySelectorAll('input').forEach(i => {
+  form.querySelectorAll('input, select').forEach(i => {
     const msg = fields && fields[i.name];
     i.classList.toggle('invalid', !!msg);
     form.querySelector(`[data-err="${i.name}"]`).textContent = msg || '';
@@ -180,9 +180,47 @@ function searchView(user) {
     <div class="card">
       <h2>Search trains</h2>
       <form id="search" novalidate>
-        <label>From<input name="source" placeholder="Pune Jn"><span class="err" data-err="source"></span></label>
-        <label>To<input name="destination" placeholder="Mumbai CSMT"><span class="err" data-err="destination"></span></label>
+        <div class="row">
+          <label>From<input name="source" placeholder="Pune Jn"><span class="err" data-err="source"></span></label>
+          <label>To<input name="destination" placeholder="Mumbai CSMT"><span class="err" data-err="destination"></span></label>
+        </div>
         <label>Travel date<input name="date" type="date" value="${today}"><span class="err" data-err="date"></span></label>
+        <div class="row">
+          <label>Class
+            <select name="class">
+              <option value="">Any class</option>
+              <option value="SL">Sleeper (SL)</option>
+              <option value="3A">AC 3 Tier (3A)</option>
+              <option value="2A">AC 2 Tier (2A)</option>
+              <option value="1A">AC First Class (1A)</option>
+              <option value="CC">AC Chair Car (CC)</option>
+              <option value="EC">Executive Chair Car (EC)</option>
+            </select>
+            <span class="err" data-err="class"></span>
+          </label>
+          <label>Max fare (Rs)<input name="maxFare" type="number" min="1" placeholder="Any"><span class="err" data-err="maxFare"></span></label>
+        </div>
+        <div class="row">
+          <label>Depart after<input name="departureFrom" type="time"><span class="err" data-err="departureFrom"></span></label>
+          <label>Depart before<input name="departureTo" type="time"><span class="err" data-err="departureTo"></span></label>
+        </div>
+        <div class="row">
+          <label>Sort by
+            <select name="sort">
+              <option value="departure">Departure</option>
+              <option value="price">Price</option>
+              <option value="duration">Duration</option>
+            </select>
+            <span class="err" data-err="sort"></span>
+          </label>
+          <label>Order
+            <select name="order">
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
+            <span class="err" data-err="order"></span>
+          </label>
+        </div>
         <button type="submit">Search</button>
         <div id="status"></div>
       </form>
