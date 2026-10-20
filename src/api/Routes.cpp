@@ -102,6 +102,23 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations)
         sendJson(res, 200, {{"date", trim(query.date)}, {"count", list.size()}, {"trains", list}});
     });
 
+    // RTRS-14 / RTS-F-004
+    server.Get(R"(/api/trains/(\d+)/schedule)", [trains](const httplib::Request& req, httplib::Response& res) {
+        auto schedule = trains->findById(std::stoll(req.matches[1].str()));
+        if (!schedule) {
+            sendError(res, 404, "Train not found.");
+            return;
+        }
+        json stops = json::array();
+        for (const auto& stop : schedule->stops) {
+            stops.push_back({{"station", stop.station}, {"arrival", stop.arrival},
+                             {"departure", stop.departure}, {"dayOffset", stop.dayOffset}});
+        }
+        sendJson(res, 200,
+                 {{"train", {{"id", schedule->id}, {"number", schedule->number}, {"name", schedule->name}}},
+                  {"stops", stops}});
+    });
+
     // RTRS-9 / RTS-F-001
     server.Post("/api/auth/register", [users](const httplib::Request& req, httplib::Response& res) {
         json body;

@@ -224,11 +224,50 @@ function searchView(user) {
       item.querySelector('.arr').textContent = train.arrival + ' ' + train.destination;
       item.querySelector('.dur').textContent = formatDuration(train.durationMinutes);
       item.querySelector('.fare').textContent = 'from Rs ' + train.fromFare;
+      item.classList.add('clickable');
+      item.addEventListener('click', () => showSchedule(train, r.data.date, user));
       list.appendChild(item);
     }
     results.appendChild(list);
   });
   return view;
+}
+
+function showSchedule(train, date, user) {
+  const view = el(`
+    <div class="card">
+      <h2></h2>
+      <p class="muted" id="route"></p>
+      <h3>Schedule</h3>
+      <div id="schedule"><p class="muted">Loading schedule...</p></div>
+      <p class="muted"><a id="back">Back to search</a></p>
+    </div>`);
+  view.querySelector('h2').textContent = train.name + ' #' + train.number;
+  view.querySelector('#route').textContent = train.source + ' to ' + train.destination + ' on ' + date;
+  view.querySelector('#back').addEventListener('click', () => show('search', user));
+  app.replaceChildren(view);
+
+  api('GET', '/api/trains/' + train.id + '/schedule').then((r) => {
+    const box = view.querySelector('#schedule');
+    if (!r.ok) {
+      const message = el('<div class="msg bad"></div>');
+      message.textContent = r.data.error || 'Could not load the schedule.';
+      box.replaceChildren(message);
+      return;
+    }
+    const list = el('<div class="schedule"></div>');
+    for (const stop of r.data.stops) {
+      const row = el('<div class="stop"><span class="station"></span><span class="time"></span></div>');
+      row.querySelector('.station').textContent = stop.station;
+      const times = [];
+      if (stop.arrival) times.push('arr ' + stop.arrival);
+      if (stop.departure) times.push('dep ' + stop.departure);
+      if (stop.dayOffset) times.push('+' + stop.dayOffset + 'd');
+      row.querySelector('.time').textContent = times.join(' / ');
+      list.appendChild(row);
+    }
+    box.replaceChildren(list);
+  });
 }
 
 function show(name, data) {

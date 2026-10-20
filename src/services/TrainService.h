@@ -1,4 +1,5 @@
 #pragma once
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -29,11 +30,23 @@ struct SearchResult {
     bool ok() const { return errors.empty(); }
 };
 
+struct Stop {
+    std::string station, arrival, departure;
+    int dayOffset = 0;
+};
+
+struct TrainSchedule {
+    long long id = 0;
+    std::string number, name;
+    std::vector<Stop> stops;
+};
+
 class TrainService {
 public:
     explicit TrainService(Database& db) : db_(db) {}
 
     SearchResult search(const SearchQuery& query);
+    std::optional<TrainSchedule> findById(long long id);
 
 private:
     Database& db_;

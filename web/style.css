@@ -20,6 +20,13 @@ a { color:var(--accent); cursor:pointer; }
 .result { border:1px solid var(--border); border-radius:8px; padding:12px 14px; background:#fbfcfd; }
 .result-head { display:flex; justify-content:space-between; gap:12px; align-items:baseline; }
 .result-head .num { color:var(--muted); font-size:.85rem; }
+.result.clickable { cursor:pointer; }
+.result.clickable:hover { border-color:var(--accent); }
+.schedule { margin-top:8px; display:grid; gap:0; }
+.stop { display:flex; justify-content:space-between; gap:12px; padding:8px 0; border-bottom:1px solid var(--border); font-size:.92rem; }
+.stop:last-child { border-bottom:0; }
+.stop .time { color:var(--muted); }
+h3 { margin:20px 0 0; font-size:1rem; }
 .times { margin-top:6px; display:flex; gap:8px; font-size:.95rem; }
 .times .arrow { color:var(--muted); }
 .meta { margin-top:8px; display:flex; justify-content:space-between; color:var(--muted); font-size:.88rem; }

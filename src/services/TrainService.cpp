@@ -78,4 +78,28 @@ SearchResult TrainService::search(const SearchQuery& query) {
     return result;
 }
 
+std::optional<TrainSchedule> TrainService::findById(long long id) {
+    auto rows = db_.query("SELECT id, number, name FROM trains WHERE id = ?", {std::to_string(id)});
+    if (rows.empty()) return std::nullopt;
+
+    TrainSchedule schedule;
+    schedule.id = std::stoll(rows[0][0]);
+    schedule.number = rows[0][1];
+    schedule.name = rows[0][2];
+
+    auto stops = db_.query(
+        "SELECT station, COALESCE(arrival_time, ''), COALESCE(departure_time, ''), day_offset"
+        " FROM train_stops WHERE train_id = ? ORDER BY seq",
+        {std::to_string(id)});
+    for (const auto& row : stops) {
+        Stop stop;
+        stop.station = row[0];
+        stop.arrival = row[1];
+        stop.departure = row[2];
+        stop.dayOffset = std::stoi(row[3]);
+        schedule.stops.push_back(std::move(stop));
+    }
+    return schedule;
+}
+
 }  // namespace rtrs
