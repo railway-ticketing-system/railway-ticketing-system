@@ -4,7 +4,9 @@
 #include <memory>
 
 #include "db/Schema.h"
+#include "db/Seed.h"
 #include "services/AuthService.h"
+#include "services/TrainService.h"
 #include "services/UserService.h"
 
 namespace rtrs {
@@ -58,12 +60,21 @@ json userJson(const User& u) {
             {"createdAt", u.createdAt}};
 }
 
+json trainSummaryJson(const TrainSummary& t) {
+    return {{"id", t.id},       {"number", t.number}, {"name", t.name},
+            {"source", t.source}, {"destination", t.destination},
+            {"departure", t.departure}, {"arrival", t.arrival},
+            {"durationMinutes", t.durationMinutes}, {"fromFare", t.fromFare}};
+}
+
 }  // namespace
 
 void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations) {
     initSchema(db);
+    seedDemoData(db);
     auto users = std::make_shared<UserService>(db, PasswordHasher(pbkdf2Iterations));
     auto auth = std::make_shared<AuthService>(db, *users, PasswordHasher(pbkdf2Iterations));
+    auto trains = std::make_shared<TrainService>(db);
 
     server.set_payload_max_length(64 * 1024);
     // RTS-NF-003: never leak internals in error responses.
@@ -73,6 +84,84 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations)
 
     server.Get("/api/health", [](const httplib::Request&, httplib::Response& res) {
         sendJson(res, 200, {{"status", "ok"}});
+    });
+
+    // RTRS-13 / RTS-F-003
+    server.Get("/api/trains/search", [trains](const httplib::Request& req, httplib::Response& res) {
+        SearchQuery query;
+        query.source = req.get_param_value("source");
+        query.destination = req.get_param_value("destination");
+        query.date = req.get_param_value("date");
+        query.travelClass = req.get_param_value("class");
+        query.maxFare = req.get_param_value("maxFare");
+        query.departureFrom = req.get_param_value("departureFrom");
+        query.departureTo = req.get_param_value("departureTo");
+        query.sort = req.get_param_value("sort");
+        query.order = req.get_param_value("order");
+        auto result = trains->search(query);
+        if (!result.ok()) {
+            sendError(res, 400, "Please correct the highlighted fields.", result.errors);
+            return;
+        }
+        json list = json::array();
+        for (const auto& train : result.trains) list.push_back(trainSummaryJson(train));
+        sendJson(res, 200, {{"date", trim(query.date)}, {"count", list.size()}, {"trains", list}});
+    });
+
+    // RTRS-14 / RTS-F-004
+    server.Get(R"(/api/trains/(\d+)/schedule)", [trains](const httplib::Request& req, httplib::Response& res) {
+        auto schedule = trains->findById(std::stoll(req.matches[1].str()));
+        if (!schedule) {
+            sendError(res, 404, "Train not found.");
+            return;
+        }
+        json stops = json::array();
+        for (const auto& stop : schedule->stops) {
+            stops.push_back({{"station", stop.station}, {"arrival", stop.arrival},
+                             {"departure", stop.departure}, {"dayOffset", stop.dayOffset}});
+        }
+        sendJson(res, 200,
+                 {{"train", {{"id", schedule->id}, {"number", schedule->number}, {"name", schedule->name}}},
+                  {"stops", stops}});
+    });
+
+    // RTRS-15 / RTS-F-005
+    server.Get(R"(/api/trains/(\d+)/availability)", [trains](const httplib::Request& req, httplib::Response& res) {
+        long long id = std::stoll(req.matches[1].str());
+        if (!trains->findById(id)) {
+            sendError(res, 404, "Train not found.");
+            return;
+        }
+        std::string date = trim(req.get_param_value("date"));
+        if (!isValidDate(date)) {
+            sendError(res, 400, "Enter a valid travel date (YYYY-MM-DD).",
+                      {{"date", "Enter a valid travel date (YYYY-MM-DD)."}});
+            return;
+        }
+        json list = json::array();
+        for (const auto& entry : trains->availability(id, date)) {
+            list.push_back({{"code", entry.code},
+                            {"name", entry.name},
+                            {"totalSeats", entry.totalSeats},
+                            {"bookedSeats", entry.bookedSeats},
+                            {"availableSeats", entry.availableSeats},
+                            {"fare", entry.fare}});
+        }
+        sendJson(res, 200, {{"date", date}, {"classes", list}});
+    });
+
+    // RTRS-16 / RTS-F-006
+    server.Get(R"(/api/trains/(\d+)/fares)", [trains](const httplib::Request& req, httplib::Response& res) {
+        long long id = std::stoll(req.matches[1].str());
+        if (!trains->findById(id)) {
+            sendError(res, 404, "Train not found.");
+            return;
+        }
+        json list = json::array();
+        for (const auto& cls : trains->fares(id)) {
+            list.push_back({{"code", cls.code}, {"name", cls.name}, {"fare", cls.fare}});
+        }
+        sendJson(res, 200, {{"classes", list}});
     });
 
     // RTRS-9 / RTS-F-001
