@@ -29,7 +29,8 @@ function showFieldErrors(form, fields) {
   form.querySelectorAll('input, select').forEach(i => {
     const msg = fields && fields[i.name];
     i.classList.toggle('invalid', !!msg);
-    form.querySelector(`[data-err="${i.name}"]`).textContent = msg || '';
+    const err = form.querySelector(`[data-err="${i.name}"]`);
+    if (err) err.textContent = msg || '';
   });
 }
 
