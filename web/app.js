@@ -188,9 +188,10 @@ function profileView(user) {
 }
 
 function homeView(user) {
-  const view = el('<div class="card"><h2></h2><p class="muted">You are logged in.</p><button id="search-btn">Search trains</button><button id="profile-btn">My profile</button><button id="logout">Log out</button><div id="status"></div></div>');
+  const view = el('<div class="card"><h2></h2><p class="muted">You are logged in.</p><button id="search-btn">Search trains</button><button id="bookings-btn">My bookings</button><button id="profile-btn">My profile</button><button id="logout">Log out</button><div id="status"></div></div>');
   view.querySelector('h2').textContent = 'Welcome, ' + user.name;
   view.querySelector('#search-btn').addEventListener('click', () => show('search', user));
+  view.querySelector('#bookings-btn').addEventListener('click', () => show('bookings', user));
   view.querySelector('#profile-btn').addEventListener('click', () => show('profile', user));
   view.querySelector('#logout').addEventListener('click', async () => {
     await api('POST', '/api/auth/logout');
@@ -444,6 +445,54 @@ function showSchedule(train, date, user) {
   });
 }
 
+function bookingsView(user) {
+  const view = el(`
+    <div class="card">
+      <h2>My bookings</h2>
+      <div id="bookings"><p class="muted">Loading bookings...</p></div>
+      <p><button type="button" class="secondary" id="bookings-back">Back</button></p>
+    </div>`);
+  view.querySelector('#bookings-back').addEventListener('click', () => show('home', user));
+  const box = view.querySelector('#bookings');
+
+  (async () => {
+    const r = await api('GET', '/api/bookings');
+    if (!r.ok) {
+      const message = el('<div class="msg bad"></div>');
+      message.textContent = r.data.error || 'Could not load your bookings.';
+      box.replaceChildren(message);
+      return;
+    }
+    if (!r.data.bookings.length) {
+      box.innerHTML = '<p class="muted">You have not booked a ticket yet.</p>';
+      return;
+    }
+    const list = el('<div class="results"></div>');
+    r.data.bookings.forEach((booking) => {
+      const item = el(`
+        <div class="result clickable">
+          <div class="result-head">
+            <div><strong></strong> <span class="num"></span></div>
+            <span class="badge"></span>
+          </div>
+          <div class="meta"><span class="journey"></span><span class="fare"></span></div>
+        </div>`);
+      item.querySelector('strong').textContent = booking.trainNumber + ' - ' + booking.trainName;
+      item.querySelector('.num').textContent = 'PNR ' + booking.pnr;
+      item.querySelector('.badge').textContent = booking.status;
+      item.querySelector('.journey').textContent =
+        booking.date + ' - ' + booking.className + ' (' + booking.class + ')';
+      item.querySelector('.fare').textContent =
+        booking.passengerCount + ' passenger(s) - Rs ' + booking.totalFare;
+      item.addEventListener('click', () => show('ticket', { pnr: booking.pnr }));
+      list.appendChild(item);
+    });
+    box.replaceChildren(list);
+  })();
+
+  return view;
+}
+
 function ticketView(data) {
   const view = el(`
     <div class="card">
@@ -557,6 +606,7 @@ function show(name, data) {
     home: () => homeView(data),
     profile: () => profileView(data),
     search: () => searchView(data),
+    bookings: () => bookingsView(data),
     ticket: () => ticketView(data),
   };
   app.replaceChildren(views[name]());

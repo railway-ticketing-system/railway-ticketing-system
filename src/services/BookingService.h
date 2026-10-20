@@ -59,6 +59,7 @@ public:
     PreviewResult preview(const BookingInput& input);
     ConfirmResult confirm(const BookingInput& input);
     std::optional<Booking> findByPnr(const std::string& pnr);
+    std::vector<Booking> listForUser(long long userId);
 
 private:
     std::optional<Booking> loadBooking(long long id);

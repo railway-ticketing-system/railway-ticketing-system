@@ -283,6 +283,15 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations)
         sendJson(res, 201, {{"booking", bookingJson(result.booking)}});
     });
 
+    // RTRS-24 / RTS-F-008
+    server.Get("/api/bookings", [auth, bookings](const httplib::Request& req, httplib::Response& res) {
+        auto user = requireUser(*auth, req, res);
+        if (!user) return;
+        json list = json::array();
+        for (const auto& booking : bookings->listForUser(user->id)) list.push_back(bookingJson(booking));
+        sendJson(res, 200, {{"bookings", list}});
+    });
+
     // RTRS-23 / RTS-F-008
     server.Get(R"(/api/bookings/([0-9]+))", [auth, bookings](const httplib::Request& req, httplib::Response& res) {
         auto user = requireUser(*auth, req, res);

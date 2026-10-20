@@ -192,6 +192,17 @@ std::optional<Booking> BookingService::findByPnr(const std::string& pnr) {
     return loadBooking(std::stoll(rows[0][0]));
 }
 
+std::vector<Booking> BookingService::listForUser(long long userId) {
+    std::vector<Booking> bookings;
+    auto rows = db_.query("SELECT id FROM bookings WHERE user_id = ? ORDER BY id DESC",
+                          {std::to_string(userId)});
+    for (const auto& row : rows) {
+        auto booking = loadBooking(std::stoll(row[0]));
+        if (booking) bookings.push_back(std::move(*booking));
+    }
+    return bookings;
+}
+
 std::optional<Booking> BookingService::loadBooking(long long id) {
     auto rows = db_.query(
         "SELECT b.id, b.pnr, b.user_id, b.train_id, b.travel_date, b.class_code, b.fare,"
