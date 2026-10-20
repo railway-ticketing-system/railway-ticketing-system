@@ -25,6 +25,12 @@ function el(html) {
   return t.content.firstChild;
 }
 
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (c) => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+  ));
+}
+
 function showFieldErrors(form, fields) {
   form.querySelectorAll('input, select').forEach(i => {
     const msg = fields && fields[i.name];
@@ -428,16 +434,73 @@ function showSchedule(train, date, user) {
         status.replaceChildren(message);
         return;
       }
-      const booking = c.data.booking;
-      const done = el('<div class="msg ok"></div>');
-      done.textContent = 'Booking confirmed. PNR ' + booking.pnr + '.';
-      status.replaceChildren(done);
       bookingForm.reset();
       passengerBox.replaceChildren();
       addPassengerRow(passengerBox);
       preview.replaceChildren();
+      status.replaceChildren();
+      show('ticket', { booking: c.data.booking });
     });
   });
+}
+
+function ticketView(data) {
+  const view = el(`
+    <div class="card">
+      <h2>Your ticket</h2>
+      <div id="ticket"></div>
+      <p><button type="button" class="secondary" id="ticket-back">Back to search</button></p>
+    </div>`);
+  view.querySelector('#ticket-back').addEventListener('click', () => show('search'));
+  const box = view.querySelector('#ticket');
+
+  if (data && data.booking) {
+    renderTicket(box, data.booking);
+    return view;
+  }
+
+  const pnr = data && data.pnr;
+  box.innerHTML = '<p class="muted">Loading ticket...</p>';
+  (async () => {
+    const r = await api('GET', '/api/bookings/' + encodeURIComponent(pnr));
+    if (!r.ok) {
+      const message = el('<div class="msg bad"></div>');
+      message.textContent = r.data.error || 'Ticket not found.';
+      box.replaceChildren(message);
+      return;
+    }
+    renderTicket(box, r.data.booking);
+  })();
+  return view;
+}
+
+function renderTicket(box, booking) {
+  const gender = { M: 'Male', F: 'Female', O: 'Other' };
+  const rows = (booking.passengers || []).map((p, index) => `
+    <tr>
+      <td>${index + 1}</td>
+      <td>${escapeHtml(p.name)}</td>
+      <td>${p.age}</td>
+      <td>${gender[p.gender] || escapeHtml(p.gender)}</td>
+      <td>${escapeHtml(p.seatNumber)}</td>
+    </tr>`).join('');
+  box.innerHTML = `
+    <div class="ticket">
+      <div class="ticket-head">
+        <strong>PNR ${escapeHtml(booking.pnr)}</strong>
+        <span class="badge">${escapeHtml(booking.status)}</span>
+      </div>
+      <dl>
+        <div><dt>Train</dt><dd>${escapeHtml(booking.trainNumber)} - ${escapeHtml(booking.trainName)}</dd></div>
+        <div><dt>Travel date</dt><dd>${escapeHtml(booking.date)}</dd></div>
+        <div><dt>Class</dt><dd>${escapeHtml(booking.className)} (${escapeHtml(booking.class)})</dd></div>
+        <div><dt>Fare</dt><dd>Rs ${booking.farePerPassenger} x ${booking.passengerCount} = Rs ${booking.totalFare}</dd></div>
+      </dl>
+      <table>
+        <thead><tr><th>#</th><th>Passenger</th><th>Age</th><th>Gender</th><th>Seat</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
 }
 
 function addPassengerRow(container) {
@@ -494,6 +557,7 @@ function show(name, data) {
     home: () => homeView(data),
     profile: () => profileView(data),
     search: () => searchView(data),
+    ticket: () => ticketView(data),
   };
   app.replaceChildren(views[name]());
 }

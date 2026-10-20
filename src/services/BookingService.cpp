@@ -186,6 +186,12 @@ ConfirmResult BookingService::confirm(const BookingInput& input) {
     return result;
 }
 
+std::optional<Booking> BookingService::findByPnr(const std::string& pnr) {
+    auto rows = db_.query("SELECT id FROM bookings WHERE pnr = ?", {pnr});
+    if (rows.empty()) return std::nullopt;
+    return loadBooking(std::stoll(rows[0][0]));
+}
+
 std::optional<Booking> BookingService::loadBooking(long long id) {
     auto rows = db_.query(
         "SELECT b.id, b.pnr, b.user_id, b.train_id, b.travel_date, b.class_code, b.fare,"
