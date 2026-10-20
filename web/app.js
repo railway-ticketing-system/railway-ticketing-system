@@ -34,6 +34,31 @@ function showFieldErrors(form, fields) {
   });
 }
 
+function clearBookingErrors(form) {
+  form.querySelectorAll('.err').forEach((span) => { span.textContent = ''; });
+  form.querySelectorAll('.invalid').forEach((input) => { input.classList.remove('invalid'); });
+}
+
+function showBookingErrors(form, fields) {
+  clearBookingErrors(form);
+  Object.entries(fields || {}).forEach(([key, message]) => {
+    if (key.startsWith('passengers.')) {
+      const [, index, field] = key.split('.');
+      const row = form.querySelectorAll('.passenger')[Number(index)];
+      if (!row) return;
+      const input = row.querySelector('.p-' + field);
+      const err = row.querySelector('[data-perr="' + field + '"]');
+      if (input) input.classList.add('invalid');
+      if (err) err.textContent = message;
+      return;
+    }
+    const input = form.querySelector('[name="' + key + '"]');
+    const err = form.querySelector('[data-err="' + key + '"]');
+    if (input) input.classList.add('invalid');
+    if (err) err.textContent = message;
+  });
+}
+
 function registerView() {
   const view = el(`
     <div class="card">
@@ -378,6 +403,7 @@ function showSchedule(train, date, user) {
     status.replaceChildren();
     preview.replaceChildren();
     const r = await api('POST', '/api/bookings/preview', bookingPayload(bookingForm, train, date));
+    showBookingErrors(bookingForm, r.data.fields);
     if (!r.ok) {
       const message = el('<div class="msg bad"></div>');
       message.textContent = r.data.error || 'Could not review the booking.';

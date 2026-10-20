@@ -9,6 +9,29 @@ namespace {
 
 std::string trimValue(const std::string& value) { return trim(value); }
 
+FieldErrors validatePassengers(const std::vector<PassengerInput>& passengers) {
+    FieldErrors errors;
+    for (size_t i = 0; i < passengers.size(); ++i) {
+        const auto& passenger = passengers[i];
+        const std::string prefix = "passengers." + std::to_string(i) + ".";
+
+        if (!isValidName(trimValue(passenger.name)))
+            errors[prefix + "name"] = "Enter the passenger's name.";
+
+        std::string age = trimValue(passenger.age);
+        bool digits = !age.empty() && age.size() <= 3 &&
+                      std::all_of(age.begin(), age.end(),
+                                  [](unsigned char c) { return std::isdigit(c) != 0; });
+        if (!digits || std::stoi(age) < 1 || std::stoi(age) > 120)
+            errors[prefix + "age"] = "Age must be between 1 and 120.";
+
+        std::string gender = trimValue(passenger.gender);
+        if (gender != "M" && gender != "F" && gender != "O")
+            errors[prefix + "gender"] = "Select the passenger's gender.";
+    }
+    return errors;
+}
+
 FieldErrors validateInput(const BookingInput& input) {
     FieldErrors errors;
     if (input.trainId <= 0) errors["trainId"] = "Choose a train.";
@@ -28,6 +51,8 @@ FieldErrors validateInput(const BookingInput& input) {
 PreviewResult BookingService::preview(const BookingInput& input) {
     PreviewResult result;
     result.errors = validateInput(input);
+    auto passengerErrors = validatePassengers(input.passengers);
+    result.errors.insert(passengerErrors.begin(), passengerErrors.end());
 
     if (input.trainId <= 0) return result;
 
