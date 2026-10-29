@@ -262,11 +262,12 @@ CancellationQuote BookingService::cancellationQuote(const Booking& booking) cons
     return quote;
 }
 
-CancelResult BookingService::cancel(long long id) {
+CancelResult BookingService::cancel(long long id, long long userId) {
     CancelResult result;
     try {
         db_.transaction([&] {
-            auto rows = db_.query("SELECT status FROM bookings WHERE id = ?", {std::to_string(id)});
+            auto rows = db_.query("SELECT status FROM bookings WHERE id = ? AND user_id = ?",
+                                  {std::to_string(id), std::to_string(userId)});
             if (rows.empty()) throw BookingNotFound{};
             if (rows[0][0] != "CONFIRMED") throw NotCancellable{"This booking is already cancelled."};
             auto booking = loadBooking(id);

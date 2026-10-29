@@ -82,7 +82,7 @@ public:
     std::optional<Booking> findByPnr(const std::string& pnr);
     std::optional<Booking> findById(long long id);
     std::vector<Booking> listForUser(long long userId);
-    CancelResult cancel(long long id);
+    CancelResult cancel(long long id, long long userId);
     CancellationQuote cancellationQuote(const Booking& booking) const;
 
     const CancellationPolicy& policy() const { return policy_; }

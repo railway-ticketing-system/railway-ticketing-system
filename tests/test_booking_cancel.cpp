@@ -250,3 +250,65 @@ TEST(BookingRestoreApi, InventoryFailureRollsBackCancellationAndRefund) {
     TrainService trains(s.db());
     EXPECT_EQ(trains.availability(trainId, dateAfter(3))[0].availableSeats, 8);
 }
+
+TEST(BookingCancelSecurityApi, AnotherUserCannotPreviewOrCancelEvenWithSpoofedOwner) {
+    TestServer s;
+    auto trainId = addBookingTrain(s);
+    auto owner = test::registerAndLogin(s, "owner@example.com");
+    auto attacker = test::registerAndLogin(s, "attacker@example.com");
+    auto booking = createBooking(s, owner, trainId, 3);
+    auto path = "/api/bookings/" + std::to_string(booking["id"].get<long long>());
+    auto quote = s.client().Get(path + "/cancellation", test::bearer(attacker));
+    ASSERT_TRUE(quote);
+    EXPECT_EQ(quote->status, 404);
+    auto cancel = s.client().Post(path + "/cancel", test::bearer(attacker),
+                                  R"({"userId":1,"refundAmount":500})", "application/json");
+    ASSERT_TRUE(cancel);
+    EXPECT_EQ(cancel->status, 404);
+    auto put = s.client().Put(path + "/cancel", test::bearer(attacker), "", "application/json");
+    ASSERT_TRUE(put);
+    EXPECT_EQ(put->status, 404);
+    auto rows = s.db().query("SELECT status, refund_amount, cancelled_at FROM bookings");
+    EXPECT_EQ(rows[0][0], "CONFIRMED");
+    EXPECT_EQ(rows[0][1], "0");
+    EXPECT_EQ(rows[0][2], "");
+    TrainService trains(s.db());
+    EXPECT_EQ(trains.availability(trainId, dateAfter(3))[0].availableSeats, 8);
+    auto allowed = s.client().Put(path + "/cancel", test::bearer(owner), "", "application/json");
+    ASSERT_TRUE(allowed);
+    EXPECT_EQ(allowed->status, 200);
+    EXPECT_EQ(json::parse(allowed->body)["booking"]["refundAmount"], 450);
+}
+
+TEST(BookingCancelSecurityApi, QuoteAndCancellationRejectMissingInvalidAndRevokedSessions) {
+    TestServer s;
+    auto trainId = addBookingTrain(s);
+    auto token = test::registerAndLogin(s);
+    auto booking = createBooking(s, token, trainId, 3);
+    auto path = "/api/bookings/" + std::to_string(booking["id"].get<long long>());
+    auto missing = s.client().Get(path + "/cancellation");
+    ASSERT_TRUE(missing);
+    EXPECT_EQ(missing->status, 401);
+    auto invalid = cancelBooking(s, "invalid", booking["id"]);
+    ASSERT_TRUE(invalid);
+    EXPECT_EQ(invalid->status, 401);
+    auto logout = s.client().Post("/api/auth/logout", test::bearer(token), "", "application/json");
+    ASSERT_TRUE(logout);
+    auto revoked = cancelBooking(s, token, booking["id"]);
+    ASSERT_TRUE(revoked);
+    EXPECT_EQ(revoked->status, 401);
+    EXPECT_EQ(s.db().query("SELECT status FROM bookings")[0][0], "CONFIRMED");
+}
+
+TEST(BookingCancelSecurityApi, ServiceEnforcesOwnerInsideCancellationTransaction) {
+    TestServer s;
+    auto trainId = addBookingTrain(s);
+    auto token = test::registerAndLogin(s);
+    auto booking = createBooking(s, token, trainId, 3);
+    TrainService trains(s.db());
+    BookingService bookings(s.db(), trains);
+    auto result = bookings.cancel(booking["id"], 9999);
+    EXPECT_FALSE(result.ok);
+    EXPECT_EQ(result.conflict, "not_found");
+    EXPECT_EQ(s.db().query("SELECT status FROM bookings")[0][0], "CONFIRMED");
+}

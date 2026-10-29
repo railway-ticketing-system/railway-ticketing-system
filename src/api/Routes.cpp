@@ -307,11 +307,11 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
         sendJson(res, 200, {{"booking", bookingJson(*booking)}});
     });
 
-    server.Get(R"(/api/bookings/([0-9]+)/cancellation)", [auth, bookings](const httplib::Request& req, httplib::Response& res) {
+    server.Get(R"(/api/bookings/([0-9]{1,18})/cancellation)", [auth, bookings](const httplib::Request& req, httplib::Response& res) {
         auto user = requireUser(*auth, req, res);
         if (!user) return;
         auto booking = bookings->findById(std::stoll(req.matches[1].str()));
-        if (!booking) {
+        if (!booking || booking->userId != user->id) {
             sendError(res, 404, "Booking not found.");
             return;
         }
@@ -322,10 +322,10 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
     });
 
     // RTRS-25 / RTS-F-013
-    server.Post(R"(/api/bookings/([0-9]+)/cancel)", [auth, bookings](const httplib::Request& req, httplib::Response& res) {
+    auto cancelBooking = [auth, bookings](const httplib::Request& req, httplib::Response& res) {
         auto user = requireUser(*auth, req, res);
         if (!user) return;
-        auto result = bookings->cancel(std::stoll(req.matches[1].str()));
+        auto result = bookings->cancel(std::stoll(req.matches[1].str()), user->id);
         if (!result.ok) {
             if (result.conflict == "not_found") {
                 sendError(res, 404, "Booking not found.");
@@ -335,7 +335,9 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
             return;
         }
         sendJson(res, 200, {{"booking", bookingJson(result.booking)}});
-    });
+    };
+    server.Post(R"(/api/bookings/([0-9]{1,18})/cancel)", cancelBooking);
+    server.Put(R"(/api/bookings/([0-9]{1,18})/cancel)", cancelBooking);
 
     // RTRS-9 / RTS-F-001
     server.Post("/api/auth/register", [users](const httplib::Request& req, httplib::Response& res) {
