@@ -187,3 +187,66 @@ TEST(BookingRefundApi, IneligibleQuoteHasReasonAndNoRefund) {
     EXPECT_EQ(quote["refundAmount"], 0);
     EXPECT_FALSE(quote["reason"].get<std::string>().empty());
 }
+
+TEST(BookingRestoreApi, CancellationRestoresOnlyItsOwnSeatsExactlyOnce) {
+    TestServer s;
+    auto trainId = addBookingTrain(s);
+    auto token = test::registerAndLogin(s);
+    auto first = createBooking(s, token, trainId, 3);
+    auto second = createBooking(s, token, trainId, 3);
+    test::reserveSeats(s.db(), trainId, dateAfter(4), "SL", 3);
+    TrainService trains(s.db());
+    EXPECT_EQ(trains.availability(trainId, dateAfter(3))[0].availableSeats, 6);
+    auto cancelled = cancelBooking(s, token, first["id"]);
+    ASSERT_TRUE(cancelled);
+    ASSERT_EQ(cancelled->status, 200);
+    EXPECT_EQ(trains.availability(trainId, dateAfter(3))[0].availableSeats, 8);
+    EXPECT_EQ(trains.availability(trainId, dateAfter(4))[0].availableSeats, 7);
+    auto repeated = cancelBooking(s, token, first["id"]);
+    ASSERT_TRUE(repeated);
+    EXPECT_EQ(repeated->status, 409);
+    EXPECT_EQ(trains.availability(trainId, dateAfter(3))[0].availableSeats, 8);
+    auto reservations = s.db().query("SELECT booking_id, seats FROM seat_reservations WHERE booking_id IS NOT NULL");
+    ASSERT_EQ(reservations.size(), 1u);
+    EXPECT_EQ(reservations[0][0], std::to_string(second["id"].get<long long>()));
+    EXPECT_EQ(reservations[0][1], "2");
+}
+
+TEST(BookingRestoreApi, RebookingReusesFreedSeatsWithoutDuplicatingActiveSeats) {
+    TestServer s;
+    auto trainId = addBookingTrain(s);
+    auto token = test::registerAndLogin(s);
+    auto first = createBooking(s, token, trainId, 3);
+    auto second = createBooking(s, token, trainId, 3);
+    auto cancelled = cancelBooking(s, token, first["id"]);
+    ASSERT_TRUE(cancelled);
+    ASSERT_EQ(cancelled->status, 200);
+    auto replacement = createBooking(s, token, trainId, 3);
+    ASSERT_FALSE(replacement.empty());
+    EXPECT_EQ(replacement["passengers"][0]["seatNumber"], "SL-1");
+    EXPECT_EQ(replacement["passengers"][1]["seatNumber"], "SL-2");
+    EXPECT_EQ(second["passengers"][0]["seatNumber"], "SL-3");
+    auto counts = s.db().query(
+        "SELECT COUNT(*), COUNT(DISTINCT p.seat_number) FROM passengers p"
+        " JOIN bookings b ON b.id = p.booking_id WHERE b.status = 'CONFIRMED'");
+    EXPECT_EQ(counts[0][0], "4");
+    EXPECT_EQ(counts[0][1], "4");
+}
+
+TEST(BookingRestoreApi, InventoryFailureRollsBackCancellationAndRefund) {
+    TestServer s;
+    auto trainId = addBookingTrain(s);
+    auto token = test::registerAndLogin(s);
+    auto booking = createBooking(s, token, trainId, 3);
+    s.db().execute("CREATE TRIGGER reject_release BEFORE DELETE ON seat_reservations"
+                   " BEGIN SELECT RAISE(ABORT, 'inventory unavailable'); END");
+    auto res = cancelBooking(s, token, booking["id"]);
+    ASSERT_TRUE(res);
+    EXPECT_EQ(res->status, 500);
+    auto rows = s.db().query("SELECT status, refund_amount, cancelled_at FROM bookings");
+    EXPECT_EQ(rows[0][0], "CONFIRMED");
+    EXPECT_EQ(rows[0][1], "0");
+    EXPECT_EQ(rows[0][2], "");
+    TrainService trains(s.db());
+    EXPECT_EQ(trains.availability(trainId, dateAfter(3))[0].availableSeats, 8);
+}

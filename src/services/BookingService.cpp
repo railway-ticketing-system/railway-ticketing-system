@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <ctime>
 #include <random>
+#include <set>
 
 namespace rtrs {
 
@@ -169,9 +170,26 @@ ConfirmResult BookingService::confirm(const BookingInput& input) {
                  draft.classCode, std::to_string(draft.farePerPassenger), std::to_string(count)});
             bookingId = db_.lastInsertId();
 
+            std::set<std::string> occupied;
+            for (const auto& row : db_.query(
+                     "SELECT p.seat_number FROM passengers p JOIN bookings b ON b.id = p.booking_id"
+                     " WHERE b.train_id = ? AND b.travel_date = ? AND b.class_code = ? AND b.status = 'CONFIRMED'",
+                     {std::to_string(input.trainId), draft.travelDate, draft.classCode}))
+                occupied.insert(row[0]);
+            auto legacy = db_.query(
+                "SELECT COALESCE(SUM(seats), 0) FROM seat_reservations"
+                " WHERE train_id = ? AND travel_date = ? AND class_code = ? AND booking_id IS NULL",
+                {std::to_string(input.trainId), draft.travelDate, draft.classCode});
+            for (int seat = 1; seat <= std::stoi(legacy[0][0]); ++seat)
+                occupied.insert(draft.classCode + "-" + std::to_string(seat));
+
+            int nextSeat = 1;
             for (int i = 0; i < count; ++i) {
                 const auto& passenger = input.passengers[i];
-                std::string seat = draft.classCode + "-" + std::to_string(bookedSeats + i + 1);
+                while (nextSeat <= totalSeats && occupied.count(draft.classCode + "-" + std::to_string(nextSeat)))
+                    ++nextSeat;
+                if (nextSeat > totalSeats) throw SoldOut{};
+                std::string seat = draft.classCode + "-" + std::to_string(nextSeat++);
                 db_.execute(
                     "INSERT INTO passengers (booking_id, name, age, gender, seat_number)"
                     " VALUES (?, ?, ?, ?, ?)",
@@ -259,6 +277,7 @@ CancelResult BookingService::cancel(long long id) {
                 "UPDATE bookings SET status = 'CANCELLED',"
                 " cancelled_at = strftime('%Y-%m-%dT%H:%M:%SZ','now'), refund_amount = ? WHERE id = ?",
                 {std::to_string(quote.refundAmount), std::to_string(id)});
+            db_.execute("DELETE FROM seat_reservations WHERE booking_id = ?", {std::to_string(id)});
         });
     } catch (const BookingNotFound&) {
         result.conflict = "not_found";
