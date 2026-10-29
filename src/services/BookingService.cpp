@@ -2,13 +2,29 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cstdio>
+#include <ctime>
 #include <random>
+#include <set>
 
 namespace rtrs {
 
 namespace {
 
 std::string trimValue(const std::string& value) { return trim(value); }
+
+long long epochAt(const std::string& date, const std::string& time) {
+    int year = 0, month = 0, day = 0, hour = 0, minute = 0;
+    if (std::sscanf(date.c_str(), "%d-%d-%d", &year, &month, &day) != 3) return -1;
+    if (!time.empty() && std::sscanf(time.c_str(), "%d:%d", &hour, &minute) != 2) return -1;
+    std::tm tm{};
+    tm.tm_year = year - 1900;
+    tm.tm_mon = month - 1;
+    tm.tm_mday = day;
+    tm.tm_hour = hour;
+    tm.tm_min = minute;
+    return static_cast<long long>(timegm(&tm));
+}
 
 FieldErrors validatePassengers(const std::vector<PassengerInput>& passengers) {
     FieldErrors errors;
@@ -35,6 +51,10 @@ FieldErrors validatePassengers(const std::vector<PassengerInput>& passengers) {
 
 struct SoldOut {};
 struct PnrUnavailable {};
+struct BookingNotFound {};
+struct NotCancellable {
+    std::string reason;
+};
 
 std::string randomPnr() {
     static thread_local std::mt19937_64 rng(std::random_device{}());
@@ -150,9 +170,26 @@ ConfirmResult BookingService::confirm(const BookingInput& input) {
                  draft.classCode, std::to_string(draft.farePerPassenger), std::to_string(count)});
             bookingId = db_.lastInsertId();
 
+            std::set<std::string> occupied;
+            for (const auto& row : db_.query(
+                     "SELECT p.seat_number FROM passengers p JOIN bookings b ON b.id = p.booking_id"
+                     " WHERE b.train_id = ? AND b.travel_date = ? AND b.class_code = ? AND b.status = 'CONFIRMED'",
+                     {std::to_string(input.trainId), draft.travelDate, draft.classCode}))
+                occupied.insert(row[0]);
+            auto legacy = db_.query(
+                "SELECT COALESCE(SUM(seats), 0) FROM seat_reservations"
+                " WHERE train_id = ? AND travel_date = ? AND class_code = ? AND booking_id IS NULL",
+                {std::to_string(input.trainId), draft.travelDate, draft.classCode});
+            for (int seat = 1; seat <= std::stoi(legacy[0][0]); ++seat)
+                occupied.insert(draft.classCode + "-" + std::to_string(seat));
+
+            int nextSeat = 1;
             for (int i = 0; i < count; ++i) {
                 const auto& passenger = input.passengers[i];
-                std::string seat = draft.classCode + "-" + std::to_string(bookedSeats + i + 1);
+                while (nextSeat <= totalSeats && occupied.count(draft.classCode + "-" + std::to_string(nextSeat)))
+                    ++nextSeat;
+                if (nextSeat > totalSeats) throw SoldOut{};
+                std::string seat = draft.classCode + "-" + std::to_string(nextSeat++);
                 db_.execute(
                     "INSERT INTO passengers (booking_id, name, age, gender, seat_number)"
                     " VALUES (?, ?, ?, ?, ?)",
@@ -186,6 +223,82 @@ ConfirmResult BookingService::confirm(const BookingInput& input) {
     return result;
 }
 
+std::optional<Booking> BookingService::findById(long long id) { return loadBooking(id); }
+
+bool BookingService::cancellable(const Booking& booking, std::string& reason) const {
+    if (booking.status != "CONFIRMED") {
+        reason = "This booking is already cancelled.";
+        return false;
+    }
+    auto rows = db_.query(
+        "SELECT COALESCE(departure_time, ''), day_offset FROM train_stops"
+        " WHERE train_id = ? ORDER BY seq LIMIT 1",
+        {std::to_string(booking.trainId)});
+    if (rows.empty() || rows[0][0].empty()) {
+        reason = "Cancellation is not available for this train.";
+        return false;
+    }
+    long long departure = epochAt(booking.travelDate, rows[0][0]);
+    if (departure < 0) {
+        reason = "Cancellation is not available for this booking.";
+        return false;
+    }
+    departure += std::stoll(rows[0][1]) * 86400LL;
+    long long now = static_cast<long long>(std::time(nullptr));
+    if (departure - now < static_cast<long long>(policy_.cutoffHours) * 3600) {
+        reason = "Cancellation closes " + std::to_string(policy_.cutoffHours) + " hours before departure.";
+        return false;
+    }
+    return true;
+}
+
+CancellationQuote BookingService::cancellationQuote(const Booking& booking) const {
+    CancellationQuote quote;
+    quote.cutoffHours = policy_.cutoffHours;
+    quote.refundPercent = policy_.refundPercent;
+    quote.eligible = cancellable(booking, quote.reason);
+    if (quote.eligible)
+        quote.refundAmount = static_cast<int>(static_cast<long long>(booking.totalFare) * policy_.refundPercent / 100);
+    return quote;
+}
+
+CancelResult BookingService::cancel(long long id, long long userId) {
+    CancelResult result;
+    try {
+        db_.transaction([&] {
+            auto rows = db_.query("SELECT status FROM bookings WHERE id = ? AND user_id = ?",
+                                  {std::to_string(id), std::to_string(userId)});
+            if (rows.empty()) throw BookingNotFound{};
+            if (rows[0][0] != "CONFIRMED") throw NotCancellable{"This booking is already cancelled."};
+            auto booking = loadBooking(id);
+            if (!booking) throw BookingNotFound{};
+            auto quote = cancellationQuote(*booking);
+            if (!quote.eligible) throw NotCancellable{quote.reason};
+            db_.execute(
+                "UPDATE bookings SET status = 'CANCELLED',"
+                " cancelled_at = strftime('%Y-%m-%dT%H:%M:%SZ','now'), refund_amount = ? WHERE id = ?",
+                {std::to_string(quote.refundAmount), std::to_string(id)});
+            db_.execute("DELETE FROM seat_reservations WHERE booking_id = ?", {std::to_string(id)});
+        });
+    } catch (const BookingNotFound&) {
+        result.conflict = "not_found";
+        return result;
+    } catch (const NotCancellable& e) {
+        result.conflict = "not_cancellable";
+        result.errors["booking"] = e.reason;
+        return result;
+    }
+
+    auto booking = loadBooking(id);
+    if (!booking) {
+        result.errors["booking"] = "Booking could not be loaded.";
+        return result;
+    }
+    result.booking = *booking;
+    result.ok = true;
+    return result;
+}
+
 std::optional<Booking> BookingService::findByPnr(const std::string& pnr) {
     auto rows = db_.query("SELECT id FROM bookings WHERE pnr = ?", {pnr});
     if (rows.empty()) return std::nullopt;
@@ -206,7 +319,7 @@ std::vector<Booking> BookingService::listForUser(long long userId) {
 std::optional<Booking> BookingService::loadBooking(long long id) {
     auto rows = db_.query(
         "SELECT b.id, b.pnr, b.user_id, b.train_id, b.travel_date, b.class_code, b.fare,"
-        " b.passenger_count, b.status, b.created_at, t.number, t.name, c.class_name"
+        " b.passenger_count, b.status, b.created_at, b.cancelled_at, t.number, t.name, c.class_name, b.refund_amount"
         " FROM bookings b"
         " JOIN trains t ON t.id = b.train_id"
         " JOIN train_classes c ON c.train_id = b.train_id AND c.class_code = b.class_code"
@@ -225,9 +338,11 @@ std::optional<Booking> BookingService::loadBooking(long long id) {
     booking.passengerCount = std::stoi(rows[0][7]);
     booking.status = rows[0][8];
     booking.createdAt = rows[0][9];
-    booking.trainNumber = rows[0][10];
-    booking.trainName = rows[0][11];
-    booking.className = rows[0][12];
+    booking.cancelledAt = rows[0][10];
+    booking.trainNumber = rows[0][11];
+    booking.trainName = rows[0][12];
+    booking.className = rows[0][13];
+    booking.refundAmount = std::stoi(rows[0][14]);
     booking.totalFare = booking.farePerPassenger * booking.passengerCount;
 
     auto passengers = db_.query(

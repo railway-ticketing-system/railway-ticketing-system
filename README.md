@@ -23,6 +23,12 @@ ctest --test-dir build --output-on-failure
 ```
 Environment variables: `RTRS_PORT` (default 8080), `RTRS_DB` (default `rtrs.db`), `RTRS_WEB_DIR` (default `web`).
 
+### Cancellation and refund policy
+- `RTRS_CANCEL_CUTOFF_HOURS` defaults to **24**: confirmed tickets can be cancelled until 24 hours before the train's first scheduled departure (including its day offset). Schedule dates/times are interpreted as UTC.
+- `RTRS_REFUND_PERCENT` defaults to **90**: the refund is this percentage of the stored total booking fare, rounded down to whole rupees. These configurable defaults are project policy, pending the team's final policy decision.
+- The ticket screen shows eligibility and the refund before cancellation is confirmed. Cancellation records the timestamp and refund amount; this is a recorded refund, with no payment-provider transfer.
+- `GET /api/bookings/{id}/cancellation` previews eligibility and refund; `PUT /api/bookings/{id}/cancel` (also supported as `POST`) confirms cancellation and returns the updated ticket. Both actions require the booking owner's active session. Unknown bookings and other passengers' bookings return the same 404 response.
+
 Docker: `docker build -t rtrs . && docker run -p 8080:8080 rtrs`
 
 ## Workflow

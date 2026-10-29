@@ -41,6 +41,8 @@ struct Passenger {
 struct Booking {
     long long id = 0, userId = 0, trainId = 0;
     std::string pnr, status, trainNumber, trainName, travelDate, classCode, className, createdAt;
+    std::string cancelledAt;
+    int refundAmount = 0;
     int farePerPassenger = 0, totalFare = 0, passengerCount = 0;
     std::vector<Passenger> passengers;
 };
@@ -52,20 +54,46 @@ struct ConfirmResult {
     Booking booking;
 };
 
+struct CancellationPolicy {
+    int cutoffHours = 24;
+    int refundPercent = 90;
+};
+
+struct CancelResult {
+    bool ok = false;
+    FieldErrors errors;
+    std::string conflict;
+    Booking booking;
+};
+
+struct CancellationQuote {
+    bool eligible = false;
+    int refundAmount = 0, refundPercent = 0, cutoffHours = 0;
+    std::string reason;
+};
+
 class BookingService {
 public:
-    BookingService(Database& db, TrainService& trains) : db_(db), trains_(trains) {}
+    BookingService(Database& db, TrainService& trains, CancellationPolicy policy = {})
+        : db_(db), trains_(trains), policy_(policy) {}
 
     PreviewResult preview(const BookingInput& input);
     ConfirmResult confirm(const BookingInput& input);
     std::optional<Booking> findByPnr(const std::string& pnr);
+    std::optional<Booking> findById(long long id);
     std::vector<Booking> listForUser(long long userId);
+    CancelResult cancel(long long id, long long userId);
+    CancellationQuote cancellationQuote(const Booking& booking) const;
+
+    const CancellationPolicy& policy() const { return policy_; }
 
 private:
     std::optional<Booking> loadBooking(long long id);
+    bool cancellable(const Booking& booking, std::string& reason) const;
 
     Database& db_;
     TrainService& trains_;
+    CancellationPolicy policy_;
 };
 
 }  // namespace rtrs

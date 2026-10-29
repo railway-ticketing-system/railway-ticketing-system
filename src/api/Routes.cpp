@@ -141,18 +141,21 @@ json bookingJson(const Booking& b) {
             {"passengerCount", b.passengerCount},
             {"totalFare", b.totalFare},
             {"createdAt", b.createdAt},
+            {"cancelledAt", b.cancelledAt},
+            {"refundAmount", b.refundAmount},
             {"passengers", passengers}};
 }
 
 }  // namespace
 
-void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations) {
+void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
+                    CancellationPolicy policy) {
     initSchema(db);
     seedDemoData(db);
     auto users = std::make_shared<UserService>(db, PasswordHasher(pbkdf2Iterations));
     auto auth = std::make_shared<AuthService>(db, *users, PasswordHasher(pbkdf2Iterations));
     auto trains = std::make_shared<TrainService>(db);
-    auto bookings = std::make_shared<BookingService>(db, *trains);
+    auto bookings = std::make_shared<BookingService>(db, *trains, policy);
 
     server.set_payload_max_length(64 * 1024);
     // RTS-NF-003: never leak internals in error responses.
@@ -303,6 +306,38 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations)
         }
         sendJson(res, 200, {{"booking", bookingJson(*booking)}});
     });
+
+    server.Get(R"(/api/bookings/([0-9]{1,18})/cancellation)", [auth, bookings](const httplib::Request& req, httplib::Response& res) {
+        auto user = requireUser(*auth, req, res);
+        if (!user) return;
+        auto booking = bookings->findById(std::stoll(req.matches[1].str()));
+        if (!booking || booking->userId != user->id) {
+            sendError(res, 404, "Booking not found.");
+            return;
+        }
+        auto quote = bookings->cancellationQuote(*booking);
+        sendJson(res, 200, {{"cancellation", {{"eligible", quote.eligible},
+                   {"refundAmount", quote.refundAmount}, {"refundPercent", quote.refundPercent},
+                   {"cutoffHours", quote.cutoffHours}, {"reason", quote.reason}}}});
+    });
+
+    // RTRS-25 / RTS-F-013
+    auto cancelBooking = [auth, bookings](const httplib::Request& req, httplib::Response& res) {
+        auto user = requireUser(*auth, req, res);
+        if (!user) return;
+        auto result = bookings->cancel(std::stoll(req.matches[1].str()), user->id);
+        if (!result.ok) {
+            if (result.conflict == "not_found") {
+                sendError(res, 404, "Booking not found.");
+            } else {
+                sendError(res, 409, result.errors["booking"], result.errors);
+            }
+            return;
+        }
+        sendJson(res, 200, {{"booking", bookingJson(result.booking)}});
+    };
+    server.Post(R"(/api/bookings/([0-9]{1,18})/cancel)", cancelBooking);
+    server.Put(R"(/api/bookings/([0-9]{1,18})/cancel)", cancelBooking);
 
     // RTRS-9 / RTS-F-001
     server.Post("/api/auth/register", [users](const httplib::Request& req, httplib::Response& res) {

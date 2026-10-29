@@ -537,19 +537,62 @@ function renderTicket(box, booking) {
     <div class="ticket">
       <div class="ticket-head">
         <strong>PNR ${escapeHtml(booking.pnr)}</strong>
-        <span class="badge">${escapeHtml(booking.status)}</span>
+        <span class="badge ${booking.status === 'CANCELLED' ? 'cancelled' : ''}">${escapeHtml(booking.status)}</span>
       </div>
       <dl>
         <div><dt>Train</dt><dd>${escapeHtml(booking.trainNumber)} - ${escapeHtml(booking.trainName)}</dd></div>
         <div><dt>Travel date</dt><dd>${escapeHtml(booking.date)}</dd></div>
         <div><dt>Class</dt><dd>${escapeHtml(booking.className)} (${escapeHtml(booking.class)})</dd></div>
         <div><dt>Fare</dt><dd>Rs ${booking.farePerPassenger} x ${booking.passengerCount} = Rs ${booking.totalFare}</dd></div>
+        ${booking.cancelledAt ? `<div><dt>Cancelled at</dt><dd>${escapeHtml(booking.cancelledAt)}</dd></div>` : ''}
+        ${booking.status === 'CANCELLED' ? `<div><dt>Recorded refund</dt><dd>Rs ${booking.refundAmount}</dd></div>` : ''}
       </dl>
       <table>
         <thead><tr><th>#</th><th>Passenger</th><th>Age</th><th>Gender</th><th>Seat</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
+      <div id="ticket-actions"></div>
     </div>`;
+
+  const actions = box.querySelector('#ticket-actions');
+  if (!actions || booking.status !== 'CONFIRMED') return;
+  const cancel = el('<button type="button" class="secondary">Cancel ticket</button>');
+  cancel.addEventListener('click', async () => {
+    cancel.disabled = true;
+    const quoteResult = await api('GET', '/api/bookings/' + booking.id + '/cancellation');
+    if (!quoteResult.ok || !quoteResult.data.cancellation.eligible) {
+      cancel.disabled = false;
+      const message = el('<div class="msg bad"></div>');
+      message.textContent = quoteResult.data.error || quoteResult.data.cancellation.reason;
+      actions.replaceChildren(message, cancel);
+      return;
+    }
+    const quote = quoteResult.data.cancellation;
+    const message = el('<div class="msg ok"></div>');
+    message.textContent = 'Refund: Rs ' + quote.refundAmount + ' (' + quote.refundPercent +
+      '% of the booking fare). Cancellation closes ' + quote.cutoffHours + ' hours before departure.';
+    const confirm = el('<button type="button">Confirm cancellation</button>');
+    const keep = el('<button type="button" class="secondary">Keep ticket</button>');
+    keep.addEventListener('click', () => {
+      cancel.disabled = false;
+      actions.replaceChildren(cancel);
+    });
+    confirm.addEventListener('click', async () => {
+      confirm.disabled = true;
+      keep.disabled = true;
+      const r = await api('POST', '/api/bookings/' + booking.id + '/cancel');
+      if (!r.ok) {
+        const error = el('<div class="msg bad"></div>');
+        error.textContent = r.data.error || 'Could not cancel the ticket.';
+        cancel.disabled = false;
+        actions.replaceChildren(error, cancel);
+        return;
+      }
+      show('ticket', { booking: r.data.booking });
+    });
+    actions.replaceChildren(message, confirm, keep);
+  });
+  actions.appendChild(cancel);
 }
 
 function addPassengerRow(container) {
