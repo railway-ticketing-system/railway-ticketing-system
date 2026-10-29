@@ -13,7 +13,17 @@ int main() {
         rtrs::Database db(dbPath ? dbPath : "rtrs.db");
         httplib::Server server;
         server.set_mount_point("/", std::getenv("RTRS_WEB_DIR") ? std::getenv("RTRS_WEB_DIR") : "web");
-        rtrs::registerRoutes(server, db);
+
+        rtrs::CancellationPolicy policy;
+        if (const char* cutoff = std::getenv("RTRS_CANCEL_CUTOFF_HOURS")) {
+            int hours = std::atoi(cutoff);
+            if (hours >= 0) policy.cutoffHours = hours;
+        }
+        if (const char* refund = std::getenv("RTRS_REFUND_PERCENT")) {
+            int percent = std::atoi(refund);
+            if (percent >= 0 && percent <= 100) policy.refundPercent = percent;
+        }
+        rtrs::registerRoutes(server, db, rtrs::PasswordHasher::kDefaultIterations, policy);
         std::cout << "RTRS listening on http://0.0.0.0:" << port << std::endl;
         if (!server.listen("0.0.0.0", port)) {
             std::cerr << "failed to bind port " << port << std::endl;

@@ -9,8 +9,8 @@
 // Spins up the real app on an ephemeral port with an in-memory database.
 class TestServer {
 public:
-    TestServer() : db_(":memory:") {
-        rtrs::registerRoutes(server_, db_, /*pbkdf2Iterations=*/1000);
+    explicit TestServer(rtrs::CancellationPolicy policy = {}) : db_(":memory:") {
+        rtrs::registerRoutes(server_, db_, /*pbkdf2Iterations=*/1000, policy);
         port_ = server_.bind_to_any_port("127.0.0.1");
         thread_ = std::thread([this] { server_.listen_after_bind(); });
         server_.wait_until_ready();

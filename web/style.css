@@ -54,3 +54,5 @@ h3 { margin:20px 0 0; font-size:1rem; }
 .ticket th, .ticket td { text-align:left; padding:8px 6px; border-bottom:1px solid var(--border); }
 .ticket th { color:var(--muted); font-weight:600; font-size:.8rem; text-transform:uppercase; letter-spacing:.03em; }
 .ticket tr:last-child td { border-bottom:0; }
+.badge.cancelled { background:#fdecea; color:var(--error); }
+.ticket #ticket-actions { margin-top:16px; }

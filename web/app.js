@@ -537,19 +537,39 @@ function renderTicket(box, booking) {
     <div class="ticket">
       <div class="ticket-head">
         <strong>PNR ${escapeHtml(booking.pnr)}</strong>
-        <span class="badge">${escapeHtml(booking.status)}</span>
+        <span class="badge ${booking.status === 'CANCELLED' ? 'cancelled' : ''}">${escapeHtml(booking.status)}</span>
       </div>
       <dl>
         <div><dt>Train</dt><dd>${escapeHtml(booking.trainNumber)} - ${escapeHtml(booking.trainName)}</dd></div>
         <div><dt>Travel date</dt><dd>${escapeHtml(booking.date)}</dd></div>
         <div><dt>Class</dt><dd>${escapeHtml(booking.className)} (${escapeHtml(booking.class)})</dd></div>
         <div><dt>Fare</dt><dd>Rs ${booking.farePerPassenger} x ${booking.passengerCount} = Rs ${booking.totalFare}</dd></div>
+        ${booking.cancelledAt ? `<div><dt>Cancelled at</dt><dd>${escapeHtml(booking.cancelledAt)}</dd></div>` : ''}
       </dl>
       <table>
         <thead><tr><th>#</th><th>Passenger</th><th>Age</th><th>Gender</th><th>Seat</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
+      <div id="ticket-actions"></div>
     </div>`;
+
+  const actions = box.querySelector('#ticket-actions');
+  if (!actions || booking.status !== 'CONFIRMED') return;
+  const cancel = el('<button type="button" class="secondary">Cancel ticket</button>');
+  cancel.addEventListener('click', async () => {
+    if (!window.confirm('Cancel this ticket? This cannot be undone.')) return;
+    cancel.disabled = true;
+    const r = await api('POST', '/api/bookings/' + booking.id + '/cancel');
+    if (!r.ok) {
+      cancel.disabled = false;
+      const message = el('<div class="msg bad"></div>');
+      message.textContent = r.data.error || 'Could not cancel the ticket.';
+      actions.prepend(message);
+      return;
+    }
+    show('ticket', { booking: r.data.booking });
+  });
+  actions.appendChild(cancel);
 }
 
 function addPassengerRow(container) {
