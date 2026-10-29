@@ -130,3 +130,60 @@ TEST(BookingCancelApi, HonoursConfiguredCutoff) {
     EXPECT_NE(json::parse(res->body)["fields"]["booking"].get<std::string>().find("48 hours"),
               std::string::npos);
 }
+
+TEST(BookingRefundApi, QuotePreviewsRefundWithoutChangingBooking) {
+    TestServer s;
+    auto trainId = addBookingTrain(s);
+    auto token = test::registerAndLogin(s);
+    auto booking = createBooking(s, token, trainId, 3);
+    auto path = "/api/bookings/" + std::to_string(booking["id"].get<long long>());
+    auto res = s.client().Get(path + "/cancellation", test::bearer(token));
+    ASSERT_TRUE(res);
+    ASSERT_EQ(res->status, 200);
+    auto quote = json::parse(res->body)["cancellation"];
+    EXPECT_EQ(quote["eligible"], true);
+    EXPECT_EQ(quote["refundAmount"], 450);
+    EXPECT_EQ(quote["refundPercent"], 90);
+    EXPECT_EQ(quote["cutoffHours"], 24);
+    auto row = s.db().query("SELECT status, refund_amount FROM bookings WHERE id = ?",
+                            {std::to_string(booking["id"].get<long long>())});
+    EXPECT_EQ(row[0][0], "CONFIRMED");
+    EXPECT_EQ(row[0][1], "0");
+    auto cancelled = cancelBooking(s, token, booking["id"]);
+    ASSERT_TRUE(cancelled);
+    ASSERT_EQ(cancelled->status, 200);
+    EXPECT_EQ(json::parse(cancelled->body)["booking"]["refundAmount"], quote["refundAmount"]);
+    auto stored = s.db().query("SELECT refund_amount FROM bookings WHERE id = ?",
+                               {std::to_string(booking["id"].get<long long>())});
+    EXPECT_EQ(stored[0][0], "450");
+}
+
+TEST(BookingRefundApi, RefundUsesConfiguredPercentageAndRoundsDown) {
+    TestServer s(CancellationPolicy{24, 33});
+    auto trainId = addBookingTrain(s);
+    auto token = test::registerAndLogin(s);
+    auto res = s.client().Post("/api/bookings", test::bearer(token),
+        test::bookingBody(trainId, "SL", {"Asha Rao"}, dateAfter(3)).dump(), "application/json");
+    ASSERT_TRUE(res);
+    ASSERT_EQ(res->status, 201);
+    auto booking = json::parse(res->body)["booking"];
+    auto cancelled = cancelBooking(s, token, booking["id"]);
+    ASSERT_TRUE(cancelled);
+    ASSERT_EQ(cancelled->status, 200);
+    EXPECT_EQ(json::parse(cancelled->body)["booking"]["refundAmount"], 82);
+}
+
+TEST(BookingRefundApi, IneligibleQuoteHasReasonAndNoRefund) {
+    TestServer s;
+    auto trainId = addBookingTrain(s);
+    auto token = test::registerAndLogin(s);
+    auto booking = createBooking(s, token, trainId, 0);
+    auto res = s.client().Get("/api/bookings/" + std::to_string(booking["id"].get<long long>()) +
+                              "/cancellation", test::bearer(token));
+    ASSERT_TRUE(res);
+    ASSERT_EQ(res->status, 200);
+    auto quote = json::parse(res->body)["cancellation"];
+    EXPECT_EQ(quote["eligible"], false);
+    EXPECT_EQ(quote["refundAmount"], 0);
+    EXPECT_FALSE(quote["reason"].get<std::string>().empty());
+}

@@ -142,6 +142,7 @@ json bookingJson(const Booking& b) {
             {"totalFare", b.totalFare},
             {"createdAt", b.createdAt},
             {"cancelledAt", b.cancelledAt},
+            {"refundAmount", b.refundAmount},
             {"passengers", passengers}};
 }
 
@@ -304,6 +305,20 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
             return;
         }
         sendJson(res, 200, {{"booking", bookingJson(*booking)}});
+    });
+
+    server.Get(R"(/api/bookings/([0-9]+)/cancellation)", [auth, bookings](const httplib::Request& req, httplib::Response& res) {
+        auto user = requireUser(*auth, req, res);
+        if (!user) return;
+        auto booking = bookings->findById(std::stoll(req.matches[1].str()));
+        if (!booking) {
+            sendError(res, 404, "Booking not found.");
+            return;
+        }
+        auto quote = bookings->cancellationQuote(*booking);
+        sendJson(res, 200, {{"cancellation", {{"eligible", quote.eligible},
+                   {"refundAmount", quote.refundAmount}, {"refundPercent", quote.refundPercent},
+                   {"cutoffHours", quote.cutoffHours}, {"reason", quote.reason}}}});
     });
 
     // RTRS-25 / RTS-F-013

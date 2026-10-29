@@ -42,6 +42,7 @@ struct Booking {
     long long id = 0, userId = 0, trainId = 0;
     std::string pnr, status, trainNumber, trainName, travelDate, classCode, className, createdAt;
     std::string cancelledAt;
+    int refundAmount = 0;
     int farePerPassenger = 0, totalFare = 0, passengerCount = 0;
     std::vector<Passenger> passengers;
 };
@@ -65,6 +66,12 @@ struct CancelResult {
     Booking booking;
 };
 
+struct CancellationQuote {
+    bool eligible = false;
+    int refundAmount = 0, refundPercent = 0, cutoffHours = 0;
+    std::string reason;
+};
+
 class BookingService {
 public:
     BookingService(Database& db, TrainService& trains, CancellationPolicy policy = {})
@@ -76,6 +83,7 @@ public:
     std::optional<Booking> findById(long long id);
     std::vector<Booking> listForUser(long long userId);
     CancelResult cancel(long long id);
+    CancellationQuote cancellationQuote(const Booking& booking) const;
 
     const CancellationPolicy& policy() const { return policy_; }
 

@@ -234,20 +234,31 @@ bool BookingService::cancellable(const Booking& booking, std::string& reason) co
     return true;
 }
 
+CancellationQuote BookingService::cancellationQuote(const Booking& booking) const {
+    CancellationQuote quote;
+    quote.cutoffHours = policy_.cutoffHours;
+    quote.refundPercent = policy_.refundPercent;
+    quote.eligible = cancellable(booking, quote.reason);
+    if (quote.eligible)
+        quote.refundAmount = static_cast<int>(static_cast<long long>(booking.totalFare) * policy_.refundPercent / 100);
+    return quote;
+}
+
 CancelResult BookingService::cancel(long long id) {
     CancelResult result;
-    std::string reason;
     try {
         db_.transaction([&] {
             auto rows = db_.query("SELECT status FROM bookings WHERE id = ?", {std::to_string(id)});
             if (rows.empty()) throw BookingNotFound{};
             if (rows[0][0] != "CONFIRMED") throw NotCancellable{"This booking is already cancelled."};
             auto booking = loadBooking(id);
-            if (!booking || !cancellable(*booking, reason)) throw NotCancellable{reason};
+            if (!booking) throw BookingNotFound{};
+            auto quote = cancellationQuote(*booking);
+            if (!quote.eligible) throw NotCancellable{quote.reason};
             db_.execute(
                 "UPDATE bookings SET status = 'CANCELLED',"
-                " cancelled_at = strftime('%Y-%m-%dT%H:%M:%SZ','now') WHERE id = ?",
-                {std::to_string(id)});
+                " cancelled_at = strftime('%Y-%m-%dT%H:%M:%SZ','now'), refund_amount = ? WHERE id = ?",
+                {std::to_string(quote.refundAmount), std::to_string(id)});
         });
     } catch (const BookingNotFound&) {
         result.conflict = "not_found";
@@ -288,7 +299,7 @@ std::vector<Booking> BookingService::listForUser(long long userId) {
 std::optional<Booking> BookingService::loadBooking(long long id) {
     auto rows = db_.query(
         "SELECT b.id, b.pnr, b.user_id, b.train_id, b.travel_date, b.class_code, b.fare,"
-        " b.passenger_count, b.status, b.created_at, b.cancelled_at, t.number, t.name, c.class_name"
+        " b.passenger_count, b.status, b.created_at, b.cancelled_at, t.number, t.name, c.class_name, b.refund_amount"
         " FROM bookings b"
         " JOIN trains t ON t.id = b.train_id"
         " JOIN train_classes c ON c.train_id = b.train_id AND c.class_code = b.class_code"
@@ -311,6 +322,7 @@ std::optional<Booking> BookingService::loadBooking(long long id) {
     booking.trainNumber = rows[0][11];
     booking.trainName = rows[0][12];
     booking.className = rows[0][13];
+    booking.refundAmount = std::stoi(rows[0][14]);
     booking.totalFare = booking.farePerPassenger * booking.passengerCount;
 
     auto passengers = db_.query(

@@ -71,12 +71,15 @@ void initSchema(Database& db) {
         "                 CHECK (status IN ('CONFIRMED','CANCELLED')),"
         " created_at      TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now')),"
         " cancelled_at    TEXT,"
+        " refund_amount   INTEGER NOT NULL DEFAULT 0 CHECK (refund_amount >= 0),"
         " FOREIGN KEY (train_id, class_code)"
         "   REFERENCES train_classes(train_id, class_code)"
         ")");
     db.execute("CREATE INDEX IF NOT EXISTS idx_bookings_user ON bookings (user_id)");
     if (!hasColumn(db, "bookings", "cancelled_at"))
         db.execute("ALTER TABLE bookings ADD COLUMN cancelled_at TEXT");
+    if (!hasColumn(db, "bookings", "refund_amount"))
+        db.execute("ALTER TABLE bookings ADD COLUMN refund_amount INTEGER NOT NULL DEFAULT 0 CHECK (refund_amount >= 0)");
     db.execute(
         "CREATE TABLE IF NOT EXISTS passengers ("
         " id          INTEGER PRIMARY KEY AUTOINCREMENT,"
