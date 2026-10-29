@@ -15,6 +15,10 @@ select.invalid { border-color:var(--error); }
 .err { color:var(--error); font-size:.82rem; min-height:1em; }
 button { margin-top:16px; width:100%; padding:10px; border:0; border-radius:6px; background:var(--accent); color:#fff; font-size:1rem; cursor:pointer; }
 button:disabled { opacity:.6; cursor:default; }
+button.secondary { background:#e8eef4; color:var(--text); border:1px solid var(--border); }
+button.remove { width:auto; padding:6px 10px; margin-top:10px; font-size:.85rem; }
+fieldset.passenger { border:1px solid var(--border); border-radius:8px; padding:12px; margin:14px 0 0; }
+fieldset.passenger legend { font-size:.85rem; color:var(--muted); padding:0 4px; }
 .msg { margin-top:12px; padding:10px; border-radius:6px; font-size:.9rem; }
 .msg.ok { background:#e3f4e7; color:#1b5e20; }
 .msg.bad { background:#fdecea; color:var(--error); }
@@ -39,3 +43,14 @@ h3 { margin:20px 0 0; font-size:1rem; }
 .times { margin-top:6px; display:flex; gap:8px; font-size:.95rem; }
 .times .arrow { color:var(--muted); }
 .meta { margin-top:8px; display:flex; justify-content:space-between; color:var(--muted); font-size:.88rem; }
+.ticket { margin-top:16px; border:1px solid var(--border); border-radius:8px; padding:16px; background:#fbfcfd; }
+.ticket-head { display:flex; justify-content:space-between; align-items:center; gap:12px; font-size:1.05rem; }
+.badge { padding:3px 10px; border-radius:999px; background:#e3f4e7; color:#1b5e20; font-size:.75rem; font-weight:600; }
+.ticket dl { margin:16px 0; display:grid; gap:8px; }
+.ticket dl div { display:flex; justify-content:space-between; gap:16px; font-size:.92rem; }
+.ticket dt { color:var(--muted); }
+.ticket dd { margin:0; text-align:right; }
+.ticket table { width:100%; border-collapse:collapse; font-size:.9rem; }
+.ticket th, .ticket td { text-align:left; padding:8px 6px; border-bottom:1px solid var(--border); }
+.ticket th { color:var(--muted); font-weight:600; font-size:.8rem; text-transform:uppercase; letter-spacing:.03em; }
+.ticket tr:last-child td { border-bottom:0; }
