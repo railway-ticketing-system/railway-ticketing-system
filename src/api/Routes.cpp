@@ -181,7 +181,7 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
     // RTRS-14 / RTS-F-004
     server.Get(R"(/api/trains/(\d+)/schedule)", [trains](const httplib::Request& req, httplib::Response& res) {
         auto schedule = trains->findById(std::stoll(req.matches[1].str()));
-        if (!schedule) {
+        if (!schedule || !schedule->active) {
             sendError(res, 404, "Train not found.");
             return;
         }
@@ -198,7 +198,8 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
     // RTRS-15 / RTS-F-005
     server.Get(R"(/api/trains/(\d+)/availability)", [trains](const httplib::Request& req, httplib::Response& res) {
         long long id = std::stoll(req.matches[1].str());
-        if (!trains->findById(id)) {
+        auto schedule = trains->findById(id);
+        if (!schedule || !schedule->active) {
             sendError(res, 404, "Train not found.");
             return;
         }
@@ -223,7 +224,8 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
     // RTRS-16 / RTS-F-006
     server.Get(R"(/api/trains/(\d+)/fares)", [trains](const httplib::Request& req, httplib::Response& res) {
         long long id = std::stoll(req.matches[1].str());
-        if (!trains->findById(id)) {
+        auto schedule = trains->findById(id);
+        if (!schedule || !schedule->active) {
             sendError(res, 404, "Train not found.");
             return;
         }
@@ -265,6 +267,8 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
         if (!result.ok) {
             if (result.conflict == "sold_out") {
                 sendError(res, 409, "Not enough seats are available.", result.errors);
+            } else if (result.conflict == "train_unavailable") {
+                sendError(res, 409, "This train is no longer available for booking.", result.errors);
             } else if (result.conflict == "pnr_unavailable") {
                 sendError(res, 409, "Could not generate a PNR. Please try again.", result.errors);
             } else {

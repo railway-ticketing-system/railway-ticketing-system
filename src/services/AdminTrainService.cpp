@@ -96,6 +96,7 @@ std::optional<ManagedTrain> AdminTrainService::findById(long long id) {
     if (!schedule) return std::nullopt;
     ManagedTrain train;
     train.id = id;
+    train.active = schedule->active;
     train.details.number = schedule->number;
     train.details.name = schedule->name;
     train.details.stops = schedule->stops;
@@ -204,6 +205,20 @@ TrainWriteResult AdminTrainService::update(long long id, TrainInput input) {
                         " VALUES (?, ?, ?, ?, ?) ON CONFLICT(train_id, class_code) DO UPDATE SET"
                         " class_name = excluded.class_name, fare = excluded.fare, total_seats = excluded.total_seats",
                         {std::to_string(id), cls.code, cls.name, std::to_string(cls.fare), std::to_string(cls.totalSeats)});
+        result.train = *findById(id);
+        result.status = 200;
+    });
+    return result;
+}
+
+TrainWriteResult AdminTrainService::deactivate(long long id) {
+    TrainWriteResult result;
+    db_.transaction([&] {
+        if (!findById(id)) {
+            result.status = 404;
+            return;
+        }
+        db_.execute("UPDATE trains SET active = 0 WHERE id = ?", {std::to_string(id)});
         result.train = *findById(id);
         result.status = 200;
     });

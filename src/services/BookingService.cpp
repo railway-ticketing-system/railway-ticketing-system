@@ -50,6 +50,7 @@ FieldErrors validatePassengers(const std::vector<PassengerInput>& passengers) {
 }
 
 struct SoldOut {};
+struct TrainUnavailable {};
 struct PnrUnavailable {};
 struct BookingNotFound {};
 struct NotCancellable {
@@ -89,12 +90,15 @@ PreviewResult BookingService::preview(const BookingInput& input) {
     auto rows = db_.query(
         "SELECT t.number, t.name, c.class_name, c.fare"
         " FROM trains t JOIN train_classes c ON c.train_id = t.id"
-        " WHERE t.id = ? AND c.class_code = ?",
+        " WHERE t.id = ? AND t.active = 1 AND c.class_code = ?",
         {std::to_string(input.trainId), trimValue(input.classCode)});
 
     if (rows.empty()) {
-        if (!trains_.findById(input.trainId)) {
+        auto schedule = trains_.findById(input.trainId);
+        if (!schedule) {
             result.errors["trainId"] = "Train not found.";
+        } else if (!schedule->active) {
+            result.errors["trainId"] = "This train is no longer available for booking.";
         } else {
             result.errors["class"] = "This class is not available on the selected train.";
         }
@@ -135,7 +139,7 @@ ConfirmResult BookingService::confirm(const BookingInput& input) {
     result.conflict = checked.conflict;
     if (!checked.ok) return result;
 
-    const auto& draft = checked.preview;
+    auto draft = checked.preview;
     long long bookingId = 0;
 
     try {
@@ -144,14 +148,16 @@ ConfirmResult BookingService::confirm(const BookingInput& input) {
                 "SELECT c.total_seats,"
                 " COALESCE((SELECT SUM(r.seats) FROM seat_reservations r"
                 "  WHERE r.train_id = c.train_id AND r.class_code = c.class_code"
-                "  AND r.travel_date = ?), 0)"
-                " FROM train_classes c WHERE c.train_id = ? AND c.class_code = ?",
+                "  AND r.travel_date = ?), 0), c.fare"
+                " FROM train_classes c JOIN trains t ON t.id = c.train_id"
+                " WHERE c.train_id = ? AND c.class_code = ? AND t.active = 1",
                 {draft.travelDate, std::to_string(input.trainId), draft.classCode});
-            if (rows.empty()) throw SoldOut{};
+            if (rows.empty()) throw TrainUnavailable{};
 
             int totalSeats = std::stoi(rows[0][0]);
             int bookedSeats = std::stoi(rows[0][1]);
             int count = draft.passengerCount;
+            draft.farePerPassenger = std::stoi(rows[0][2]);
             if (bookedSeats + count > totalSeats) throw SoldOut{};
 
             std::string pnr;
@@ -203,6 +209,10 @@ ConfirmResult BookingService::confirm(const BookingInput& input) {
                 {std::to_string(input.trainId), draft.travelDate, draft.classCode, std::to_string(count),
                  std::to_string(bookingId)});
         });
+    } catch (const TrainUnavailable&) {
+        result.conflict = "train_unavailable";
+        result.errors["trainId"] = "This train is no longer available for booking.";
+        return result;
     } catch (const SoldOut&) {
         result.conflict = "sold_out";
         result.errors["passengers"] = "Not enough seats are available.";

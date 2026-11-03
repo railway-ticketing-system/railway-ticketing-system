@@ -223,9 +223,29 @@ function adminView(user) {
       const item = el('<div class="result"><strong></strong><p class="muted"></p></div>');
       item.querySelector('strong').textContent = train.number + ' - ' + train.name;
       item.querySelector('p').textContent = train.stops.map((stop) => stop.station).join(' → ');
+      const state = el('<span class="badge"></span>');
+      state.textContent = train.active ? 'Active' : 'Inactive';
+      state.classList.toggle('cancelled', !train.active);
+      item.querySelector('strong').after(document.createTextNode(' '), state);
       const edit = el('<button type="button" class="secondary">Edit train and schedule</button>');
       edit.addEventListener('click', () => adminTrainEditor(content, train, saved, load));
       item.appendChild(edit);
+      if (train.active) {
+        const deactivate = el('<button type="button" class="secondary">Deactivate service</button>');
+        deactivate.addEventListener('click', async () => {
+          deactivate.disabled = true;
+          try {
+            const result = await api('PUT', '/api/admin/trains/' + train.id + '/deactivate');
+            if (result.ok) { saved(result.data.train); return; }
+            view.querySelector('#admin-status').textContent = result.data.error || 'Could not deactivate the train.';
+          } catch (_) {
+            view.querySelector('#admin-status').textContent = 'Network error. Please try again.';
+          } finally {
+            deactivate.disabled = false;
+          }
+        });
+        item.appendChild(deactivate);
+      }
       list.appendChild(item);
     });
     content.replaceChildren(add, list);

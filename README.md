@@ -44,6 +44,7 @@ The admin screen lists train records and provides a form for adding a train with
 - `GET /api/admin/trains` lists full records; `GET /api/admin/trains/{id}` reads one.
 - `POST /api/admin/trains` creates a train, stops, fares, and seat capacities in one transaction.
 - `PUT /api/admin/trains/{id}` replaces a train's details, ordered stops, and classes atomically. Existing booking fares and reservations are preserved. Referenced classes cannot be removed, and capacity cannot be reduced below reserved quantities or existing assigned seat numbers; these conflicts return 409.
+- `PUT /api/admin/trains/{id}/deactivate` deactivates the whole service and its schedule without deleting records. Inactive trains disappear from passenger search, schedule, fare, and availability endpoints and reject new bookings (including stale previews). Existing tickets, history, and eligible cancellations remain available. Repeating deactivation is safe; editing an inactive record does not reactivate it.
 
 Train payloads contain `number` (five-digit string), `name`, `stops`, and `classes`. Each stop has `station`, `arrival`, `departure` (HH:MM), and integer `dayOffset` (0-30). Leave the origin arrival and destination departure blank. Stops must be chronological; increase the day offset for overnight journeys. Each class has `code` (`SL`, `3A`, `2A`, `1A`, `CC`, `EC`), `name`, integer `fare` (1-1000000 rupees), and integer `totalSeats` (1-10000). Validation errors are indexed by row, such as `stops.1.arrival`; duplicate train numbers return 409.
 

@@ -34,8 +34,11 @@ void initSchema(Database& db) {
         "CREATE TABLE IF NOT EXISTS trains ("
         " id     INTEGER PRIMARY KEY AUTOINCREMENT,"
         " number TEXT NOT NULL UNIQUE,"
-        " name   TEXT NOT NULL"
+        " name   TEXT NOT NULL,"
+        " active INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0, 1))"
         ")");
+    if (!hasColumn(db, "trains", "active"))
+        db.execute("ALTER TABLE trains ADD COLUMN active INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0, 1))");
     db.execute(
         "CREATE TABLE IF NOT EXISTS train_stops ("
         " id             INTEGER PRIMARY KEY AUTOINCREMENT,"

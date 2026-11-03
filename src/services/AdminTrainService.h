@@ -11,6 +11,7 @@ struct TrainInput {
 
 struct ManagedTrain {
     long long id = 0;
+    bool active = true;
     TrainInput details;
 };
 
@@ -27,6 +28,7 @@ public:
     std::optional<ManagedTrain> findById(long long id);
     TrainWriteResult create(TrainInput input);
     TrainWriteResult update(long long id, TrainInput input);
+    TrainWriteResult deactivate(long long id);
 
 private:
     void insertStops(long long id, const TrainInput& input);

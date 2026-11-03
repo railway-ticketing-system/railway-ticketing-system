@@ -64,7 +64,7 @@ json trainJson(const ManagedTrain& train) {
                          {"departure", stop.departure}, {"dayOffset", stop.dayOffset}});
     for (const auto& cls : train.details.classes)
         classes.push_back({{"code", cls.code}, {"name", cls.name}, {"fare", cls.fare}, {"totalSeats", cls.totalSeats}});
-    return {{"id", train.id}, {"number", train.details.number}, {"name", train.details.name},
+    return {{"id", train.id}, {"active", train.active}, {"number", train.details.number}, {"name", train.details.name},
             {"stops", stops}, {"classes", classes}};
 }
 
@@ -114,6 +114,10 @@ void registerAdminRoutes(httplib::Server& server, Database& db, std::shared_ptr<
             return;
         }
         writeReply(res, adminTrains->update(std::stoll(req.matches[1].str()), parseTrain(body)));
+    });
+    server.Put(R"(/api/admin/trains/([0-9]{1,18})/deactivate)", [auth, trains, adminTrains](const httplib::Request& req, httplib::Response& res) {
+        if (!requireAdmin(*auth, req, res)) return;
+        writeReply(res, adminTrains->deactivate(std::stoll(req.matches[1].str())));
     });
 }
 

@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 #include "AdminHelpers.h"
+#include "db/Schema.h"
+#include "db/Seed.h"
 
 using namespace rtrs;
 using nlohmann::json;
@@ -254,4 +256,108 @@ TEST(AdminTrainUpdateApi, FailedClassUpdateRollsBackTrainAndStopChanges) {
     auto current = s.client().Get("/api/admin/trains/" + std::to_string(train["id"].get<long long>()), test::bearer(token));
     ASSERT_TRUE(current);
     EXPECT_EQ(json::parse(current->body)["train"], train);
+}
+
+TEST(AdminTrainDeactivateApi, HidesServiceAndRejectsBookingsFromStalePreviews) {
+    TestServer s;
+    auto token = test::adminLogin(s);
+    auto train = createTrain(s, token);
+    auto id = std::to_string(train["id"].get<long long>());
+    auto body = test::bookingBody(train["id"], "SL", {"Asha Rao"}, "2099-01-01");
+    auto preview = s.client().Post("/api/bookings/preview", test::bearer(token), body.dump(), "application/json");
+    ASSERT_TRUE(preview);
+    ASSERT_EQ(preview->status, 200);
+    auto res = s.client().Put("/api/admin/trains/" + id + "/deactivate", test::bearer(token), "", "application/json");
+    ASSERT_TRUE(res);
+    ASSERT_EQ(res->status, 200);
+    EXPECT_EQ(json::parse(res->body)["train"]["active"], false);
+    auto search = s.client().Get("/api/trains/search?source=Cedar%20Jn&destination=Maple%20Jn&date=2099-01-01");
+    ASSERT_TRUE(search);
+    EXPECT_TRUE(json::parse(search->body)["trains"].empty());
+    for (const auto& suffix : {"/schedule", "/fares", "/availability?date=2099-01-01"}) {
+        auto hidden = s.client().Get("/api/trains/" + id + suffix);
+        ASSERT_TRUE(hidden);
+        EXPECT_EQ(hidden->status, 404);
+    }
+    for (const auto& endpoint : {"/api/bookings/preview", "/api/bookings"}) {
+        auto denied = s.client().Post(endpoint, test::bearer(token), body.dump(), "application/json");
+        ASSERT_TRUE(denied);
+        EXPECT_EQ(denied->status, 400);
+        EXPECT_TRUE(json::parse(denied->body)["fields"].contains("trainId"));
+    }
+    EXPECT_EQ(s.db().query("SELECT COUNT(*) FROM bookings")[0][0], "0");
+    auto listing = s.client().Get("/api/admin/trains", test::bearer(token));
+    ASSERT_TRUE(listing);
+    bool found = false;
+    auto records = json::parse(listing->body)["trains"];
+    for (const auto& record : records) {
+        if (record["id"] == train["id"]) {
+            found = true;
+            EXPECT_EQ(record["active"], false);
+            EXPECT_EQ(record["stops"], train["stops"]);
+        }
+    }
+    EXPECT_TRUE(found);
+}
+
+TEST(AdminTrainDeactivateApi, ExistingTicketsHistoryAndCancellationStillWork) {
+    TestServer s;
+    auto token = test::adminLogin(s);
+    auto train = createTrain(s, token);
+    auto booking = bookTrain(s, token, train["id"]);
+    ASSERT_FALSE(booking.empty());
+    auto path = "/api/admin/trains/" + std::to_string(train["id"].get<long long>());
+    auto deactivate = s.client().Put(path + "/deactivate", test::bearer(token), "", "application/json");
+    ASSERT_TRUE(deactivate);
+    ASSERT_EQ(deactivate->status, 200);
+    auto ticket = s.client().Get("/api/bookings/" + booking["pnr"].get<std::string>(), test::bearer(token));
+    ASSERT_TRUE(ticket);
+    EXPECT_EQ(ticket->status, 200);
+    EXPECT_EQ(json::parse(ticket->body)["booking"]["status"], "CONFIRMED");
+    auto history = s.client().Get("/api/bookings", test::bearer(token));
+    ASSERT_TRUE(history);
+    EXPECT_EQ(json::parse(history->body)["bookings"].size(), 1u);
+    auto cancel = s.client().Put("/api/bookings/" + std::to_string(booking["id"].get<long long>()) + "/cancel",
+                                test::bearer(token), "", "application/json");
+    ASSERT_TRUE(cancel);
+    EXPECT_EQ(cancel->status, 200);
+    EXPECT_EQ(json::parse(cancel->body)["booking"]["refundAmount"], 450);
+    auto repeated = s.client().Put(path + "/deactivate", test::bearer(token), "", "application/json");
+    ASSERT_TRUE(repeated);
+    EXPECT_EQ(repeated->status, 200);
+    auto edit = updateTrain(s, token, train["id"], test::managedTrainBody());
+    ASSERT_TRUE(edit);
+    ASSERT_EQ(edit->status, 200);
+    EXPECT_EQ(json::parse(edit->body)["train"]["active"], false);
+}
+
+TEST(AdminTrainDeactivateApi, RequiresAdminAndReturnsNotFoundForUnknownIds) {
+    TestServer s;
+    auto token = test::adminLogin(s);
+    auto train = createTrain(s, token);
+    auto passenger = test::registerAndLogin(s);
+    auto path = "/api/admin/trains/" + std::to_string(train["id"].get<long long>()) + "/deactivate";
+    auto unauthenticated = s.client().Put(path, "", "application/json");
+    ASSERT_TRUE(unauthenticated);
+    EXPECT_EQ(unauthenticated->status, 401);
+    auto denied = s.client().Put(path, test::bearer(passenger), "", "application/json");
+    ASSERT_TRUE(denied);
+    EXPECT_EQ(denied->status, 403);
+    auto unknown = s.client().Put("/api/admin/trains/99999/deactivate", test::bearer(token), "", "application/json");
+    ASSERT_TRUE(unknown);
+    EXPECT_EQ(unknown->status, 404);
+    EXPECT_EQ(s.db().query("SELECT active FROM trains WHERE number = '94001'")[0][0], "1");
+}
+
+TEST(AdminTrainDeactivateApi, MigratesExistingTrainRecordsAndPreservesInactiveStateOnRestart) {
+    Database db(":memory:");
+    db.execute("CREATE TABLE trains (id INTEGER PRIMARY KEY AUTOINCREMENT, number TEXT UNIQUE NOT NULL, name TEXT NOT NULL)");
+    db.execute("INSERT INTO trains (number, name) VALUES ('94001', 'Existing Express')");
+    initSchema(db);
+    EXPECT_EQ(db.query("SELECT active FROM trains WHERE number = '94001'")[0][0], "1");
+    db.execute("UPDATE trains SET active = 0 WHERE number = '94001'");
+    initSchema(db);
+    seedDemoData(db);
+    EXPECT_EQ(db.query("SELECT active FROM trains WHERE number = '94001'")[0][0], "0");
+    EXPECT_EQ(db.query("SELECT name FROM trains WHERE number = '94001'")[0][0], "Existing Express");
 }
