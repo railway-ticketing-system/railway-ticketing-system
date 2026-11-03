@@ -44,7 +44,17 @@ int main(int argc, char* argv[]) {
             int percent = std::atoi(refund);
             if (percent >= 0 && percent <= 100) policy.refundPercent = percent;
         }
-        rtrs::registerRoutes(server, db, rtrs::PasswordHasher::kDefaultIterations, policy);
+        int iterations = rtrs::PasswordHasher::kDefaultIterations;
+        if (const char* configured = std::getenv("RTRS_PBKDF2_ITERATIONS")) {
+            int value = std::atoi(configured);
+            if (value >= rtrs::PasswordHasher::kMinIterations && value <= rtrs::PasswordHasher::kMaxIterations)
+                iterations = value;
+            else
+                std::cerr << "Ignoring RTRS_PBKDF2_ITERATIONS outside "
+                          << rtrs::PasswordHasher::kMinIterations << "-"
+                          << rtrs::PasswordHasher::kMaxIterations << std::endl;
+        }
+        rtrs::registerRoutes(server, db, iterations, policy);
         std::cout << "RTRS listening on http://0.0.0.0:" << port << std::endl;
         if (!server.listen("0.0.0.0", port)) {
             std::cerr << "failed to bind port " << port << std::endl;

@@ -39,6 +39,11 @@ LoginResult AuthService::login(const std::string& rawEmail, const std::string& p
     }
     attempts_.erase(email);
 
+    // Transparently upgrade legacy or below-floor hashes after a successful login.
+    if (hasher_.needsRehash(creds->second))
+        db_.execute("UPDATE users SET password_hash = ? WHERE id = ?",
+                    {hasher_.hash(password), std::to_string(creds->first.id)});
+
     result.token = randomHex(32);
     result.expiresAt = now + kSessionTtl;
     db_.execute("INSERT INTO sessions (token_hash, user_id, expires_at) VALUES (?, ?, ?)",

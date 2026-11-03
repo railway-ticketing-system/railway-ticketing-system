@@ -21,7 +21,7 @@ cmake --build build -j
 ctest --test-dir build --output-on-failure
 ./build/rtrs_server          # http://localhost:8080
 ```
-Environment variables: `RTRS_PORT` (default 8080), `RTRS_DB` (default `rtrs.db`), `RTRS_WEB_DIR` (default `web`).
+Environment variables: `RTRS_PORT` (default 8080), `RTRS_DB` (default `rtrs.db`), `RTRS_WEB_DIR` (default `web`), `RTRS_PBKDF2_ITERATIONS` (100000-10000000, default 600000).
 
 ### Cancellation and refund policy
 - `RTRS_CANCEL_CUTOFF_HOURS` defaults to **24**: confirmed tickets can be cancelled until 24 hours before the train's first scheduled departure (including its day offset). Schedule dates/times are interpreted as UTC.
@@ -37,6 +37,9 @@ Search, availability, and booking inventory lookups use dedicated SQLite indexes
 Seat allocation runs in `BEGIN IMMEDIATE` transactions with a busy timeout, so competing writers wait and re-check inventory atomically. A database trigger additionally rejects any duplicate seat for the same train, date, and class. `ConcurrencyApi.ConcurrentBookingsAllocateEachSeatOnlyOnce` verifies that simultaneous confirmations never double-allocate a seat (RTS-NF-002 / TC-CONC-01).
 
 All API failures return JSON with a human-readable `error` and, where relevant, field-level messages. Unknown routes, unsupported methods, oversized payloads (over 64 KB), malformed JSON, and unexpected failures use generic messages; database, stack-trace, and credential details are never included in responses (RTS-NF-003 / TC-ERR-01).
+
+### Passwords and access control
+Passwords are stored only as PBKDF2-HMAC-SHA256 hashes with a random 16-byte salt and at least 100,000 iterations (default 600,000). A successful login transparently rehashes older or weaker stored hashes (RTS-NF-005 / RTS-SR-001). Session tokens are random, returned once, and stored only as SHA-256 hashes; sessions expire after 24 hours. Administrator access is re-checked from the current database role on every admin request, so role changes take effect immediately. Changing a password revokes every other session for that account (RTS-NF-006 / RTS-SR-002).
 
 ## Workflow
 ### Administrator access
