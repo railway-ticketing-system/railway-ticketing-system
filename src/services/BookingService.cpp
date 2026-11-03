@@ -208,6 +208,7 @@ ConfirmResult BookingService::confirm(const BookingInput& input) {
                 " VALUES (?, ?, ?, ?, ?)",
                 {std::to_string(input.trainId), draft.travelDate, draft.classCode, std::to_string(count),
                  std::to_string(bookingId)});
+            audit_.recordBookingCreated(input.userId, bookingId, input.trainId, pnr);
         });
     } catch (const TrainUnavailable&) {
         result.conflict = "train_unavailable";
@@ -289,6 +290,7 @@ CancelResult BookingService::cancel(long long id, long long userId) {
                 " cancelled_at = strftime('%Y-%m-%dT%H:%M:%SZ','now'), refund_amount = ? WHERE id = ?",
                 {std::to_string(quote.refundAmount), std::to_string(id)});
             db_.execute("DELETE FROM seat_reservations WHERE booking_id = ?", {std::to_string(id)});
+            audit_.recordBookingCancelled(userId, id, booking->trainId, booking->pnr, quote.refundAmount);
         });
     } catch (const BookingNotFound&) {
         result.conflict = "not_found";

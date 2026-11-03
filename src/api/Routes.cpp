@@ -7,6 +7,7 @@
 
 #include "db/Schema.h"
 #include "db/Seed.h"
+#include "services/AuditService.h"
 #include "services/AuthService.h"
 #include "services/BookingService.h"
 #include "services/TrainService.h"
@@ -143,8 +144,9 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
     auto users = std::make_shared<UserService>(db, PasswordHasher(pbkdf2Iterations));
     auto auth = std::make_shared<AuthService>(db, *users, PasswordHasher(pbkdf2Iterations));
     auto trains = std::make_shared<TrainService>(db);
-    auto bookings = std::make_shared<BookingService>(db, *trains, policy);
-    registerAdminRoutes(server, db, auth, trains);
+    auto audit = std::make_shared<AuditService>(db);
+    auto bookings = std::make_shared<BookingService>(db, *trains, *audit, policy);
+    registerAdminRoutes(server, db, auth, trains, audit);
 
     server.set_payload_max_length(64 * 1024);
     // RTS-NF-003: never leak internals in error responses.
