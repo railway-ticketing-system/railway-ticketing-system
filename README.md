@@ -31,6 +31,15 @@ Environment variables: `RTRS_PORT` (default 8080), `RTRS_DB` (default `rtrs.db`)
 
 Docker: `docker build -t rtrs . && docker run -p 8080:8080 rtrs`
 
+### Secure transport
+Set `RTRS_TLS_CERT` and `RTRS_TLS_KEY` to PEM certificate and private-key files to serve HTTPS directly (both are required together):
+
+```bash
+RTRS_TLS_CERT=/etc/rtrs/server.crt RTRS_TLS_KEY=/etc/rtrs/server.key ./build/rtrs_server
+```
+
+Without these variables the service listens over HTTP and should run behind a TLS-terminating reverse proxy. Such a proxy should forward `X-Forwarded-Proto: https`, which makes the server add `Strict-Transport-Security`. Every response also includes `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, and `Referrer-Policy: no-referrer` (RTS-SR-003 / TC-SEC-04).
+
 ### Performance
 Search, availability, and booking inventory lookups use dedicated SQLite indexes (case-insensitive station lookup, train classes, seat reservations, and bookings by train/date/class/status). The `PerformanceApi.P90SearchLatencyStaysUnderThreeSeconds` test exercises concurrent search requests and asserts the 90th percentile stays below the 3-second requirement (RTS-NF-001 / TC-PERF-01).
 

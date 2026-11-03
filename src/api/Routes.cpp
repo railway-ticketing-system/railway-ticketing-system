@@ -163,6 +163,16 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
         else if (res.status >= 500) sendError(res, 500, "Something went wrong. Please try again.");
         else sendError(res, res.status, "The request could not be processed.");
     });
+    // RTS-SR-003: security headers; HSTS is added for direct TLS or a
+    // TLS-terminating proxy that identifies the original scheme.
+    server.set_post_routing_handler([](const httplib::Request& req, httplib::Response& res) {
+        res.set_header("X-Content-Type-Options", "nosniff");
+        res.set_header("X-Frame-Options", "DENY");
+        res.set_header("Referrer-Policy", "no-referrer");
+        bool secure = req.ssl != nullptr;
+        if (!secure) secure = req.get_header_value("X-Forwarded-Proto") == "https";
+        if (secure) res.set_header("Strict-Transport-Security", "max-age=31536000");
+    });
 
     server.Get("/api/health", [](const httplib::Request&, httplib::Response& res) {
         sendJson(res, 200, {{"status", "ok"}});
