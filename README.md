@@ -36,6 +36,8 @@ Search, availability, and booking inventory lookups use dedicated SQLite indexes
 
 Seat allocation runs in `BEGIN IMMEDIATE` transactions with a busy timeout, so competing writers wait and re-check inventory atomically. A database trigger additionally rejects any duplicate seat for the same train, date, and class. `ConcurrencyApi.ConcurrentBookingsAllocateEachSeatOnlyOnce` verifies that simultaneous confirmations never double-allocate a seat (RTS-NF-002 / TC-CONC-01).
 
+All API failures return JSON with a human-readable `error` and, where relevant, field-level messages. Unknown routes, unsupported methods, oversized payloads (over 64 KB), malformed JSON, and unexpected failures use generic messages; database, stack-trace, and credential details are never included in responses (RTS-NF-003 / TC-ERR-01).
+
 ## Workflow
 ### Administrator access
 Register an ordinary account first, then grant it the admin role from the server host:

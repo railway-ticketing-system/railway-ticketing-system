@@ -149,9 +149,19 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
     registerAdminRoutes(server, db, auth, trains, audit);
 
     server.set_payload_max_length(64 * 1024);
-    // RTS-NF-003: never leak internals in error responses.
+    // RTS-NF-003: never leak internals in error responses. Handler-level errors
+    // already carry safe JSON and field messages, so only fill in framework
+    // responses that would otherwise expose default markup.
     server.set_exception_handler([](const httplib::Request&, httplib::Response& res, std::exception_ptr) {
         sendError(res, 500, "Something went wrong. Please try again.");
+    });
+    server.set_error_handler([](const httplib::Request&, httplib::Response& res) {
+        if (!res.body.empty()) return;
+        if (res.status == 404) sendError(res, 404, "Resource not found.");
+        else if (res.status == 405) sendError(res, 405, "Method not allowed.");
+        else if (res.status == 413) sendError(res, 413, "Request body is too large.");
+        else if (res.status >= 500) sendError(res, 500, "Something went wrong. Please try again.");
+        else sendError(res, res.status, "The request could not be processed.");
     });
 
     server.Get("/api/health", [](const httplib::Request&, httplib::Response& res) {
@@ -181,7 +191,7 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
     });
 
     // RTRS-14 / RTS-F-004
-    server.Get(R"(/api/trains/(\d+)/schedule)", [trains](const httplib::Request& req, httplib::Response& res) {
+    server.Get(R"(/api/trains/([0-9]{1,18})/schedule)", [trains](const httplib::Request& req, httplib::Response& res) {
         auto schedule = trains->findById(std::stoll(req.matches[1].str()));
         if (!schedule || !schedule->active) {
             sendError(res, 404, "Train not found.");
@@ -198,7 +208,7 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
     });
 
     // RTRS-15 / RTS-F-005
-    server.Get(R"(/api/trains/(\d+)/availability)", [trains](const httplib::Request& req, httplib::Response& res) {
+    server.Get(R"(/api/trains/([0-9]{1,18})/availability)", [trains](const httplib::Request& req, httplib::Response& res) {
         long long id = std::stoll(req.matches[1].str());
         auto schedule = trains->findById(id);
         if (!schedule || !schedule->active) {
@@ -224,7 +234,7 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
     });
 
     // RTRS-16 / RTS-F-006
-    server.Get(R"(/api/trains/(\d+)/fares)", [trains](const httplib::Request& req, httplib::Response& res) {
+    server.Get(R"(/api/trains/([0-9]{1,18})/fares)", [trains](const httplib::Request& req, httplib::Response& res) {
         long long id = std::stoll(req.matches[1].str());
         auto schedule = trains->findById(id);
         if (!schedule || !schedule->active) {
