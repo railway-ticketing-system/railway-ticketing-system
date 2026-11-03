@@ -193,12 +193,164 @@ function homeView(user) {
   view.querySelector('#search-btn').addEventListener('click', () => show('search', user));
   view.querySelector('#bookings-btn').addEventListener('click', () => show('bookings', user));
   view.querySelector('#profile-btn').addEventListener('click', () => show('profile', user));
+  if (user.role === 'ADMIN') {
+    const admin = el('<button type="button">Manage trains</button>');
+    admin.addEventListener('click', () => show('admin', user));
+    view.querySelector('#logout').before(admin);
+  }
   view.querySelector('#logout').addEventListener('click', async () => {
     await api('POST', '/api/auth/logout');
     session.token = null;  // clear locally even if the server already dropped the session
     show('login');
   });
   return view;
+}
+
+function adminView(user) {
+  const view = el('<div class="card"><h2>Train administration</h2><div id="admin-status"></div><div id="admin-content">Loading trains...</div><button id="admin-back" type="button" class="secondary">Back</button></div>');
+  view.querySelector('#admin-back').addEventListener('click', () => show('home', user));
+  const content = view.querySelector('#admin-content');
+  async function load() {
+    const r = await api('GET', '/api/admin/trains');
+    if (!r.ok) {
+      content.textContent = r.data.error || 'Could not load trains.';
+      return;
+    }
+    const add = el('<button type="button">Add train and schedule</button>');
+    add.addEventListener('click', () => adminTrainEditor(content, null, saved, load));
+    const list = el('<div class="results"></div>');
+    r.data.trains.forEach((train) => {
+      const item = el('<div class="result"><strong></strong><p class="muted"></p></div>');
+      item.querySelector('strong').textContent = train.number + ' - ' + train.name;
+      item.querySelector('p').textContent = train.stops.map((stop) => stop.station).join(' → ');
+      const state = el('<span class="badge"></span>');
+      state.textContent = train.active ? 'Active' : 'Inactive';
+      state.classList.toggle('cancelled', !train.active);
+      item.querySelector('strong').after(document.createTextNode(' '), state);
+      const edit = el('<button type="button" class="secondary">Edit train and schedule</button>');
+      edit.addEventListener('click', () => adminTrainEditor(content, train, saved, load));
+      item.appendChild(edit);
+      if (train.active) {
+        const deactivate = el('<button type="button" class="secondary">Deactivate service</button>');
+        deactivate.addEventListener('click', async () => {
+          deactivate.disabled = true;
+          try {
+            const result = await api('PUT', '/api/admin/trains/' + train.id + '/deactivate');
+            if (result.ok) { saved(result.data.train); return; }
+            view.querySelector('#admin-status').textContent = result.data.error || 'Could not deactivate the train.';
+          } catch (_) {
+            view.querySelector('#admin-status').textContent = 'Network error. Please try again.';
+          } finally {
+            deactivate.disabled = false;
+          }
+        });
+        item.appendChild(deactivate);
+      }
+      list.appendChild(item);
+    });
+    content.replaceChildren(add, list);
+  }
+  function saved(train) {
+    const message = el('<div class="msg ok"></div>');
+    message.textContent = 'Saved train ' + train.number + '.';
+    view.querySelector('#admin-status').replaceChildren(message);
+    load();
+  }
+  load();
+  return view;
+}
+
+function adminInput(label, key, type, value) {
+  const field = el('<label><span></span><input><span class="err"></span></label>');
+  field.querySelector('span').textContent = label;
+  const input = field.querySelector('input');
+  input.dataset.prop = key;
+  input.type = type;
+  input.value = value == null ? '' : value;
+  if (type === 'number') input.min = '0';
+  return field;
+}
+
+function adminTrainEditor(container, train, saved, cancelled) {
+  const form = el(`<form novalidate>
+    <h3>New train</h3><div id="train-fields"></div>
+    <h3>Stops (journey order)</h3>
+    <p class="muted">First arrival and last departure must be blank. Day offset starts at 0; increase it for overnight journeys.</p>
+    <div id="stop-fields"></div><button id="add-stop" type="button" class="secondary">Add stop</button>
+    <h3>Travel classes</h3><div id="class-fields"></div>
+    <button id="add-class" type="button" class="secondary">Add travel class</button>
+    <div id="admin-errors"></div><button type="submit">Save train</button>
+    <button id="discard-train" type="button" class="secondary">Discard changes</button>
+  </form>`);
+  const top = form.querySelector('#train-fields');
+  form.querySelector('h3').textContent = train ? 'Edit train' : 'New train';
+  top.append(adminInput('Train number (five digits)', 'number', 'text', train && train.number),
+    adminInput('Train name', 'name', 'text', train && train.name));
+  const stops = form.querySelector('#stop-fields');
+  const classes = form.querySelector('#class-fields');
+  function addRow(group, data) {
+    const row = el('<fieldset class="admin-record"><legend></legend><div class="row"></div><button type="button" class="secondary remove">Remove</button></fieldset>');
+    row.querySelector('legend').textContent = group === 'stops' ? 'Stop' : 'Travel class';
+    const definitions = group === 'stops' ?
+      [['Station', 'station', 'text'], ['Arrival', 'arrival', 'time'], ['Departure', 'departure', 'time'], ['Day offset', 'dayOffset', 'number']] :
+      [['Class code (SL, 3A, 2A, 1A, CC, EC)', 'code', 'text'], ['Class name', 'name', 'text'], ['Fare (Rs)', 'fare', 'number'], ['Total seats', 'totalSeats', 'number']];
+    for (const [label, key, type] of definitions)
+      row.querySelector('.row').appendChild(adminInput(label, key, type, data[key]));
+    row.querySelector('button').addEventListener('click', () => row.remove());
+    (group === 'stops' ? stops : classes).appendChild(row);
+  }
+  (train ? train.stops : [{dayOffset: 0}, {dayOffset: 0}]).forEach((row) => addRow('stops', row));
+  (train ? train.classes : [{code: 'SL', name: 'Sleeper', fare: 250, totalSeats: 100}]).forEach((row) => addRow('classes', row));
+  form.querySelector('#add-stop').addEventListener('click', () => addRow('stops', {dayOffset: 0}));
+  form.querySelector('#add-class').addEventListener('click', () => addRow('classes', {}));
+  form.querySelector('#discard-train').addEventListener('click', cancelled);
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const fields = new Map();
+    const payload = {};
+    top.querySelectorAll('input').forEach((input) => {
+      payload[input.dataset.prop] = input.value;
+      fields.set(input.dataset.prop, input);
+    });
+    for (const [group, box] of [['stops', stops], ['classes', classes]]) {
+      payload[group] = [...box.children].map((row, index) => {
+        const data = {};
+        row.querySelectorAll('input').forEach((input) => {
+          data[input.dataset.prop] = input.type === 'number' ?
+            (input.value.trim() === '' ? null : Number(input.value)) : input.value;
+          fields.set(group + '.' + index + '.' + input.dataset.prop, input);
+        });
+        return data;
+      });
+    }
+    form.querySelectorAll('.err').forEach((span) => { span.textContent = ''; });
+    form.querySelectorAll('.invalid').forEach((input) => input.classList.remove('invalid'));
+    const submit = form.querySelector('[type="submit"]');
+    submit.disabled = true;
+    try {
+      const r = await api(train ? 'PUT' : 'POST', '/api/admin/trains' + (train ? '/' + train.id : ''), payload);
+      if (r.ok) { saved(r.data.train); return; }
+      const message = el('<div class="msg bad"></div>');
+      message.textContent = r.data.error || 'Could not save the train.';
+      form.querySelector('#admin-errors').replaceChildren(message);
+      for (const [key, error] of Object.entries(r.data.fields || {})) {
+        const input = fields.get(key);
+        if (input) {
+          input.classList.add('invalid');
+          input.nextElementSibling.textContent = error;
+        } else {
+          const detail = el('<p class="err"></p>');
+          detail.textContent = error;
+          message.appendChild(detail);
+        }
+      }
+    } catch (_) {
+      form.querySelector('#admin-errors').textContent = 'Network error. Please try again.';
+    } finally {
+      submit.disabled = false;
+    }
+  });
+  container.replaceChildren(form);
 }
 
 function formatDuration(minutes) {
@@ -650,6 +802,7 @@ function show(name, data) {
     profile: () => profileView(data),
     search: () => searchView(data),
     bookings: () => bookingsView(data),
+    admin: () => adminView(data),
     ticket: () => ticketView(data),
   };
   app.replaceChildren(views[name]());

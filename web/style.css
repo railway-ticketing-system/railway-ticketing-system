@@ -56,3 +56,5 @@ h3 { margin:20px 0 0; font-size:1rem; }
 .ticket tr:last-child td { border-bottom:0; }
 .badge.cancelled { background:#fdecea; color:var(--error); }
 .ticket #ticket-actions { margin-top:16px; }
+.admin-record { border:1px solid var(--border); border-radius:8px; padding:12px; margin:12px 0; }
+.admin-record .row { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); }

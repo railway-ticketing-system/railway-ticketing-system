@@ -37,6 +37,7 @@ struct Stop {
 
 struct TrainSchedule {
     long long id = 0;
+    bool active = true;
     std::string number, name;
     std::vector<Stop> stops;
 };

@@ -82,7 +82,7 @@ SearchResult TrainService::search(const SearchQuery& query) {
         "  AND COALESCE(src.departure_time, '') <> ''"
         " JOIN train_stops dst ON dst.train_id = t.id AND lower(dst.station) = lower(?)"
         "  AND dst.seq > src.seq AND COALESCE(dst.arrival_time, '') <> ''"
-        " WHERE 1 = 1";
+        " WHERE t.active = 1";
 
     std::vector<Database::Param> params{travelClass, travelClass, source, destination};
     if (!travelClass.empty()) {
@@ -141,13 +141,14 @@ SearchResult TrainService::search(const SearchQuery& query) {
 }
 
 std::optional<TrainSchedule> TrainService::findById(long long id) {
-    auto rows = db_.query("SELECT id, number, name FROM trains WHERE id = ?", {std::to_string(id)});
+    auto rows = db_.query("SELECT id, number, name, active FROM trains WHERE id = ?", {std::to_string(id)});
     if (rows.empty()) return std::nullopt;
 
     TrainSchedule schedule;
     schedule.id = std::stoll(rows[0][0]);
     schedule.number = rows[0][1];
     schedule.name = rows[0][2];
+    schedule.active = rows[0][3] == "1";
 
     auto stops = db_.query(
         "SELECT station, COALESCE(arrival_time, ''), COALESCE(departure_time, ''), day_offset"
