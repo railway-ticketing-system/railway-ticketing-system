@@ -106,6 +106,15 @@ void registerAdminRoutes(httplib::Server& server, Database& db, std::shared_ptr<
         }
         writeReply(res, adminTrains->create(parseTrain(body)));
     });
+    server.Put(R"(/api/admin/trains/([0-9]{1,18}))", [auth, trains, adminTrains](const httplib::Request& req, httplib::Response& res) {
+        if (!requireAdmin(*auth, req, res)) return;
+        auto body = json::parse(req.body, nullptr, false);
+        if (!body.is_object()) {
+            reply(res, 400, {{"error", "Request body must be a JSON object."}});
+            return;
+        }
+        writeReply(res, adminTrains->update(std::stoll(req.matches[1].str()), parseTrain(body)));
+    });
 }
 
 }

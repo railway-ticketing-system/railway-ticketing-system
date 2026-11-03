@@ -26,6 +26,7 @@ public:
     std::vector<ManagedTrain> list();
     std::optional<ManagedTrain> findById(long long id);
     TrainWriteResult create(TrainInput input);
+    TrainWriteResult update(long long id, TrainInput input);
 
 private:
     void insertStops(long long id, const TrainInput& input);

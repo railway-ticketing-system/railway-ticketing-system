@@ -223,6 +223,9 @@ function adminView(user) {
       const item = el('<div class="result"><strong></strong><p class="muted"></p></div>');
       item.querySelector('strong').textContent = train.number + ' - ' + train.name;
       item.querySelector('p').textContent = train.stops.map((stop) => stop.station).join(' → ');
+      const edit = el('<button type="button" class="secondary">Edit train and schedule</button>');
+      edit.addEventListener('click', () => adminTrainEditor(content, train, saved, load));
+      item.appendChild(edit);
       list.appendChild(item);
     });
     content.replaceChildren(add, list);
@@ -260,6 +263,7 @@ function adminTrainEditor(container, train, saved, cancelled) {
     <button id="discard-train" type="button" class="secondary">Discard changes</button>
   </form>`);
   const top = form.querySelector('#train-fields');
+  form.querySelector('h3').textContent = train ? 'Edit train' : 'New train';
   top.append(adminInput('Train number (five digits)', 'number', 'text', train && train.number),
     adminInput('Train name', 'name', 'text', train && train.name));
   const stops = form.querySelector('#stop-fields');
@@ -304,7 +308,7 @@ function adminTrainEditor(container, train, saved, cancelled) {
     const submit = form.querySelector('[type="submit"]');
     submit.disabled = true;
     try {
-      const r = await api('POST', '/api/admin/trains', payload);
+      const r = await api(train ? 'PUT' : 'POST', '/api/admin/trains' + (train ? '/' + train.id : ''), payload);
       if (r.ok) { saved(r.data.train); return; }
       const message = el('<div class="msg bad"></div>');
       message.textContent = r.data.error || 'Could not save the train.';

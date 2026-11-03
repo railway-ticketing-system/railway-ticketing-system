@@ -8,6 +8,23 @@ namespace {
 httplib::Result addTrain(TestServer& s, const std::string& token, const json& body) {
     return s.client().Post("/api/admin/trains", test::bearer(token), body.dump(), "application/json");
 }
+
+json createTrain(TestServer& s, const std::string& token, const std::string& number = "94001") {
+    auto res = addTrain(s, token, test::managedTrainBody(number));
+    if (!res || res->status != 201) return json::object();
+    return json::parse(res->body)["train"];
+}
+
+httplib::Result updateTrain(TestServer& s, const std::string& token, long long id, const json& body) {
+    return s.client().Put("/api/admin/trains/" + std::to_string(id), test::bearer(token), body.dump(), "application/json");
+}
+
+json bookTrain(TestServer& s, const std::string& token, long long id) {
+    auto res = s.client().Post("/api/bookings", test::bearer(token),
+        test::bookingBody(id, "SL", {"Asha Rao", "Ravi Kumar"}, "2099-01-01").dump(), "application/json");
+    if (!res || res->status != 201) return json::object();
+    return json::parse(res->body)["booking"];
+}
 }
 
 TEST(AdminTrainCreateApi, CreatesCompleteTrainVisibleInPassengerSearchAndDetails) {
@@ -118,4 +135,123 @@ TEST(AdminTrainCreateApi, DatabaseFailureRollsBackTrainStopsAndClasses) {
     EXPECT_EQ(res->status, 500);
     EXPECT_EQ(s.db().query("SELECT COUNT(*) FROM trains WHERE number = '94001'")[0][0], "0");
     EXPECT_EQ(s.db().query("SELECT COUNT(*) FROM train_stops WHERE station = 'Cedar Jn'")[0][0], "0");
+}
+
+TEST(AdminTrainUpdateApi, UpdatesSearchScheduleAndFaresWithoutChangingExistingBookingFare) {
+    TestServer s;
+    auto token = test::adminLogin(s);
+    auto train = createTrain(s, token);
+    ASSERT_FALSE(train.empty());
+    auto booking = bookTrain(s, token, train["id"]);
+    ASSERT_FALSE(booking.empty());
+    auto body = test::managedTrainBody();
+    body["name"] = "Updated Express";
+    body["number"] = "94009";
+    body["stops"][0]["departure"] = "21:00";
+    body["classes"][0]["fare"] = 350;
+    body["classes"][0]["totalSeats"] = 12;
+    auto res = updateTrain(s, token, train["id"], body);
+    ASSERT_TRUE(res);
+    ASSERT_EQ(res->status, 200) << res->body;
+    auto updated = json::parse(res->body)["train"];
+    EXPECT_EQ(updated["name"], "Updated Express");
+    EXPECT_EQ(updated["stops"][0]["departure"], "21:00");
+    auto search = s.client().Get("/api/trains/search?source=Cedar%20Jn&destination=Maple%20Jn&date=2099-01-01");
+    ASSERT_TRUE(search);
+    auto matches = json::parse(search->body)["trains"];
+    ASSERT_EQ(matches.size(), 1u);
+    EXPECT_EQ(matches[0]["number"], "94009");
+    EXPECT_EQ(matches[0]["fromFare"], 350);
+    EXPECT_EQ(matches[0]["durationMinutes"], 300);
+    auto ticket = s.client().Get("/api/bookings/" + booking["pnr"].get<std::string>(), test::bearer(token));
+    ASSERT_TRUE(ticket);
+    EXPECT_EQ(json::parse(ticket->body)["booking"]["totalFare"], 500);
+    TrainService trains(s.db());
+    EXPECT_EQ(trains.availability(train["id"], "2099-01-01")[0].availableSeats, 10);
+}
+
+TEST(AdminTrainUpdateApi, CannotRemoveReferencedClassOrShrinkBelowAssignedSeats) {
+    TestServer s;
+    auto token = test::adminLogin(s);
+    auto train = createTrain(s, token);
+    auto first = bookTrain(s, token, train["id"]);
+    auto second = bookTrain(s, token, train["id"]);
+    ASSERT_FALSE(first.empty());
+    ASSERT_FALSE(second.empty());
+    auto cancelled = s.client().Post("/api/bookings/" + std::to_string(first["id"].get<long long>()) +
+                                     "/cancel", test::bearer(token), "", "application/json");
+    ASSERT_TRUE(cancelled);
+    ASSERT_EQ(cancelled->status, 200);
+    auto body = test::managedTrainBody();
+    body["classes"][0]["totalSeats"] = 2;
+    auto shrink = updateTrain(s, token, train["id"], body);
+    ASSERT_TRUE(shrink);
+    EXPECT_EQ(shrink->status, 409);
+    EXPECT_TRUE(json::parse(shrink->body)["fields"].contains("classes.0.totalSeats"));
+    body["classes"].erase(body["classes"].begin());
+    auto remove = updateTrain(s, token, train["id"], body);
+    ASSERT_TRUE(remove);
+    EXPECT_EQ(remove->status, 409);
+    EXPECT_TRUE(json::parse(remove->body)["fields"].contains("classes"));
+    auto stillValid = s.client().Get("/api/admin/trains/" + std::to_string(train["id"].get<long long>()), test::bearer(token));
+    ASSERT_TRUE(stillValid);
+    EXPECT_EQ(json::parse(stillValid->body)["train"], train);
+}
+
+TEST(AdminTrainUpdateApi, CanAddClassesAndRemoveUnusedClasses) {
+    TestServer s;
+    auto token = test::adminLogin(s);
+    auto train = createTrain(s, token);
+    auto body = test::managedTrainBody();
+    body["classes"][1] = {{"code", "CC"}, {"name", "Chair Car"}, {"fare", 450}, {"totalSeats", 20}};
+    auto res = updateTrain(s, token, train["id"], body);
+    ASSERT_TRUE(res);
+    ASSERT_EQ(res->status, 200);
+    auto classes = json::parse(res->body)["train"]["classes"];
+    ASSERT_EQ(classes.size(), 2u);
+    EXPECT_EQ(classes[1]["code"], "CC");
+}
+
+TEST(AdminTrainUpdateApi, RejectsUnauthorizedInvalidUnknownAndDuplicateUpdates) {
+    TestServer s;
+    auto token = test::adminLogin(s);
+    auto train = createTrain(s, token);
+    createTrain(s, token, "94002");
+    auto passenger = test::registerAndLogin(s);
+    auto body = test::managedTrainBody();
+    auto denied = updateTrain(s, passenger, train["id"], body);
+    ASSERT_TRUE(denied);
+    EXPECT_EQ(denied->status, 403);
+    auto missing = updateTrain(s, "", train["id"], body);
+    ASSERT_TRUE(missing);
+    EXPECT_EQ(missing->status, 401);
+    auto unknown = updateTrain(s, token, 99999, body);
+    ASSERT_TRUE(unknown);
+    EXPECT_EQ(unknown->status, 404);
+    body["number"] = "94002";
+    auto duplicate = updateTrain(s, token, train["id"], body);
+    ASSERT_TRUE(duplicate);
+    EXPECT_EQ(duplicate->status, 409);
+    body["stops"][0]["departure"] = "99:00";
+    auto invalid = updateTrain(s, token, train["id"], body);
+    ASSERT_TRUE(invalid);
+    EXPECT_EQ(invalid->status, 400);
+    EXPECT_TRUE(json::parse(invalid->body)["fields"].contains("stops.0.departure"));
+}
+
+TEST(AdminTrainUpdateApi, FailedClassUpdateRollsBackTrainAndStopChanges) {
+    TestServer s;
+    auto token = test::adminLogin(s);
+    auto train = createTrain(s, token);
+    s.db().execute("CREATE TRIGGER reject_class_update BEFORE UPDATE ON train_classes"
+                   " BEGIN SELECT RAISE(ABORT, 'write unavailable'); END");
+    auto body = test::managedTrainBody();
+    body["name"] = "Changed Name";
+    body["stops"][0]["departure"] = "21:00";
+    auto res = updateTrain(s, token, train["id"], body);
+    ASSERT_TRUE(res);
+    EXPECT_EQ(res->status, 500);
+    auto current = s.client().Get("/api/admin/trains/" + std::to_string(train["id"].get<long long>()), test::bearer(token));
+    ASSERT_TRUE(current);
+    EXPECT_EQ(json::parse(current->body)["train"], train);
 }

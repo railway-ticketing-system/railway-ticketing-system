@@ -148,4 +148,66 @@ TrainWriteResult AdminTrainService::create(TrainInput input) {
     return result;
 }
 
+TrainWriteResult AdminTrainService::update(long long id, TrainInput input) {
+    normalize(input);
+    TrainWriteResult result;
+    result.errors = validate(input);
+    if (!result.errors.empty()) return result;
+    db_.transaction([&] {
+        auto existing = findById(id);
+        if (!existing) {
+            result.status = 404;
+            return;
+        }
+        result.status = 409;
+        if (!db_.query("SELECT id FROM trains WHERE number = ? AND id <> ?",
+                        {input.number, std::to_string(id)}).empty()) {
+            result.errors["number"] = "This train number is already registered.";
+            return;
+        }
+        std::set<std::string> codes;
+        for (size_t i = 0; i < input.classes.size(); ++i) {
+            const auto& cls = input.classes[i];
+            codes.insert(cls.code);
+            auto reserved = db_.query(
+                "SELECT COALESCE(MAX(booked), 0) FROM (SELECT SUM(seats) AS booked FROM seat_reservations"
+                " WHERE train_id = ? AND class_code = ? GROUP BY travel_date)", {std::to_string(id), cls.code});
+            auto highestSeat = db_.query(
+                "SELECT COALESCE(MAX(CAST(substr(p.seat_number, instr(p.seat_number, '-') + 1) AS INTEGER)), 0)"
+                " FROM passengers p JOIN bookings b ON b.id = p.booking_id"
+                " WHERE b.train_id = ? AND b.class_code = ? AND b.status = 'CONFIRMED'", {std::to_string(id), cls.code});
+            int minimum = std::max(std::stoi(reserved[0][0]), std::stoi(highestSeat[0][0]));
+            if (cls.totalSeats < minimum)
+                result.errors["classes." + std::to_string(i) + ".totalSeats"] =
+                    "Capacity must accommodate all reserved seats and assigned seat numbers (minimum " +
+                    std::to_string(minimum) + ").";
+        }
+        for (const auto& cls : existing->details.classes) {
+            if (codes.count(cls.code)) continue;
+            if (!db_.query("SELECT id FROM bookings WHERE train_id = ? AND class_code = ? LIMIT 1",
+                           {std::to_string(id), cls.code}).empty() ||
+                !db_.query("SELECT id FROM seat_reservations WHERE train_id = ? AND class_code = ? LIMIT 1",
+                           {std::to_string(id), cls.code}).empty())
+                result.errors["classes"] = "Classes referenced by bookings or reservations cannot be removed.";
+        }
+        if (!result.errors.empty()) return;
+        db_.execute("UPDATE trains SET number = ?, name = ? WHERE id = ?",
+                    {input.number, input.name, std::to_string(id)});
+        db_.execute("DELETE FROM train_stops WHERE train_id = ?", {std::to_string(id)});
+        insertStops(id, input);
+        for (const auto& cls : existing->details.classes)
+            if (!codes.count(cls.code))
+                db_.execute("DELETE FROM train_classes WHERE train_id = ? AND class_code = ?",
+                            {std::to_string(id), cls.code});
+        for (const auto& cls : input.classes)
+            db_.execute("INSERT INTO train_classes (train_id, class_code, class_name, fare, total_seats)"
+                        " VALUES (?, ?, ?, ?, ?) ON CONFLICT(train_id, class_code) DO UPDATE SET"
+                        " class_name = excluded.class_name, fare = excluded.fare, total_seats = excluded.total_seats",
+                        {std::to_string(id), cls.code, cls.name, std::to_string(cls.fare), std::to_string(cls.totalSeats)});
+        result.train = *findById(id);
+        result.status = 200;
+    });
+    return result;
+}
+
 }
