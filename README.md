@@ -50,6 +50,9 @@ All API failures return JSON with a human-readable `error` and, where relevant, 
 ### Input validation
 All API input is validated server-side before use: request bodies must be JSON objects under 64 KB, names/stations/class labels use explicit character whitelists and length limits, dates and times must be real calendar values, travel classes and sort fields are enumerated, and numeric identifiers are bounded in route patterns. Passwords reject ASCII control characters. All SQL uses bound parameters. Script-like, injection-style, malformed, and wrong-typed values are rejected with field-level messages (RTS-SR-004 / TC-SEC-05).
 
+### Logging
+Access logs contain a UTC timestamp, HTTP method, path (the query string is dropped), status code, and remote address. Request bodies and headers are never logged. Passwords, tokens, API keys, and `Bearer` credentials are redacted, and control characters are stripped from logged paths before writing, so client input cannot forge log entries (RTS-SR-005 / TC-SEC-06).
+
 ### Passwords and access control
 Passwords are stored only as PBKDF2-HMAC-SHA256 hashes with a random 16-byte salt and at least 100,000 iterations (default 600,000). A successful login transparently rehashes older or weaker stored hashes (RTS-NF-005 / RTS-SR-001). Session tokens are random, returned once, and stored only as SHA-256 hashes; sessions expire after 24 hours. Administrator access is re-checked from the current database role on every admin request, so role changes take effect immediately. Changing a password revokes every other session for that account (RTS-NF-006 / RTS-SR-002).
 

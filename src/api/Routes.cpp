@@ -12,6 +12,7 @@
 #include "services/BookingService.h"
 #include "services/TrainService.h"
 #include "services/UserService.h"
+#include "util/Log.h"
 
 namespace rtrs {
 
@@ -149,6 +150,10 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
     registerAdminRoutes(server, db, auth, trains, audit);
 
     server.set_payload_max_length(64 * 1024);
+    // RTS-SR-005: log only method, path (without query), status and address.
+    server.set_logger([](const httplib::Request& req, const httplib::Response& res) {
+        logAccess(req.method, req.path, res.status, req.remote_addr);
+    });
     // RTS-NF-003: never leak internals in error responses. Handler-level errors
     // already carry safe JSON and field messages, so only fill in framework
     // responses that would otherwise expose default markup.
