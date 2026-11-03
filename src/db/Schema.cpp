@@ -51,6 +51,8 @@ void initSchema(Database& db) {
         " UNIQUE (train_id, seq)"
         ")");
     db.execute("CREATE INDEX IF NOT EXISTS idx_train_stops_station ON train_stops (station)");
+    // RTS-NF-001: search matches stations case-insensitively, so index the expression.
+    db.execute("CREATE INDEX IF NOT EXISTS idx_train_stops_station_nocase ON train_stops (lower(station))");
     db.execute(
         "CREATE TABLE IF NOT EXISTS train_classes ("
         " train_id    INTEGER NOT NULL REFERENCES trains(id) ON DELETE CASCADE,"
@@ -106,6 +108,14 @@ void initSchema(Database& db) {
         ")");
     if (!hasColumn(db, "seat_reservations", "booking_id"))
         db.execute("ALTER TABLE seat_reservations ADD COLUMN booking_id INTEGER REFERENCES bookings(id)");
+    // RTS-NF-001: indexes for search, availability and booking inventory lookups.
+    db.execute("CREATE INDEX IF NOT EXISTS idx_train_classes_train ON train_classes (train_id, fare)");
+    db.execute(
+        "CREATE INDEX IF NOT EXISTS idx_seat_reservations_inventory"
+        " ON seat_reservations (train_id, travel_date, class_code)");
+    db.execute(
+        "CREATE INDEX IF NOT EXISTS idx_bookings_inventory"
+        " ON bookings (train_id, travel_date, class_code, status)");
     // RTS-F-018 / RTS-NF-008: append-only audit trail for bookings and cancellations.
     db.execute(
         "CREATE TABLE IF NOT EXISTS audit_events ("

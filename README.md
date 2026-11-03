@@ -31,6 +31,9 @@ Environment variables: `RTRS_PORT` (default 8080), `RTRS_DB` (default `rtrs.db`)
 
 Docker: `docker build -t rtrs . && docker run -p 8080:8080 rtrs`
 
+### Performance
+Search, availability, and booking inventory lookups use dedicated SQLite indexes (case-insensitive station lookup, train classes, seat reservations, and bookings by train/date/class/status). The `PerformanceApi.P90SearchLatencyStaysUnderThreeSeconds` test exercises concurrent search requests and asserts the 90th percentile stays below the 3-second requirement (RTS-NF-001 / TC-PERF-01).
+
 ## Workflow
 ### Administrator access
 Register an ordinary account first, then grant it the admin role from the server host:
