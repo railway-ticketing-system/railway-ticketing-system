@@ -1,5 +1,7 @@
 #include "api/AdminRoutes.h"
 
+#include <algorithm>
+#include <cctype>
 #include <nlohmann/json.hpp>
 
 #include "api/Authorization.h"
@@ -74,10 +76,16 @@ void writeReply(httplib::Response& res, const TrainWriteResult& result) {
                                     {"fields", result.errors}});
 }
 
+json auditJson(const AuditEvent& event) {
+    return {{"id", event.id}, {"event", event.eventType}, {"userId", event.userId},
+            {"bookingId", event.bookingId}, {"trainId", event.trainId}, {"pnr", event.pnr},
+            {"refundAmount", event.refundAmount}, {"createdAt", event.createdAt}};
+}
+
 }
 
 void registerAdminRoutes(httplib::Server& server, Database& db, std::shared_ptr<AuthService> auth,
-                         std::shared_ptr<TrainService> trains) {
+                         std::shared_ptr<TrainService> trains, std::shared_ptr<AuditService> audit) {
     auto adminTrains = std::make_shared<AdminTrainService>(db, *trains);
     server.Get("/api/admin/me", [auth](const httplib::Request& req, httplib::Response& res) {
         auto user = requireAdmin(*auth, req, res);
@@ -118,6 +126,25 @@ void registerAdminRoutes(httplib::Server& server, Database& db, std::shared_ptr<
     server.Put(R"(/api/admin/trains/([0-9]{1,18})/deactivate)", [auth, trains, adminTrains](const httplib::Request& req, httplib::Response& res) {
         if (!requireAdmin(*auth, req, res)) return;
         writeReply(res, adminTrains->deactivate(std::stoll(req.matches[1].str())));
+    });
+    // RTS-F-018 / RTS-NF-008: administrators can retrieve the audit trail.
+    server.Get("/api/admin/audit", [auth, audit](const httplib::Request& req, httplib::Response& res) {
+        if (!requireAdmin(*auth, req, res)) return;
+        int limit = 100;
+        const std::string raw = req.get_param_value("limit");
+        if (!raw.empty()) {
+            bool digits = raw.size() <= 3 &&
+                          std::all_of(raw.begin(), raw.end(), [](unsigned char c) { return std::isdigit(c) != 0; });
+            int parsed = digits ? std::stoi(raw) : 0;
+            if (parsed < 1 || parsed > 500) {
+                reply(res, 400, {{"error", "Limit must be between 1 and 500."}});
+                return;
+            }
+            limit = parsed;
+        }
+        json events = json::array();
+        for (const auto& event : audit->list(limit)) events.push_back(auditJson(event));
+        reply(res, 200, {{"events", events}});
     });
 }
 

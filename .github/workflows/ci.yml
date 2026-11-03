@@ -23,11 +23,11 @@ jobs:
       - name: Coverage report (line + branch)
         run: |
           mkdir -p coverage
-          gcovr -r . --filter 'src/' --exclude 'src/main.cpp' --txt --print-summary \
-                --html-details coverage/index.html --branches --txt-metric branch \
+          gcovr -r . --filter 'src/' --exclude 'src/main.cpp' --gcov-ignore-parse-errors negative_hits.warn_once_per_file \
+                --txt --print-summary --html-details coverage/index.html --branches --txt-metric branch \
                 > coverage/summary.txt || true
-          gcovr -r . --filter 'src/' --exclude 'src/main.cpp' --print-summary
-          gcovr -r . --filter 'src/' --exclude 'src/main.cpp' --txt-metric branch --print-summary
+          gcovr -r . --filter 'src/' --exclude 'src/main.cpp' --gcov-ignore-parse-errors negative_hits.warn_once_per_file --print-summary
+          gcovr -r . --filter 'src/' --exclude 'src/main.cpp' --gcov-ignore-parse-errors negative_hits.warn_once_per_file --txt-metric branch --print-summary
       - uses: actions/upload-artifact@v4
         with:
           name: coverage-report

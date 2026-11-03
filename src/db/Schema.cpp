@@ -51,6 +51,8 @@ void initSchema(Database& db) {
         " UNIQUE (train_id, seq)"
         ")");
     db.execute("CREATE INDEX IF NOT EXISTS idx_train_stops_station ON train_stops (station)");
+    // RTS-NF-001: search matches stations case-insensitively, so index the expression.
+    db.execute("CREATE INDEX IF NOT EXISTS idx_train_stops_station_nocase ON train_stops (lower(station))");
     db.execute(
         "CREATE TABLE IF NOT EXISTS train_classes ("
         " train_id    INTEGER NOT NULL REFERENCES trains(id) ON DELETE CASCADE,"
@@ -93,6 +95,22 @@ void initSchema(Database& db) {
         " seat_number TEXT NOT NULL"
         ")");
     db.execute("CREATE INDEX IF NOT EXISTS idx_passengers_booking ON passengers (booking_id)");
+    // RTS-NF-002: a seat can belong to at most one confirmed booking for a
+    // train/date/class, even if a future process bypasses the service layer.
+    db.execute(
+        "CREATE TRIGGER IF NOT EXISTS trg_passengers_unique_seat"
+        " BEFORE INSERT ON passengers"
+        " WHEN EXISTS ("
+        "  SELECT 1 FROM passengers p"
+        "  JOIN bookings b ON b.id = p.booking_id"
+        "  JOIN bookings nb ON nb.id = NEW.booking_id"
+        "  WHERE b.status = 'CONFIRMED'"
+        "    AND b.train_id = nb.train_id"
+        "    AND b.travel_date = nb.travel_date"
+        "    AND b.class_code = nb.class_code"
+        "    AND p.seat_number = NEW.seat_number"
+        " )"
+        " BEGIN SELECT RAISE(ABORT, 'seat already allocated'); END");
     db.execute(
         "CREATE TABLE IF NOT EXISTS seat_reservations ("
         " id          INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -106,6 +124,29 @@ void initSchema(Database& db) {
         ")");
     if (!hasColumn(db, "seat_reservations", "booking_id"))
         db.execute("ALTER TABLE seat_reservations ADD COLUMN booking_id INTEGER REFERENCES bookings(id)");
+    // RTS-NF-001: indexes for search, availability and booking inventory lookups.
+    db.execute("CREATE INDEX IF NOT EXISTS idx_train_classes_train ON train_classes (train_id, fare)");
+    db.execute(
+        "CREATE INDEX IF NOT EXISTS idx_seat_reservations_inventory"
+        " ON seat_reservations (train_id, travel_date, class_code)");
+    db.execute(
+        "CREATE INDEX IF NOT EXISTS idx_bookings_inventory"
+        " ON bookings (train_id, travel_date, class_code, status)");
+    // RTS-F-018 / RTS-NF-008: append-only audit trail for bookings and cancellations.
+    db.execute(
+        "CREATE TABLE IF NOT EXISTS audit_events ("
+        " id            INTEGER PRIMARY KEY AUTOINCREMENT,"
+        " event_type    TEXT NOT NULL"
+        "               CHECK (event_type IN ('BOOKING_CREATED','BOOKING_CANCELLED')),"
+        " user_id       INTEGER NOT NULL REFERENCES users(id),"
+        " booking_id    INTEGER NOT NULL REFERENCES bookings(id),"
+        " train_id      INTEGER NOT NULL REFERENCES trains(id),"
+        " pnr           TEXT NOT NULL,"
+        " refund_amount INTEGER NOT NULL DEFAULT 0 CHECK (refund_amount >= 0),"
+        " created_at    TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now'))"
+        ")");
+    db.execute("CREATE INDEX IF NOT EXISTS idx_audit_events_booking ON audit_events (booking_id)");
+    db.execute("CREATE INDEX IF NOT EXISTS idx_audit_events_created ON audit_events (created_at)");
 }
 
 }  // namespace rtrs

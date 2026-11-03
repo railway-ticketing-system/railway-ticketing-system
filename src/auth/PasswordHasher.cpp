@@ -63,6 +63,23 @@ std::string sha256Hex(const std::string& data) {
     return toHex(md, len);
 }
 
+int PasswordHasher::storedIterations(const std::string& stored) const {
+    if (stored.rfind("pbkdf2$", 0) != 0) return 0;
+    const size_t start = 7;
+    const size_t end = stored.find('$', start);
+    if (end == std::string::npos) return 0;
+    try {
+        return std::stoi(stored.substr(start, end - start));
+    } catch (...) {
+        return 0;
+    }
+}
+
+bool PasswordHasher::needsRehash(const std::string& stored) const {
+    int iterations = storedIterations(stored);
+    return iterations < iterations_ || (iterations_ >= kMinIterations && iterations < kMinIterations);
+}
+
 std::string PasswordHasher::hash(const std::string& password) const {
     std::vector<unsigned char> salt(kSaltLen);
     if (RAND_bytes(salt.data(), static_cast<int>(salt.size())) != 1) throw std::runtime_error("random generation failed");
@@ -88,7 +105,9 @@ bool PasswordHasher::verify(const std::string& password, const std::string& stor
     } catch (...) {
         return false;
     }
-    if (iters <= 0) return false;
+    // Refuse absurd values from a corrupted row so verification cannot be used
+    // to burn unbounded CPU.
+    if (iters <= 0 || iters > kMaxIterations) return false;
     std::vector<unsigned char> salt, expected;
     if (!fromHex(parts[2], salt) || !fromHex(parts[3], expected) || expected.size() != kHashLen) return false;
 

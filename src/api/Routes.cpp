@@ -7,10 +7,12 @@
 
 #include "db/Schema.h"
 #include "db/Seed.h"
+#include "services/AuditService.h"
 #include "services/AuthService.h"
 #include "services/BookingService.h"
 #include "services/TrainService.h"
 #include "services/UserService.h"
+#include "util/Log.h"
 
 namespace rtrs {
 
@@ -143,13 +145,38 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
     auto users = std::make_shared<UserService>(db, PasswordHasher(pbkdf2Iterations));
     auto auth = std::make_shared<AuthService>(db, *users, PasswordHasher(pbkdf2Iterations));
     auto trains = std::make_shared<TrainService>(db);
-    auto bookings = std::make_shared<BookingService>(db, *trains, policy);
-    registerAdminRoutes(server, db, auth, trains);
+    auto audit = std::make_shared<AuditService>(db);
+    auto bookings = std::make_shared<BookingService>(db, *trains, *audit, policy);
+    registerAdminRoutes(server, db, auth, trains, audit);
 
     server.set_payload_max_length(64 * 1024);
-    // RTS-NF-003: never leak internals in error responses.
+    // RTS-SR-005: log only method, path (without query), status and address.
+    server.set_logger([](const httplib::Request& req, const httplib::Response& res) {
+        logAccess(req.method, req.path, res.status, req.remote_addr);
+    });
+    // RTS-NF-003: never leak internals in error responses. Handler-level errors
+    // already carry safe JSON and field messages, so only fill in framework
+    // responses that would otherwise expose default markup.
     server.set_exception_handler([](const httplib::Request&, httplib::Response& res, std::exception_ptr) {
         sendError(res, 500, "Something went wrong. Please try again.");
+    });
+    server.set_error_handler([](const httplib::Request&, httplib::Response& res) {
+        if (!res.body.empty()) return;
+        if (res.status == 404) sendError(res, 404, "Resource not found.");
+        else if (res.status == 405) sendError(res, 405, "Method not allowed.");
+        else if (res.status == 413) sendError(res, 413, "Request body is too large.");
+        else if (res.status >= 500) sendError(res, 500, "Something went wrong. Please try again.");
+        else sendError(res, res.status, "The request could not be processed.");
+    });
+    // RTS-SR-003: security headers; HSTS is added for direct TLS or a
+    // TLS-terminating proxy that identifies the original scheme.
+    server.set_post_routing_handler([](const httplib::Request& req, httplib::Response& res) {
+        res.set_header("X-Content-Type-Options", "nosniff");
+        res.set_header("X-Frame-Options", "DENY");
+        res.set_header("Referrer-Policy", "no-referrer");
+        bool secure = req.ssl != nullptr;
+        if (!secure) secure = req.get_header_value("X-Forwarded-Proto") == "https";
+        if (secure) res.set_header("Strict-Transport-Security", "max-age=31536000");
     });
 
     server.Get("/api/health", [](const httplib::Request&, httplib::Response& res) {
@@ -179,7 +206,7 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
     });
 
     // RTRS-14 / RTS-F-004
-    server.Get(R"(/api/trains/(\d+)/schedule)", [trains](const httplib::Request& req, httplib::Response& res) {
+    server.Get(R"(/api/trains/([0-9]{1,18})/schedule)", [trains](const httplib::Request& req, httplib::Response& res) {
         auto schedule = trains->findById(std::stoll(req.matches[1].str()));
         if (!schedule || !schedule->active) {
             sendError(res, 404, "Train not found.");
@@ -196,7 +223,7 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
     });
 
     // RTRS-15 / RTS-F-005
-    server.Get(R"(/api/trains/(\d+)/availability)", [trains](const httplib::Request& req, httplib::Response& res) {
+    server.Get(R"(/api/trains/([0-9]{1,18})/availability)", [trains](const httplib::Request& req, httplib::Response& res) {
         long long id = std::stoll(req.matches[1].str());
         auto schedule = trains->findById(id);
         if (!schedule || !schedule->active) {
@@ -222,7 +249,7 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
     });
 
     // RTRS-16 / RTS-F-006
-    server.Get(R"(/api/trains/(\d+)/fares)", [trains](const httplib::Request& req, httplib::Response& res) {
+    server.Get(R"(/api/trains/([0-9]{1,18})/fares)", [trains](const httplib::Request& req, httplib::Response& res) {
         long long id = std::stoll(req.matches[1].str());
         auto schedule = trains->findById(id);
         if (!schedule || !schedule->active) {
@@ -289,7 +316,7 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
     });
 
     // RTRS-23 / RTS-F-008
-    server.Get(R"(/api/bookings/([0-9]+))", [auth, bookings](const httplib::Request& req, httplib::Response& res) {
+    server.Get(R"(/api/bookings/([0-9]{1,20}))", [auth, bookings](const httplib::Request& req, httplib::Response& res) {
         auto user = requireUser(*auth, req, res);
         if (!user) return;
         auto booking = bookings->findByPnr(req.matches[1]);

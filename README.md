@@ -21,7 +21,7 @@ cmake --build build -j
 ctest --test-dir build --output-on-failure
 ./build/rtrs_server          # http://localhost:8080
 ```
-Environment variables: `RTRS_PORT` (default 8080), `RTRS_DB` (default `rtrs.db`), `RTRS_WEB_DIR` (default `web`).
+Environment variables: `RTRS_PORT` (default 8080), `RTRS_DB` (default `rtrs.db`), `RTRS_WEB_DIR` (default `web`), `RTRS_PBKDF2_ITERATIONS` (100000-10000000, default 600000).
 
 ### Cancellation and refund policy
 - `RTRS_CANCEL_CUTOFF_HOURS` defaults to **24**: confirmed tickets can be cancelled until 24 hours before the train's first scheduled departure (including its day offset). Schedule dates/times are interpreted as UTC.
@@ -30,6 +30,31 @@ Environment variables: `RTRS_PORT` (default 8080), `RTRS_DB` (default `rtrs.db`)
 - `GET /api/bookings/{id}/cancellation` previews eligibility and refund; `PUT /api/bookings/{id}/cancel` (also supported as `POST`) confirms cancellation and returns the updated ticket. Both actions require the booking owner's active session. Unknown bookings and other passengers' bookings return the same 404 response.
 
 Docker: `docker build -t rtrs . && docker run -p 8080:8080 rtrs`
+
+### Secure transport
+Set `RTRS_TLS_CERT` and `RTRS_TLS_KEY` to PEM certificate and private-key files to serve HTTPS directly (both are required together):
+
+```bash
+RTRS_TLS_CERT=/etc/rtrs/server.crt RTRS_TLS_KEY=/etc/rtrs/server.key ./build/rtrs_server
+```
+
+Without these variables the service listens over HTTP and should run behind a TLS-terminating reverse proxy. Such a proxy should forward `X-Forwarded-Proto: https`, which makes the server add `Strict-Transport-Security`. Every response also includes `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, and `Referrer-Policy: no-referrer` (RTS-SR-003 / TC-SEC-04).
+
+### Performance
+Search, availability, and booking inventory lookups use dedicated SQLite indexes (case-insensitive station lookup, train classes, seat reservations, and bookings by train/date/class/status). The `PerformanceApi.P90SearchLatencyStaysUnderThreeSeconds` test exercises concurrent search requests and asserts the 90th percentile stays below the 3-second requirement (RTS-NF-001 / TC-PERF-01).
+
+Seat allocation runs in `BEGIN IMMEDIATE` transactions with a busy timeout, so competing writers wait and re-check inventory atomically. A database trigger additionally rejects any duplicate seat for the same train, date, and class. `ConcurrencyApi.ConcurrentBookingsAllocateEachSeatOnlyOnce` verifies that simultaneous confirmations never double-allocate a seat (RTS-NF-002 / TC-CONC-01).
+
+All API failures return JSON with a human-readable `error` and, where relevant, field-level messages. Unknown routes, unsupported methods, oversized payloads (over 64 KB), malformed JSON, and unexpected failures use generic messages; database, stack-trace, and credential details are never included in responses (RTS-NF-003 / TC-ERR-01).
+
+### Input validation
+All API input is validated server-side before use: request bodies must be JSON objects under 64 KB, names/stations/class labels use explicit character whitelists and length limits, dates and times must be real calendar values, travel classes and sort fields are enumerated, and numeric identifiers are bounded in route patterns. Passwords reject ASCII control characters. All SQL uses bound parameters. Script-like, injection-style, malformed, and wrong-typed values are rejected with field-level messages (RTS-SR-004 / TC-SEC-05).
+
+### Logging
+Access logs contain a UTC timestamp, HTTP method, path (the query string is dropped), status code, and remote address. Request bodies and headers are never logged. Passwords, tokens, API keys, and `Bearer` credentials are redacted, and control characters are stripped from logged paths before writing, so client input cannot forge log entries (RTS-SR-005 / TC-SEC-06).
+
+### Passwords and access control
+Passwords are stored only as PBKDF2-HMAC-SHA256 hashes with a random 16-byte salt and at least 100,000 iterations (default 600,000). A successful login transparently rehashes older or weaker stored hashes (RTS-NF-005 / RTS-SR-001). Session tokens are random, returned once, and stored only as SHA-256 hashes; sessions expire after 24 hours. Administrator access is re-checked from the current database role on every admin request, so role changes take effect immediately. Changing a password revokes every other session for that account (RTS-NF-006 / RTS-SR-002).
 
 ## Workflow
 ### Administrator access
@@ -45,6 +70,9 @@ The admin screen lists train records and provides a form for adding a train with
 - `POST /api/admin/trains` creates a train, stops, fares, and seat capacities in one transaction.
 - `PUT /api/admin/trains/{id}` replaces a train's details, ordered stops, and classes atomically. Existing booking fares and reservations are preserved. Referenced classes cannot be removed, and capacity cannot be reduced below reserved quantities or existing assigned seat numbers; these conflicts return 409.
 - `PUT /api/admin/trains/{id}/deactivate` deactivates the whole service and its schedule without deleting records. Inactive trains disappear from passenger search, schedule, fare, and availability endpoints and reject new bookings (including stale previews). Existing tickets, history, and eligible cancellations remain available. Repeating deactivation is safe; editing an inactive record does not reactivate it.
+- `GET /api/admin/audit?limit=100` returns the newest audit events first (`limit` 1-500, default 100).
+
+Booking and cancellation events are written to the append-only `audit_events` table in the same database transaction as the reservation change. Each event stores the timestamp, event type, user, booking, train, PNR, and cancellation refund amount. Audit records never contain passwords, session tokens, or passenger personal details.
 
 Train payloads contain `number` (five-digit string), `name`, `stops`, and `classes`. Each stop has `station`, `arrival`, `departure` (HH:MM), and integer `dayOffset` (0-30). Leave the origin arrival and destination departure blank. Stops must be chronological; increase the day offset for overnight journeys. Each class has `code` (`SL`, `3A`, `2A`, `1A`, `CC`, `EC`), `name`, integer `fare` (1-1000000 rupees), and integer `totalSeats` (1-10000). Validation errors are indexed by row, such as `stops.1.arrival`; duplicate train numbers return 409.
 

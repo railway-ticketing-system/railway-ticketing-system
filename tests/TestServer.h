@@ -22,6 +22,7 @@ public:
     }
     httplib::Client& client() { return *client_; }
     rtrs::Database& db() { return db_; }
+    int port() const { return port_; }
 
 private:
     rtrs::Database db_;

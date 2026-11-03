@@ -9,6 +9,10 @@ using FieldErrors = std::map<std::string, std::string>;
 
 std::string trim(const std::string& s);
 
+// Rejects ASCII control characters (including NUL, newlines and tabs) so
+// user-supplied text cannot smuggle terminal or log control sequences.
+bool hasControlChars(const std::string& s);
+
 bool isValidName(const std::string& name);      // 2-60 chars: letters, spaces, . ' -
 bool isValidEmail(const std::string& email);    // simple RFC-5322 subset, max 254 chars
 bool isValidPhone(const std::string& phone);    // 10 digits starting with 6-9

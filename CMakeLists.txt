@@ -30,8 +30,10 @@ list(FILTER RTRS_SOURCES EXCLUDE REGEX ".*/main\\.cpp$")
 
 add_library(rtrs_core STATIC ${RTRS_SOURCES})
 target_include_directories(rtrs_core PUBLIC src)
+# RTS-SR-003: enable cpp-httplib's TLS support in the server binary.
+target_compile_definitions(rtrs_core PUBLIC CPPHTTPLIB_OPENSSL_SUPPORT)
 target_link_libraries(rtrs_core PUBLIC sqlite3 nlohmann_json::nlohmann_json
-                      httplib::httplib OpenSSL::Crypto Threads::Threads ${CMAKE_DL_LIBS})
+                      httplib::httplib OpenSSL::Crypto OpenSSL::SSL Threads::Threads ${CMAKE_DL_LIBS})
 target_compile_options(rtrs_core PRIVATE -Wall -Wextra -Wpedantic)
 
 if(RTRS_COVERAGE)

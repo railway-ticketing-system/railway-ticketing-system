@@ -306,7 +306,8 @@ TEST(BookingCancelSecurityApi, ServiceEnforcesOwnerInsideCancellationTransaction
     auto token = test::registerAndLogin(s);
     auto booking = createBooking(s, token, trainId, 3);
     TrainService trains(s.db());
-    BookingService bookings(s.db(), trains);
+    AuditService audit(s.db());
+    BookingService bookings(s.db(), trains, audit);
     auto result = bookings.cancel(booking["id"], 9999);
     EXPECT_FALSE(result.ok);
     EXPECT_EQ(result.conflict, "not_found");

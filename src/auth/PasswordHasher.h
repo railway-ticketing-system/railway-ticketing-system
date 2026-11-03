@@ -8,11 +8,20 @@ namespace rtrs {
 class PasswordHasher {
 public:
     static constexpr int kDefaultIterations = 600000;
+    static constexpr int kMinIterations = 100000;
+    static constexpr int kMaxIterations = 10000000;
     explicit PasswordHasher(int iterations = kDefaultIterations) : iterations_(iterations) {}
 
     std::string hash(const std::string& password) const;
-    // Constant-time comparison; returns false for malformed stored values.
+    // Constant-time comparison; returns false for malformed or implausibly
+    // expensive stored values.
     bool verify(const std::string& password, const std::string& stored) const;
+
+    // Iteration count encoded in a stored hash, or 0 if it is malformed.
+    int storedIterations(const std::string& stored) const;
+    // True when a successfully verified hash should be replaced: either it is
+    // weaker than this hasher or it is below the accepted security floor.
+    bool needsRehash(const std::string& stored) const;
 
 private:
     int iterations_;

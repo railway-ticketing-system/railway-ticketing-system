@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "db/Database.h"
+#include "services/AuditService.h"
 #include "services/TrainService.h"
 #include "util/Validation.h"
 
@@ -74,8 +75,8 @@ struct CancellationQuote {
 
 class BookingService {
 public:
-    BookingService(Database& db, TrainService& trains, CancellationPolicy policy = {})
-        : db_(db), trains_(trains), policy_(policy) {}
+    BookingService(Database& db, TrainService& trains, AuditService& audit, CancellationPolicy policy = {})
+        : db_(db), trains_(trains), audit_(audit), policy_(policy) {}
 
     PreviewResult preview(const BookingInput& input);
     ConfirmResult confirm(const BookingInput& input);
@@ -93,6 +94,7 @@ private:
 
     Database& db_;
     TrainService& trains_;
+    AuditService& audit_;
     CancellationPolicy policy_;
 };
 
