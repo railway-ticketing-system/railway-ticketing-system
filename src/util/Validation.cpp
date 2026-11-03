@@ -12,6 +12,12 @@ std::string trim(const std::string& s) {
     return s.substr(b, e - b);
 }
 
+bool hasControlChars(const std::string& s) {
+    for (unsigned char c : s)
+        if (c < 0x20 || c == 0x7f) return true;
+    return false;
+}
+
 bool isValidName(const std::string& name) {
     if (name.size() < 2 || name.size() > 60) return false;
     bool hasLetter = false;
@@ -36,7 +42,7 @@ bool isValidPhone(const std::string& phone) {
 }
 
 bool isValidPassword(const std::string& pw) {
-    if (pw.size() < 8 || pw.size() > 128) return false;
+    if (pw.size() < 8 || pw.size() > 128 || hasControlChars(pw)) return false;
     bool letter = false, digit = false;
     for (unsigned char c : pw) {
         if (std::isalpha(c)) letter = true;

@@ -311,7 +311,7 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
     });
 
     // RTRS-23 / RTS-F-008
-    server.Get(R"(/api/bookings/([0-9]+))", [auth, bookings](const httplib::Request& req, httplib::Response& res) {
+    server.Get(R"(/api/bookings/([0-9]{1,20}))", [auth, bookings](const httplib::Request& req, httplib::Response& res) {
         auto user = requireUser(*auth, req, res);
         if (!user) return;
         auto booking = bookings->findByPnr(req.matches[1]);
