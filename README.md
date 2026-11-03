@@ -39,6 +39,13 @@ RTRS_DB=rtrs.db ./build/rtrs_server --promote-admin admin@example.com
 ```
 This local command revokes the account's existing sessions. Log in again with its existing credentials; the home screen will show **Manage trains**. Public registration always creates a passenger, regardless of any submitted role. Admin endpoints recheck the current role on every request; there are no default admin credentials.
 
+The admin screen lists train records and provides a form for adding a train with its ordered stops and travel classes. Admin-only APIs:
+- `GET /api/admin/me` checks administrator access.
+- `GET /api/admin/trains` lists full records; `GET /api/admin/trains/{id}` reads one.
+- `POST /api/admin/trains` creates a train, stops, fares, and seat capacities in one transaction.
+
+Train payloads contain `number` (five-digit string), `name`, `stops`, and `classes`. Each stop has `station`, `arrival`, `departure` (HH:MM), and integer `dayOffset` (0-30). Leave the origin arrival and destination departure blank. Stops must be chronological; increase the day offset for overnight journeys. Each class has `code` (`SL`, `3A`, `2A`, `1A`, `CC`, `EC`), `name`, integer `fare` (1-1000000 rupees), and integer `totalSeats` (1-10000). Validation errors are indexed by row, such as `stops.1.arrival`; duplicate train numbers return 409.
+
 1. Developer works on one feature branch per Jira story (e.g. `RTRS-9-user-registration`), one commit per story.
 2. Pull request into `test`; CI must be green.
 3. Tester verifies on `test`, then merges `test` into `main`.

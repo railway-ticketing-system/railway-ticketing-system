@@ -144,7 +144,7 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
     auto auth = std::make_shared<AuthService>(db, *users, PasswordHasher(pbkdf2Iterations));
     auto trains = std::make_shared<TrainService>(db);
     auto bookings = std::make_shared<BookingService>(db, *trains, policy);
-    registerAdminRoutes(server, auth);
+    registerAdminRoutes(server, db, auth, trains);
 
     server.set_payload_max_length(64 * 1024);
     // RTS-NF-003: never leak internals in error responses.
