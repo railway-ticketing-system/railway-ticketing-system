@@ -95,6 +95,22 @@ void initSchema(Database& db) {
         " seat_number TEXT NOT NULL"
         ")");
     db.execute("CREATE INDEX IF NOT EXISTS idx_passengers_booking ON passengers (booking_id)");
+    // RTS-NF-002: a seat can belong to at most one confirmed booking for a
+    // train/date/class, even if a future process bypasses the service layer.
+    db.execute(
+        "CREATE TRIGGER IF NOT EXISTS trg_passengers_unique_seat"
+        " BEFORE INSERT ON passengers"
+        " WHEN EXISTS ("
+        "  SELECT 1 FROM passengers p"
+        "  JOIN bookings b ON b.id = p.booking_id"
+        "  JOIN bookings nb ON nb.id = NEW.booking_id"
+        "  WHERE b.status = 'CONFIRMED'"
+        "    AND b.train_id = nb.train_id"
+        "    AND b.travel_date = nb.travel_date"
+        "    AND b.class_code = nb.class_code"
+        "    AND p.seat_number = NEW.seat_number"
+        " )"
+        " BEGIN SELECT RAISE(ABORT, 'seat already allocated'); END");
     db.execute(
         "CREATE TABLE IF NOT EXISTS seat_reservations ("
         " id          INTEGER PRIMARY KEY AUTOINCREMENT,"

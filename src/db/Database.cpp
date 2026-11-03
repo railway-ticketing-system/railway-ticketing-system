@@ -18,6 +18,10 @@ Database::Database(const std::string& path) {
         throw std::runtime_error("cannot open database: " + msg);
     }
     sqlite3_exec(db_, "PRAGMA foreign_keys = ON;", nullptr, nullptr, nullptr);
+    // RTS-NF-002: wait for competing writers instead of failing immediately, and
+    // use WAL so readers and the writer do not block each other.
+    sqlite3_busy_timeout(db_, 5000);
+    sqlite3_exec(db_, "PRAGMA journal_mode = WAL;", nullptr, nullptr, nullptr);
 }
 
 Database::~Database() { sqlite3_close(db_); }
@@ -54,7 +58,9 @@ long long Database::lastInsertId() {
 
 void Database::transaction(const std::function<void()>& fn) {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
-    execute("BEGIN");
+    // Take the write lock up front so seat checks and inserts are atomic even
+    // when several connections share the database file.
+    execute("BEGIN IMMEDIATE");
     try {
         fn();
         execute("COMMIT");

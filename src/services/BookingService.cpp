@@ -222,6 +222,12 @@ ConfirmResult BookingService::confirm(const BookingInput& input) {
         result.conflict = "pnr_unavailable";
         result.errors["booking"] = "Could not generate a PNR. Please try again.";
         return result;
+    } catch (const std::exception& e) {
+        // The unique-seat trigger is the last line of defence for concurrent writers.
+        if (std::string(e.what()).find("seat already allocated") == std::string::npos) throw;
+        result.conflict = "sold_out";
+        result.errors["passengers"] = "Not enough seats are available.";
+        return result;
     }
 
     auto booking = loadBooking(bookingId);

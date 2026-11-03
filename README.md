@@ -34,6 +34,8 @@ Docker: `docker build -t rtrs . && docker run -p 8080:8080 rtrs`
 ### Performance
 Search, availability, and booking inventory lookups use dedicated SQLite indexes (case-insensitive station lookup, train classes, seat reservations, and bookings by train/date/class/status). The `PerformanceApi.P90SearchLatencyStaysUnderThreeSeconds` test exercises concurrent search requests and asserts the 90th percentile stays below the 3-second requirement (RTS-NF-001 / TC-PERF-01).
 
+Seat allocation runs in `BEGIN IMMEDIATE` transactions with a busy timeout, so competing writers wait and re-check inventory atomically. A database trigger additionally rejects any duplicate seat for the same train, date, and class. `ConcurrencyApi.ConcurrentBookingsAllocateEachSeatOnlyOnce` verifies that simultaneous confirmations never double-allocate a seat (RTS-NF-002 / TC-CONC-01).
+
 ## Workflow
 ### Administrator access
 Register an ordinary account first, then grant it the admin role from the server host:
