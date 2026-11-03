@@ -193,10 +193,24 @@ function homeView(user) {
   view.querySelector('#search-btn').addEventListener('click', () => show('search', user));
   view.querySelector('#bookings-btn').addEventListener('click', () => show('bookings', user));
   view.querySelector('#profile-btn').addEventListener('click', () => show('profile', user));
+  if (user.role === 'ADMIN') {
+    const admin = el('<button type="button">Manage trains</button>');
+    admin.addEventListener('click', () => show('admin', user));
+    view.querySelector('#logout').before(admin);
+  }
   view.querySelector('#logout').addEventListener('click', async () => {
     await api('POST', '/api/auth/logout');
     session.token = null;  // clear locally even if the server already dropped the session
     show('login');
+  });
+  return view;
+}
+
+function adminView(user) {
+  const view = el('<div class="card"><h2>Train administration</h2><div id="admin-content">Checking access...</div><button type="button" class="secondary">Back</button></div>');
+  view.querySelector('button').addEventListener('click', () => show('home', user));
+  api('GET', '/api/admin/me').then((r) => {
+    view.querySelector('#admin-content').textContent = r.ok ? 'Administrator access verified.' : r.data.error;
   });
   return view;
 }
@@ -650,6 +664,7 @@ function show(name, data) {
     profile: () => profileView(data),
     search: () => searchView(data),
     bookings: () => bookingsView(data),
+    admin: () => adminView(data),
     ticket: () => ticketView(data),
   };
   app.replaceChildren(views[name]());

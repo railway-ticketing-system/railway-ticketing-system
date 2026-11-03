@@ -1,4 +1,6 @@
 #include "api/Routes.h"
+#include "api/AdminRoutes.h"
+#include "api/Authorization.h"
 
 #include <nlohmann/json.hpp>
 #include <memory>
@@ -40,20 +42,6 @@ bool parseBody(const httplib::Request& req, httplib::Response& res, json& out) {
 std::string str(const json& j, const char* key) {
     auto it = j.find(key);
     return (it != j.end() && it->is_string()) ? it->get<std::string>() : std::string();
-}
-
-// Extracts the token from "Authorization: Bearer <token>"; empty if absent or malformed.
-std::string bearerToken(const httplib::Request& req) {
-    const std::string prefix = "Bearer ";
-    std::string h = req.get_header_value("Authorization");
-    return h.rfind(prefix, 0) == 0 ? h.substr(prefix.size()) : std::string();
-}
-
-// Resolves the caller from the bearer token; writes a 401 and returns nullopt if not logged in.
-std::optional<User> requireUser(AuthService& auth, const httplib::Request& req, httplib::Response& res) {
-    auto u = auth.authenticate(bearerToken(req));
-    if (!u) sendError(res, 401, "You are not logged in.");
-    return u;
 }
 
 json userJson(const User& u) {
@@ -156,6 +144,7 @@ void registerRoutes(httplib::Server& server, Database& db, int pbkdf2Iterations,
     auto auth = std::make_shared<AuthService>(db, *users, PasswordHasher(pbkdf2Iterations));
     auto trains = std::make_shared<TrainService>(db);
     auto bookings = std::make_shared<BookingService>(db, *trains, policy);
+    registerAdminRoutes(server, auth);
 
     server.set_payload_max_length(64 * 1024);
     // RTS-NF-003: never leak internals in error responses.

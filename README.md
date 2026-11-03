@@ -32,6 +32,13 @@ Environment variables: `RTRS_PORT` (default 8080), `RTRS_DB` (default `rtrs.db`)
 Docker: `docker build -t rtrs . && docker run -p 8080:8080 rtrs`
 
 ## Workflow
+### Administrator access
+Register an ordinary account first, then grant it the admin role from the server host:
+```bash
+RTRS_DB=rtrs.db ./build/rtrs_server --promote-admin admin@example.com
+```
+This local command revokes the account's existing sessions. Log in again with its existing credentials; the home screen will show **Manage trains**. Public registration always creates a passenger, regardless of any submitted role. Admin endpoints recheck the current role on every request; there are no default admin credentials.
+
 1. Developer works on one feature branch per Jira story (e.g. `RTRS-9-user-registration`), one commit per story.
 2. Pull request into `test`; CI must be green.
 3. Tester verifies on `test`, then merges `test` into `main`.

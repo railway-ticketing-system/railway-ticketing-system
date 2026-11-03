@@ -3,14 +3,35 @@
 
 #include "api/Routes.h"
 #include "db/Database.h"
+#include "db/Schema.h"
+#include "services/UserService.h"
 
-int main() {
+int main(int argc, char* argv[]) {
     const char* dbPath = std::getenv("RTRS_DB");
     const char* portEnv = std::getenv("RTRS_PORT");
     int port = portEnv ? std::atoi(portEnv) : 8080;
 
     try {
         rtrs::Database db(dbPath ? dbPath : "rtrs.db");
+        if (argc != 1) {
+            if (argc != 3 || std::string(argv[1]) != "--promote-admin") {
+                std::cerr << "Usage: rtrs_server [--promote-admin EMAIL]" << std::endl;
+                return 1;
+            }
+            rtrs::initSchema(db);
+            rtrs::UserService users(db, rtrs::PasswordHasher{});
+            auto account = users.findCredentials(argv[2]);
+            if (!account) {
+                std::cerr << "Account not found. Register the administrator's account first." << std::endl;
+                return 1;
+            }
+            db.transaction([&] {
+                db.execute("UPDATE users SET role = 'ADMIN' WHERE id = ?", {std::to_string(account->first.id)});
+                db.execute("DELETE FROM sessions WHERE user_id = ?", {std::to_string(account->first.id)});
+            });
+            std::cout << "Administrator access granted. Log in again to continue." << std::endl;
+            return 0;
+        }
         httplib::Server server;
         server.set_mount_point("/", std::getenv("RTRS_WEB_DIR") ? std::getenv("RTRS_WEB_DIR") : "web");
 
