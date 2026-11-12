@@ -24,5 +24,6 @@ def main():
   for f in cov['files']:s+=f"| `{f['filename']}` | {f[kind+'_covered']} | {f[kind+'_total']} | {f[kind+'_percent'] if f[kind+'_percent'] is not None else 'N/A'} |\n"
   s+='\n## Follow up\n\nPrioritize untested error and rollback paths visible in the HTML report. A passing test suite is not equivalent to complete branch coverage.\n'
   (OUT/('Code_Coverage_Report.md' if kind=='line' else 'Branch_Coverage_Report.md')).write_text(s)
+ (OUT/'branch-coverage.txt').write_text(f"GCC/gcov branch coverage: {cov['branch_covered']} / {cov['branch_total']} ({cov['branch_percent']}%)\nScope: src/ excluding src/main.cpp; compiler exception/cleanup branches included.\n")
  print(f"Reports generated: {root.get('tests')} tests; line {cov['line_percent']}%; branch {cov['branch_percent']}%")
 if __name__=='__main__':main()

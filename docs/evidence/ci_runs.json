@@ -1,0 +1,242 @@
+[
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-09T10:51:04Z",
+    "databaseId": 42604246430,
+    "headSha": "fb1b4d55957ab8022e136396d656bec870c08375",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/42604246430",
+    "workflowName": "CodeQL security scan"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T13:02:32Z",
+    "databaseId": 41640804787,
+    "headSha": "fb1b4d55957ab8022e136396d656bec870c08375",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41640804787",
+    "workflowName": "CD"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T13:02:32Z",
+    "databaseId": 41640804703,
+    "headSha": "fb1b4d55957ab8022e136396d656bec870c08375",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41640804703",
+    "workflowName": "CI"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T13:02:32Z",
+    "databaseId": 41640804672,
+    "headSha": "fb1b4d55957ab8022e136396d656bec870c08375",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41640804672",
+    "workflowName": "CodeQL security scan"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T12:57:12Z",
+    "databaseId": 41640042606,
+    "headSha": "6b5464298c949806ebba0b7bd1d903c962b5255d",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41640042606",
+    "workflowName": "CodeQL security scan"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T12:57:12Z",
+    "databaseId": 41640042431,
+    "headSha": "6b5464298c949806ebba0b7bd1d903c962b5255d",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41640042431",
+    "workflowName": "CI"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T12:54:45Z",
+    "databaseId": 41639702028,
+    "headSha": "6b5464298c949806ebba0b7bd1d903c962b5255d",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41639702028",
+    "workflowName": "CodeQL security scan"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T12:54:45Z",
+    "databaseId": 41639702021,
+    "headSha": "6b5464298c949806ebba0b7bd1d903c962b5255d",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41639702021",
+    "workflowName": "CI"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T12:47:11Z",
+    "databaseId": 41638637250,
+    "headSha": "760c5c1c6fc051ed0f03c943374d02b83fc06405",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41638637250",
+    "workflowName": "CodeQL security scan"
+  },
+  {
+    "conclusion": "failure",
+    "createdAt": "2026-11-03T12:47:11Z",
+    "databaseId": 41638637222,
+    "headSha": "760c5c1c6fc051ed0f03c943374d02b83fc06405",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41638637222",
+    "workflowName": "CI"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T12:47:09Z",
+    "databaseId": 41638633052,
+    "headSha": "3bd89dd1dd8fdce680793bec02f50244ed5693f1",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41638633052",
+    "workflowName": "CodeQL security scan"
+  },
+  {
+    "conclusion": "failure",
+    "createdAt": "2026-11-03T12:47:09Z",
+    "databaseId": 41638633041,
+    "headSha": "3bd89dd1dd8fdce680793bec02f50244ed5693f1",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41638633041",
+    "workflowName": "CI"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T12:47:07Z",
+    "databaseId": 41638628679,
+    "headSha": "a8351cfb5a4ede729300e3bc145e42f4d1d0fca1",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41638628679",
+    "workflowName": "CI"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T12:47:07Z",
+    "databaseId": 41638628660,
+    "headSha": "a8351cfb5a4ede729300e3bc145e42f4d1d0fca1",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41638628660",
+    "workflowName": "CodeQL security scan"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T12:47:05Z",
+    "databaseId": 41638623662,
+    "headSha": "2b57f358c646a1c59b51978585b6f4f958609a36",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41638623662",
+    "workflowName": "CodeQL security scan"
+  },
+  {
+    "conclusion": "failure",
+    "createdAt": "2026-11-03T12:47:05Z",
+    "databaseId": 41638623619,
+    "headSha": "2b57f358c646a1c59b51978585b6f4f958609a36",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41638623619",
+    "workflowName": "CI"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T12:47:03Z",
+    "databaseId": 41638619467,
+    "headSha": "05e5fa6c4eda4760cf389614db9b3760691edafc",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41638619467",
+    "workflowName": "CodeQL security scan"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T12:47:03Z",
+    "databaseId": 41638619428,
+    "headSha": "05e5fa6c4eda4760cf389614db9b3760691edafc",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41638619428",
+    "workflowName": "CI"
+  },
+  {
+    "conclusion": "failure",
+    "createdAt": "2026-11-03T12:47:01Z",
+    "databaseId": 41638614757,
+    "headSha": "b2dde09dea4a99c44bcc75fc004d46b50d162b5b",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41638614757",
+    "workflowName": "CI"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T12:47:01Z",
+    "databaseId": 41638614706,
+    "headSha": "b2dde09dea4a99c44bcc75fc004d46b50d162b5b",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41638614706",
+    "workflowName": "CodeQL security scan"
+  },
+  {
+    "conclusion": "failure",
+    "createdAt": "2026-11-03T12:46:59Z",
+    "databaseId": 41638609704,
+    "headSha": "a34e76768761287133fa35f9ea9b84707739a3dc",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41638609704",
+    "workflowName": "CI"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T12:46:59Z",
+    "databaseId": 41638609690,
+    "headSha": "a34e76768761287133fa35f9ea9b84707739a3dc",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41638609690",
+    "workflowName": "CodeQL security scan"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T12:46:57Z",
+    "databaseId": 41638605066,
+    "headSha": "8f4d9572ea61c90bf6a2c7fa3d8d4aa69c855468",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41638605066",
+    "workflowName": "CodeQL security scan"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T12:46:57Z",
+    "databaseId": 41638604950,
+    "headSha": "8f4d9572ea61c90bf6a2c7fa3d8d4aa69c855468",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41638604950",
+    "workflowName": "CI"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T12:05:52Z",
+    "databaseId": 41632846730,
+    "headSha": "a32c6e66aa73c266401ba8c60f39206353c7b78b",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41632846730",
+    "workflowName": "CodeQL security scan"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T12:05:52Z",
+    "databaseId": 41632846704,
+    "headSha": "a32c6e66aa73c266401ba8c60f39206353c7b78b",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41632846704",
+    "workflowName": "CD"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T12:05:52Z",
+    "databaseId": 41632846664,
+    "headSha": "a32c6e66aa73c266401ba8c60f39206353c7b78b",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41632846664",
+    "workflowName": "CI"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T12:02:00Z",
+    "databaseId": 41632313149,
+    "headSha": "dbf0b23137bc0f34ed73e5adcada4b3f7f807712",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41632313149",
+    "workflowName": "CI"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T12:01:59Z",
+    "databaseId": 41632312946,
+    "headSha": "dbf0b23137bc0f34ed73e5adcada4b3f7f807712",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41632312946",
+    "workflowName": "CodeQL security scan"
+  },
+  {
+    "conclusion": "success",
+    "createdAt": "2026-11-03T06:16:49Z",
+    "databaseId": 41588886284,
+    "headSha": "dbf0b23137bc0f34ed73e5adcada4b3f7f807712",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/actions/runs/41588886284",
+    "workflowName": "CodeQL security scan"
+  }
+]

@@ -1,0 +1,2 @@
+GCC/gcov branch coverage: 3162 / 6778 (46.7%)
+Scope: src/ excluding src/main.cpp; compiler exception/cleanup branches included.
