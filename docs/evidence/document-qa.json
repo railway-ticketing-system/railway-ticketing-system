@@ -1,0 +1,51 @@
+{
+  "review_date": "2026-11-12",
+  "method": "LibreOffice DOCX render; page PNG inspection; Poppler text boundary check; SHA256 of final PDFs",
+  "files": [
+    {
+      "file": "docs/Railway_Ticket_Reservation_System_SRS.pdf",
+      "sha256": "dc0a805b2cc140cff4228d5fefb7ee7d6a1e49d6a9aa97136c67aeaa93729a66",
+      "pages": 9,
+      "words_outside_page_safety_margin": []
+    },
+    {
+      "file": "docs/Railway_Ticket_Reservation_System_SAD_Final.pdf",
+      "sha256": "8a394dd91c9d6dc96409821ece6e931e107d8194b28a6a992ffca31f6ff8c20b",
+      "pages": 8,
+      "words_outside_page_safety_margin": []
+    },
+    {
+      "file": "docs/Railway_Ticket_Reservation_System_Test_Plan_Final.pdf",
+      "sha256": "d95f1f979d924aeb56cc64bd7fa257232b94b39b58f0bda05065f3fb15843980",
+      "pages": 17,
+      "words_outside_page_safety_margin": []
+    },
+    {
+      "file": "docs/reports/Unit_Test_Report.pdf",
+      "sha256": "35eac2c5258fa6bb5afd60251c6b171b7e4cc29a74f929a0e4f9a9f4e76bae47",
+      "pages": 2,
+      "words_outside_page_safety_margin": []
+    },
+    {
+      "file": "docs/reports/System_Validation_Report.pdf",
+      "sha256": "47f13959473ad753537b5001294ee3aae9e1b1070aaedfc63be3c1549fc2c03f",
+      "pages": 4,
+      "words_outside_page_safety_margin": []
+    },
+    {
+      "file": "docs/reports/Code_Coverage_Report.pdf",
+      "sha256": "3f59feba6c85bdf79e953380581ad7efde214b540ff281b5a5d039e5e5e7ff26",
+      "pages": 1,
+      "words_outside_page_safety_margin": []
+    },
+    {
+      "file": "docs/reports/Branch_Coverage_Report.pdf",
+      "sha256": "789f2b1522fe98fb1c0a757672689a9fec895f60e9dcdea551c62298540ad073",
+      "pages": 1,
+      "words_outside_page_safety_margin": []
+    }
+  ],
+  "source_requirements": 31,
+  "detailed_cases": 46,
+  "scope": "Document consistency/layout, not human course acceptance"
+}

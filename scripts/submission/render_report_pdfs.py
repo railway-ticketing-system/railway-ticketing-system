@@ -16,10 +16,10 @@ pdfmetrics.registerFontFamily('DejaVu',normal='DejaVu',bold='DejaVu-Bold',italic
 styles=getSampleStyleSheet()
 for name in ['Normal','Title','Heading1','Heading2','Heading3']:
  styles[name].fontName='DejaVu';styles[name].textColor=colors.HexColor('#182b43')
-styles['Normal'].fontSize=9;styles['Normal'].leading=13;styles['Normal'].spaceAfter=7
+styles['Normal'].fontSize=9;styles['Normal'].leading=13;styles['Normal'].spaceAfter=6
 styles['Title'].fontSize=21;styles['Title'].leading=26
 styles['Heading2'].fontSize=13;styles['Heading2'].leading=17;styles['Heading2'].spaceBefore=12
-styles.add(ParagraphStyle(name='Cell',fontName='DejaVu',fontSize=7.6,leading=9.5,splitLongWords=True))
+styles.add(ParagraphStyle(name='Cell',fontName='DejaVu',fontSize=7.6,leading=9.2,splitLongWords=True))
 styles.add(ParagraphStyle(name='CodeSmall',fontName='DejaVu',fontSize=7.5,leading=10,splitLongWords=True))
 def inline(s):
  s=html.escape(s)
@@ -45,7 +45,7 @@ def render(path):
    elif n==4:widths=[width*.61,width*.13,width*.13,width*.13]
    else:widths=[width/n]*n
    table=LongTable([[Paragraph(inline(x),styles['Cell']) for x in r] for r in rows],colWidths=widths,repeatRows=1,hAlign='LEFT')
-   table.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),colors.HexColor('#e8eef5')),('VALIGN',(0,0),(-1,-1),'TOP'),('LINEBELOW',(0,0),(-1,0),.5,colors.HexColor('#8396ad')),('ROWBACKGROUNDS',(0,1),(-1,-1),[colors.white,colors.HexColor('#f5f7fa')]),('BOTTOMPADDING',(0,0),(-1,-1),3.5),('TOPPADDING',(0,0),(-1,-1),3.5)]));story+=[table,Spacer(1,10)];continue
+   table.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),colors.HexColor('#e8eef5')),('VALIGN',(0,0),(-1,-1),'TOP'),('LINEBELOW',(0,0),(-1,0),.5,colors.HexColor('#8396ad')),('ROWBACKGROUNDS',(0,1),(-1,-1),[colors.white,colors.HexColor('#f5f7fa')]),('BOTTOMPADDING',(0,0),(-1,-1),2),('TOPPADDING',(0,0),(-1,-1),2)]));story+=[table,Spacer(1,10)];continue
   if s.startswith('# '):story.append(Paragraph(inline(s[2:]),styles['Title']))
   elif s.startswith('## '):story.append(Paragraph(inline(s[3:]),styles['Heading2']))
   elif s.startswith('### '):story.append(Paragraph(inline(s[4:]),styles['Heading3']))

@@ -1,6 +1,6 @@
 # Implementation deviations and evidence limits
 
-Recorded 2026-11-12 from README, extracted SRS/PDF and SAD/STP DOCX text, source, local Git and read-only GitHub metadata. This record supplements the originals without editing or backdating them. It does not approve deviations or certify acceptance.
+Recorded 2026-11-12 from README, extracted SRS/PDF and SAD/STP DOCX text, source, local Git and read-only GitHub metadata. This record accompanies the version 2 document updates; the original baselines remain in Git history. It does not approve deviations or certify acceptance.
 
 ## Baseline and dates
 
@@ -46,7 +46,7 @@ Neither real railway backend integration nor production payment settlement is pr
 
 ## Test and coverage evidence boundaries
 
-Updated 2026-11-12 with fresh verification performed by the parent workflow. The earlier statement that no build/tests/coverage had been performed is superseded by the reports below. The fresh `build-submission` build used CMake Debug, `RTRS_COVERAGE=ON`, GCC 16.2.1 (Red Hat 16.2.1-3) and gcovr 8.8 against application source `6b5464298c949806ebba0b7bd1d903c962b5255d`. Report generation timestamp: 2026-11-12T16:45:25.898236+00:00. Compilation of the main executable introduces no application change.
+Updated 2026-11-12 with fresh local verification. The fresh `build-submission` build used CMake Debug, `RTRS_COVERAGE=ON`, GCC 16.2.1 (Red Hat 16.2.1-3) and gcovr 8.8 against application source `6b5464298c949806ebba0b7bd1d903c962b5255d`. Report generation timestamp: 2026-11-12T16:45:25.898236+00:00. Compilation of the main executable introduces no application change.
 
 | Fresh verification | Recorded result | Evidence |
 |---|---|---|

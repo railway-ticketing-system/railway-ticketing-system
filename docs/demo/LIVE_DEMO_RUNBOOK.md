@@ -1,6 +1,6 @@
 # Final live demo runbook
 
-Prepared 2026-11-12 by repository inspection. Implementation baseline: `6b5464298c949806ebba0b7bd1d903c962b5255d`, branch `deliverables/final-submission`. “Final” describes this runbook's intended use, not acceptance or a successful rehearsal. Fresh parent-workflow build, test, system and selected browser evidence is linked below. The steps remain a repeatable presenter procedure; no recording or human acceptance is claimed.
+Prepared 2026-11-12 by repository inspection. Implementation baseline: `6b5464298c949806ebba0b7bd1d903c962b5255d`, branch `deliverables/final-submission`. “Final” describes this runbook's intended use, not acceptance or a successful rehearsal. Fresh local build, test, system and selected browser evidence is linked below. The steps remain a repeatable presenter procedure; no recording or human acceptance is claimed.
 
 ## Current verification evidence (2026-11-12)
 
