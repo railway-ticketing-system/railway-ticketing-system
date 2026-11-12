@@ -1,0 +1,6340 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-11-12T16:49:13.470921+00:00",
+  "sourceSha": "6b5464298c949806ebba0b7bd1d903c962b5255d",
+  "sourceStatus": "M .github/workflows/ci.yml\n?? docs/DEVIATIONS.md\n?? docs/demo/\n?? docs/diagrams/\n?? docs/evidence/\n?? docs/planning/\n?? docs/reports/\n?? scripts/",
+  "binary": "/home/deeptanshukumar/Downloads/SE-Railway Ticket Reservation System/build-submission/rtrs_server",
+  "environment": {
+    "platform": "Linux-7.2.14-200.fc44.x86_64-x86_64-with-glibc2.43",
+    "python": "3.13.13 | packaged by Anaconda, Inc. | (main, Apr 14 2026, 06:19:41) [GCC 14.3.0]",
+    "sqlite": "3.51.2",
+    "openssl": "OpenSSL 3.6.3 9 Jun 2026",
+    "cpuCount": 18,
+    "timezone": [
+      "IST",
+      "IST"
+    ]
+  },
+  "methodology": {
+    "isolation": "Fresh TemporaryDirectory under /tmp, dedicated SQLite DB; inherited RTRS_* settings removed; ephemeral ports; no production DB",
+    "transport": "Actual server subprocess and localhost HTTP/HTTPS sockets; no mocks",
+    "load": "20 search + 20 two-passenger bookings, separately, four concurrent clients, fresh connection per request, nearest-rank p90 <3 seconds each; connection through full response latency",
+    "recovery": "Controlled restart and abrupt process kill/relaunch after committed writes, same database plus read-only SQLite integrity check; not power-loss or interrupted-transaction durability",
+    "credentials": "Random runtime password; request bodies and auth headers never logged by runner; response secrets redacted",
+    "limits": [
+      "Small local load only; no sustained stress or internet latency conclusions",
+      "TLS uses a temporary self-signed trust anchor; does not validate production certificates",
+      "Admin audit API records booking events; train changes verified via read-back and restart",
+      "No UI, screenshot, coverage or unit-test results claimed by this independent runner"
+    ]
+  },
+  "binarySha256": "8437a1bb68a34e759244665e3c4deb2e565bc843e6ba2d53e46cd6e2a724f451",
+  "binaryMtimeUtc": "2026-11-12T16:41:38.210995+00:00",
+  "steps": [
+    {
+      "name": "Start HTTP server",
+      "timestamp": "2026-11-12T16:49:13.601322+00:00",
+      "expected": "Healthy isolated process within 15 seconds",
+      "actual": {
+        "port": 55969,
+        "pid": 714854,
+        "tls": false
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Register owner@example.test",
+      "timestamp": "2026-11-12T16:49:13.675946+00:00",
+      "expected": {
+        "httpStatus": 201
+      },
+      "actual": {
+        "httpStatus": 201,
+        "body": {
+          "user": {
+            "createdAt": "2026-11-12T16:49:13Z",
+            "email": "owner@example.test",
+            "id": 1,
+            "name": "System Passenger",
+            "phone": "9876543210",
+            "role": "PASSENGER"
+          }
+        },
+        "elapsedSeconds": 0.07447866999427788
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Registration cannot assign admin: owner@example.test",
+      "timestamp": "2026-11-12T16:49:13.675986+00:00",
+      "expected": "PASSENGER",
+      "actual": "PASSENGER",
+      "status": "PASS"
+    },
+    {
+      "name": "Register other@example.test",
+      "timestamp": "2026-11-12T16:49:13.746561+00:00",
+      "expected": {
+        "httpStatus": 201
+      },
+      "actual": {
+        "httpStatus": 201,
+        "body": {
+          "user": {
+            "createdAt": "2026-11-12T16:49:13Z",
+            "email": "other@example.test",
+            "id": 2,
+            "name": "System Passenger",
+            "phone": "9876543210",
+            "role": "PASSENGER"
+          }
+        },
+        "elapsedSeconds": 0.07047489700198639
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Registration cannot assign admin: other@example.test",
+      "timestamp": "2026-11-12T16:49:13.746618+00:00",
+      "expected": "PASSENGER",
+      "actual": "PASSENGER",
+      "status": "PASS"
+    },
+    {
+      "name": "Register admin@example.test",
+      "timestamp": "2026-11-12T16:49:13.819242+00:00",
+      "expected": {
+        "httpStatus": 201
+      },
+      "actual": {
+        "httpStatus": 201,
+        "body": {
+          "user": {
+            "createdAt": "2026-11-12T16:49:13Z",
+            "email": "admin@example.test",
+            "id": 3,
+            "name": "System Passenger",
+            "phone": "9876543210",
+            "role": "PASSENGER"
+          }
+        },
+        "elapsedSeconds": 0.07252097700256854
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Registration cannot assign admin: admin@example.test",
+      "timestamp": "2026-11-12T16:49:13.819294+00:00",
+      "expected": "PASSENGER",
+      "actual": "PASSENGER",
+      "status": "PASS"
+    },
+    {
+      "name": "Login owner@example.test",
+      "timestamp": "2026-11-12T16:49:13.890277+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "expiresAt": 1794588553,
+          "token": "[REDACTED]",
+          "user": {
+            "createdAt": "2026-11-12T16:49:13Z",
+            "email": "owner@example.test",
+            "id": 1,
+            "name": "System Passenger",
+            "phone": "9876543210",
+            "role": "PASSENGER"
+          }
+        },
+        "elapsedSeconds": 0.07089817599626258
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Login other@example.test",
+      "timestamp": "2026-11-12T16:49:13.959994+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "expiresAt": 1794588553,
+          "token": "[REDACTED]",
+          "user": {
+            "createdAt": "2026-11-12T16:49:13Z",
+            "email": "other@example.test",
+            "id": 2,
+            "name": "System Passenger",
+            "phone": "9876543210",
+            "role": "PASSENGER"
+          }
+        },
+        "elapsedSeconds": 0.0696171119925566
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Login admin@example.test",
+      "timestamp": "2026-11-12T16:49:14.030575+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "expiresAt": 1794588553,
+          "token": "[REDACTED]",
+          "user": {
+            "createdAt": "2026-11-12T16:49:13Z",
+            "email": "admin@example.test",
+            "id": 3,
+            "name": "System Passenger",
+            "phone": "9876543210",
+            "role": "PASSENGER"
+          }
+        },
+        "elapsedSeconds": 0.0704416759981541
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Anonymous profile denied",
+      "timestamp": "2026-11-12T16:49:14.032431+00:00",
+      "expected": {
+        "httpStatus": 401
+      },
+      "actual": {
+        "httpStatus": 401,
+        "body": {
+          "error": "You are not logged in."
+        },
+        "elapsedSeconds": 0.0016534500027773902
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Profile update",
+      "timestamp": "2026-11-12T16:49:14.033925+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "user": {
+            "createdAt": "2026-11-12T16:49:13Z",
+            "email": "owner@example.test",
+            "id": 1,
+            "name": "Updated Passenger",
+            "phone": "9123456780",
+            "role": "PASSENGER"
+          }
+        },
+        "elapsedSeconds": 0.001304849996813573
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Profile read",
+      "timestamp": "2026-11-12T16:49:14.034587+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "user": {
+            "createdAt": "2026-11-12T16:49:13Z",
+            "email": "owner@example.test",
+            "id": 1,
+            "name": "Updated Passenger",
+            "phone": "9123456780",
+            "role": "PASSENGER"
+          }
+        },
+        "elapsedSeconds": 0.0006091040122555569
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Profile update and role protection",
+      "timestamp": "2026-11-12T16:49:14.034609+00:00",
+      "expected": "Updated Passenger, PASSENGER, owner email",
+      "actual": {
+        "createdAt": "2026-11-12T16:49:13Z",
+        "email": "owner@example.test",
+        "id": 1,
+        "name": "Updated Passenger",
+        "phone": "9123456780",
+        "role": "PASSENGER"
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Future Pune to Mumbai search",
+      "timestamp": "2026-11-12T16:49:14.035665+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "count": 2,
+          "date": "2026-11-15",
+          "trains": [
+            {
+              "arrival": "10:45",
+              "departure": "07:15",
+              "destination": "Mumbai CSMT",
+              "durationMinutes": 210,
+              "fromFare": 190,
+              "id": 2,
+              "name": "Deccan Express",
+              "number": "11007",
+              "source": "Pune Jn"
+            },
+            {
+              "arrival": "20:40",
+              "departure": "17:30",
+              "destination": "Mumbai CSMT",
+              "durationMinutes": 190,
+              "fromFare": 520,
+              "id": 3,
+              "name": "Shatabdi Express",
+              "number": "12027",
+              "source": "Pune Jn"
+            }
+          ]
+        },
+        "elapsedSeconds": 0.000995399008388631
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Seeded route results",
+      "timestamp": "2026-11-12T16:49:14.035865+00:00",
+      "expected": "Deccan and Shatabdi trains",
+      "actual": {
+        "count": 2,
+        "date": "2026-11-15",
+        "trains": [
+          {
+            "arrival": "10:45",
+            "departure": "07:15",
+            "destination": "Mumbai CSMT",
+            "durationMinutes": 210,
+            "fromFare": 190,
+            "id": 2,
+            "name": "Deccan Express",
+            "number": "11007",
+            "source": "Pune Jn"
+          },
+          {
+            "arrival": "20:40",
+            "departure": "17:30",
+            "destination": "Mumbai CSMT",
+            "durationMinutes": 190,
+            "fromFare": 520,
+            "id": 3,
+            "name": "Shatabdi Express",
+            "number": "12027",
+            "source": "Pune Jn"
+          }
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Schedule",
+      "timestamp": "2026-11-12T16:49:14.036804+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "stops": [
+            {
+              "arrival": "",
+              "dayOffset": 0,
+              "departure": "07:15",
+              "station": "Pune Jn"
+            },
+            {
+              "arrival": "08:05",
+              "dayOffset": 0,
+              "departure": "08:07",
+              "station": "Lonavala"
+            },
+            {
+              "arrival": "10:45",
+              "dayOffset": 0,
+              "departure": "",
+              "station": "Mumbai CSMT"
+            }
+          ],
+          "train": {
+            "id": 2,
+            "name": "Deccan Express",
+            "number": "11007"
+          }
+        },
+        "elapsedSeconds": 0.0008757320028962567
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Ordered route stops",
+      "timestamp": "2026-11-12T16:49:14.036843+00:00",
+      "expected": [
+        "Pune Jn",
+        "Lonavala",
+        "Mumbai CSMT"
+      ],
+      "actual": [
+        {
+          "arrival": "",
+          "dayOffset": 0,
+          "departure": "07:15",
+          "station": "Pune Jn"
+        },
+        {
+          "arrival": "08:05",
+          "dayOffset": 0,
+          "departure": "08:07",
+          "station": "Lonavala"
+        },
+        {
+          "arrival": "10:45",
+          "dayOffset": 0,
+          "departure": "",
+          "station": "Mumbai CSMT"
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "name": "Seat inventory",
+      "timestamp": "2026-11-12T16:49:14.037770+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "classes": [
+            {
+              "availableSeats": 300,
+              "bookedSeats": 0,
+              "code": "SL",
+              "fare": 190,
+              "name": "Sleeper",
+              "totalSeats": 300
+            },
+            {
+              "availableSeats": 120,
+              "bookedSeats": 0,
+              "code": "CC",
+              "fare": 420,
+              "name": "AC Chair Car",
+              "totalSeats": 120
+            },
+            {
+              "availableSeats": 40,
+              "bookedSeats": 0,
+              "code": "2A",
+              "fare": 780,
+              "name": "AC 2 Tier",
+              "totalSeats": 40
+            }
+          ],
+          "date": "2026-11-15"
+        },
+        "elapsedSeconds": 0.0008699159952811897
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Class fares",
+      "timestamp": "2026-11-12T16:49:14.038547+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "classes": [
+            {
+              "code": "SL",
+              "fare": 190,
+              "name": "Sleeper"
+            },
+            {
+              "code": "CC",
+              "fare": 420,
+              "name": "AC Chair Car"
+            },
+            {
+              "code": "2A",
+              "fare": 780,
+              "name": "AC 2 Tier"
+            }
+          ]
+        },
+        "elapsedSeconds": 0.0007004799990681931
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Fare consistency",
+      "timestamp": "2026-11-12T16:49:14.038578+00:00",
+      "expected": "SL 190 and same availability fare",
+      "actual": [
+        {
+          "code": "SL",
+          "fare": 190,
+          "name": "Sleeper"
+        },
+        {
+          "code": "CC",
+          "fare": 420,
+          "name": "AC Chair Car"
+        },
+        {
+          "code": "2A",
+          "fare": 780,
+          "name": "AC 2 Tier"
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "name": "Booking preview",
+      "timestamp": "2026-11-12T16:49:14.039593+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "preview": {
+            "availableSeats": 300,
+            "class": "SL",
+            "className": "Sleeper",
+            "date": "2026-11-15",
+            "farePerPassenger": 190,
+            "passengerCount": 2,
+            "totalFare": 380,
+            "trainId": 2,
+            "trainName": "Deccan Express",
+            "trainNumber": "11007"
+          }
+        },
+        "elapsedSeconds": 0.0009432200022274628
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Preview fare arithmetic",
+      "timestamp": "2026-11-12T16:49:14.039625+00:00",
+      "expected": 380,
+      "actual": {
+        "availableSeats": 300,
+        "class": "SL",
+        "className": "Sleeper",
+        "date": "2026-11-15",
+        "farePerPassenger": 190,
+        "passengerCount": 2,
+        "totalFare": 380,
+        "trainId": 2,
+        "trainName": "Deccan Express",
+        "trainNumber": "11007"
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Seat inventory",
+      "timestamp": "2026-11-12T16:49:14.040558+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "classes": [
+            {
+              "availableSeats": 300,
+              "bookedSeats": 0,
+              "code": "SL",
+              "fare": 190,
+              "name": "Sleeper",
+              "totalSeats": 300
+            },
+            {
+              "availableSeats": 120,
+              "bookedSeats": 0,
+              "code": "CC",
+              "fare": 420,
+              "name": "AC Chair Car",
+              "totalSeats": 120
+            },
+            {
+              "availableSeats": 40,
+              "bookedSeats": 0,
+              "code": "2A",
+              "fare": 780,
+              "name": "AC 2 Tier",
+              "totalSeats": 40
+            }
+          ],
+          "date": "2026-11-15"
+        },
+        "elapsedSeconds": 0.0008665119967190549
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Seat inventory",
+      "timestamp": "2026-11-12T16:49:14.041507+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "classes": [
+            {
+              "availableSeats": 300,
+              "bookedSeats": 0,
+              "code": "SL",
+              "fare": 190,
+              "name": "Sleeper",
+              "totalSeats": 300
+            },
+            {
+              "availableSeats": 120,
+              "bookedSeats": 0,
+              "code": "CC",
+              "fare": 420,
+              "name": "AC Chair Car",
+              "totalSeats": 120
+            },
+            {
+              "availableSeats": 40,
+              "bookedSeats": 0,
+              "code": "2A",
+              "fare": 780,
+              "name": "AC 2 Tier",
+              "totalSeats": 40
+            }
+          ],
+          "date": "2026-11-15"
+        },
+        "elapsedSeconds": 0.0008599159918958321
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Preview does not reserve",
+      "timestamp": "2026-11-12T16:49:14.041547+00:00",
+      "expected": 300,
+      "actual": 300,
+      "status": "PASS"
+    },
+    {
+      "name": "Create booking",
+      "timestamp": "2026-11-12T16:49:14.043121+00:00",
+      "expected": {
+        "httpStatus": 201
+      },
+      "actual": {
+        "httpStatus": 201,
+        "body": {
+          "booking": {
+            "cancelledAt": "",
+            "class": "SL",
+            "className": "Sleeper",
+            "createdAt": "2026-11-12T16:49:14Z",
+            "date": "2026-11-15",
+            "farePerPassenger": 190,
+            "id": 1,
+            "passengerCount": 2,
+            "passengers": [
+              {
+                "age": 30,
+                "gender": "F",
+                "name": "Asha Rao",
+                "seatNumber": "SL-1"
+              },
+              {
+                "age": 35,
+                "gender": "M",
+                "name": "Ravi Kumar",
+                "seatNumber": "SL-2"
+              }
+            ],
+            "pnr": "6644215281",
+            "refundAmount": 0,
+            "status": "CONFIRMED",
+            "totalFare": 380,
+            "trainId": 2,
+            "trainName": "Deccan Express",
+            "trainNumber": "11007"
+          }
+        },
+        "elapsedSeconds": 0.0015103620098670945
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Confirmed ticket and assigned unique seats",
+      "timestamp": "2026-11-12T16:49:14.043158+00:00",
+      "expected": "CONFIRMED, numeric PNR, 2 unique seats, fare 380",
+      "actual": {
+        "cancelledAt": "",
+        "class": "SL",
+        "className": "Sleeper",
+        "createdAt": "2026-11-12T16:49:14Z",
+        "date": "2026-11-15",
+        "farePerPassenger": 190,
+        "id": 1,
+        "passengerCount": 2,
+        "passengers": [
+          {
+            "age": 30,
+            "gender": "F",
+            "name": "Asha Rao",
+            "seatNumber": "SL-1"
+          },
+          {
+            "age": 35,
+            "gender": "M",
+            "name": "Ravi Kumar",
+            "seatNumber": "SL-2"
+          }
+        ],
+        "pnr": "6644215281",
+        "refundAmount": 0,
+        "status": "CONFIRMED",
+        "totalFare": 380,
+        "trainId": 2,
+        "trainName": "Deccan Express",
+        "trainNumber": "11007"
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Seat inventory",
+      "timestamp": "2026-11-12T16:49:14.043941+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "classes": [
+            {
+              "availableSeats": 298,
+              "bookedSeats": 2,
+              "code": "SL",
+              "fare": 190,
+              "name": "Sleeper",
+              "totalSeats": 300
+            },
+            {
+              "availableSeats": 120,
+              "bookedSeats": 0,
+              "code": "CC",
+              "fare": 420,
+              "name": "AC Chair Car",
+              "totalSeats": 120
+            },
+            {
+              "availableSeats": 40,
+              "bookedSeats": 0,
+              "code": "2A",
+              "fare": 780,
+              "name": "AC 2 Tier",
+              "totalSeats": 40
+            }
+          ],
+          "date": "2026-11-15"
+        },
+        "elapsedSeconds": 0.0007177079969551414
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Seat inventory",
+      "timestamp": "2026-11-12T16:49:14.044750+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "classes": [
+            {
+              "availableSeats": 298,
+              "bookedSeats": 2,
+              "code": "SL",
+              "fare": 190,
+              "name": "Sleeper",
+              "totalSeats": 300
+            },
+            {
+              "availableSeats": 120,
+              "bookedSeats": 0,
+              "code": "CC",
+              "fare": 420,
+              "name": "AC Chair Car",
+              "totalSeats": 120
+            },
+            {
+              "availableSeats": 40,
+              "bookedSeats": 0,
+              "code": "2A",
+              "fare": 780,
+              "name": "AC 2 Tier",
+              "totalSeats": 40
+            }
+          ],
+          "date": "2026-11-15"
+        },
+        "elapsedSeconds": 0.0007392630068352446
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Seat decrement",
+      "timestamp": "2026-11-12T16:49:14.044781+00:00",
+      "expected": 298,
+      "actual": 298,
+      "status": "PASS"
+    },
+    {
+      "name": "Owner ticket",
+      "timestamp": "2026-11-12T16:49:14.045629+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "booking": {
+            "cancelledAt": "",
+            "class": "SL",
+            "className": "Sleeper",
+            "createdAt": "2026-11-12T16:49:14Z",
+            "date": "2026-11-15",
+            "farePerPassenger": 190,
+            "id": 1,
+            "passengerCount": 2,
+            "passengers": [
+              {
+                "age": 30,
+                "gender": "F",
+                "name": "Asha Rao",
+                "seatNumber": "SL-1"
+              },
+              {
+                "age": 35,
+                "gender": "M",
+                "name": "Ravi Kumar",
+                "seatNumber": "SL-2"
+              }
+            ],
+            "pnr": "6644215281",
+            "refundAmount": 0,
+            "status": "CONFIRMED",
+            "totalFare": 380,
+            "trainId": 2,
+            "trainName": "Deccan Express",
+            "trainNumber": "11007"
+          }
+        },
+        "elapsedSeconds": 0.0008172920061042532
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Ticket matches confirmed booking",
+      "timestamp": "2026-11-12T16:49:14.045665+00:00",
+      "expected": {
+        "cancelledAt": "",
+        "class": "SL",
+        "className": "Sleeper",
+        "createdAt": "2026-11-12T16:49:14Z",
+        "date": "2026-11-15",
+        "farePerPassenger": 190,
+        "id": 1,
+        "passengerCount": 2,
+        "passengers": [
+          {
+            "age": 30,
+            "gender": "F",
+            "name": "Asha Rao",
+            "seatNumber": "SL-1"
+          },
+          {
+            "age": 35,
+            "gender": "M",
+            "name": "Ravi Kumar",
+            "seatNumber": "SL-2"
+          }
+        ],
+        "pnr": "6644215281",
+        "refundAmount": 0,
+        "status": "CONFIRMED",
+        "totalFare": 380,
+        "trainId": 2,
+        "trainName": "Deccan Express",
+        "trainNumber": "11007"
+      },
+      "actual": {
+        "cancelledAt": "",
+        "class": "SL",
+        "className": "Sleeper",
+        "createdAt": "2026-11-12T16:49:14Z",
+        "date": "2026-11-15",
+        "farePerPassenger": 190,
+        "id": 1,
+        "passengerCount": 2,
+        "passengers": [
+          {
+            "age": 30,
+            "gender": "F",
+            "name": "Asha Rao",
+            "seatNumber": "SL-1"
+          },
+          {
+            "age": 35,
+            "gender": "M",
+            "name": "Ravi Kumar",
+            "seatNumber": "SL-2"
+          }
+        ],
+        "pnr": "6644215281",
+        "refundAmount": 0,
+        "status": "CONFIRMED",
+        "totalFare": 380,
+        "trainId": 2,
+        "trainName": "Deccan Express",
+        "trainNumber": "11007"
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Owner history",
+      "timestamp": "2026-11-12T16:49:14.046397+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "bookings": [
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 1,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-1"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-2"
+                }
+              ],
+              "pnr": "6644215281",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            }
+          ]
+        },
+        "elapsedSeconds": 0.0006719530065311119
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "History contains booking",
+      "timestamp": "2026-11-12T16:49:14.046442+00:00",
+      "expected": "6644215281",
+      "actual": [
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 1,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-1"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-2"
+            }
+          ],
+          "pnr": "6644215281",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "name": "Cross-user denied GET",
+      "timestamp": "2026-11-12T16:49:14.047222+00:00",
+      "expected": {
+        "httpStatus": 404
+      },
+      "actual": {
+        "httpStatus": 404,
+        "body": {
+          "error": "Booking not found."
+        },
+        "elapsedSeconds": 0.000720083000487648
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Cross-user denied GET/cancellation",
+      "timestamp": "2026-11-12T16:49:14.048035+00:00",
+      "expected": {
+        "httpStatus": 404
+      },
+      "actual": {
+        "httpStatus": 404,
+        "body": {
+          "error": "Booking not found."
+        },
+        "elapsedSeconds": 0.000760062990593724
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Cross-user denied POST/cancel",
+      "timestamp": "2026-11-12T16:49:14.048793+00:00",
+      "expected": {
+        "httpStatus": 404
+      },
+      "actual": {
+        "httpStatus": 404,
+        "body": {
+          "error": "Booking not found."
+        },
+        "elapsedSeconds": 0.0006999939942033961
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Cross-user denied PUT/cancel",
+      "timestamp": "2026-11-12T16:49:14.049586+00:00",
+      "expected": {
+        "httpStatus": 404
+      },
+      "actual": {
+        "httpStatus": 404,
+        "body": {
+          "error": "Booking not found."
+        },
+        "elapsedSeconds": 0.0007272380025824532
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Other user history",
+      "timestamp": "2026-11-12T16:49:14.050353+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "bookings": []
+        },
+        "elapsedSeconds": 0.0007130830053938553
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "History isolation",
+      "timestamp": "2026-11-12T16:49:14.050372+00:00",
+      "expected": [],
+      "actual": [],
+      "status": "PASS"
+    },
+    {
+      "name": "Refund quote",
+      "timestamp": "2026-11-12T16:49:14.051185+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "cancellation": {
+            "cutoffHours": 24,
+            "eligible": true,
+            "reason": "",
+            "refundAmount": 342,
+            "refundPercent": 90
+          }
+        },
+        "elapsedSeconds": 0.0007681709976168349
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Default cancellation policy",
+      "timestamp": "2026-11-12T16:49:14.051215+00:00",
+      "expected": "eligible, cutoff 24h, 90%, floor(380*.9)=342",
+      "actual": {
+        "cutoffHours": 24,
+        "eligible": true,
+        "reason": "",
+        "refundAmount": 342,
+        "refundPercent": 90
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Cancel booking",
+      "timestamp": "2026-11-12T16:49:14.052339+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "booking": {
+            "cancelledAt": "2026-11-12T16:49:14Z",
+            "class": "SL",
+            "className": "Sleeper",
+            "createdAt": "2026-11-12T16:49:14Z",
+            "date": "2026-11-15",
+            "farePerPassenger": 190,
+            "id": 1,
+            "passengerCount": 2,
+            "passengers": [
+              {
+                "age": 30,
+                "gender": "F",
+                "name": "Asha Rao",
+                "seatNumber": "SL-1"
+              },
+              {
+                "age": 35,
+                "gender": "M",
+                "name": "Ravi Kumar",
+                "seatNumber": "SL-2"
+              }
+            ],
+            "pnr": "6644215281",
+            "refundAmount": 342,
+            "status": "CANCELLED",
+            "totalFare": 380,
+            "trainId": 2,
+            "trainName": "Deccan Express",
+            "trainNumber": "11007"
+          }
+        },
+        "elapsedSeconds": 0.0010713289957493544
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Refund recorded and cancellation timestamp",
+      "timestamp": "2026-11-12T16:49:14.052374+00:00",
+      "expected": "CANCELLED, refund 342, timestamp",
+      "actual": {
+        "cancelledAt": "2026-11-12T16:49:14Z",
+        "class": "SL",
+        "className": "Sleeper",
+        "createdAt": "2026-11-12T16:49:14Z",
+        "date": "2026-11-15",
+        "farePerPassenger": 190,
+        "id": 1,
+        "passengerCount": 2,
+        "passengers": [
+          {
+            "age": 30,
+            "gender": "F",
+            "name": "Asha Rao",
+            "seatNumber": "SL-1"
+          },
+          {
+            "age": 35,
+            "gender": "M",
+            "name": "Ravi Kumar",
+            "seatNumber": "SL-2"
+          }
+        ],
+        "pnr": "6644215281",
+        "refundAmount": 342,
+        "status": "CANCELLED",
+        "totalFare": 380,
+        "trainId": 2,
+        "trainName": "Deccan Express",
+        "trainNumber": "11007"
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Repeat cancellation rejected",
+      "timestamp": "2026-11-12T16:49:14.053147+00:00",
+      "expected": {
+        "httpStatus": 409
+      },
+      "actual": {
+        "httpStatus": 409,
+        "body": {
+          "error": "This booking is already cancelled.",
+          "fields": {
+            "booking": "This booking is already cancelled."
+          }
+        },
+        "elapsedSeconds": 0.0007161009998526424
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Seat inventory",
+      "timestamp": "2026-11-12T16:49:14.054107+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "classes": [
+            {
+              "availableSeats": 300,
+              "bookedSeats": 0,
+              "code": "SL",
+              "fare": 190,
+              "name": "Sleeper",
+              "totalSeats": 300
+            },
+            {
+              "availableSeats": 120,
+              "bookedSeats": 0,
+              "code": "CC",
+              "fare": 420,
+              "name": "AC Chair Car",
+              "totalSeats": 120
+            },
+            {
+              "availableSeats": 40,
+              "bookedSeats": 0,
+              "code": "2A",
+              "fare": 780,
+              "name": "AC 2 Tier",
+              "totalSeats": 40
+            }
+          ],
+          "date": "2026-11-15"
+        },
+        "elapsedSeconds": 0.0008882679976522923
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Seats restored exactly once",
+      "timestamp": "2026-11-12T16:49:14.054148+00:00",
+      "expected": 300,
+      "actual": 300,
+      "status": "PASS"
+    },
+    {
+      "name": "Passenger admin denial /api/admin/me",
+      "timestamp": "2026-11-12T16:49:14.054768+00:00",
+      "expected": {
+        "httpStatus": 403
+      },
+      "actual": {
+        "httpStatus": 403,
+        "body": {
+          "error": "Administrator access is required."
+        },
+        "elapsedSeconds": 0.0005758129991590977
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Anonymous admin denial /api/admin/me",
+      "timestamp": "2026-11-12T16:49:14.055303+00:00",
+      "expected": {
+        "httpStatus": 401
+      },
+      "actual": {
+        "httpStatus": 401,
+        "body": {
+          "error": "You are not logged in."
+        },
+        "elapsedSeconds": 0.0004806600045412779
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Passenger admin denial /api/admin/trains",
+      "timestamp": "2026-11-12T16:49:14.055918+00:00",
+      "expected": {
+        "httpStatus": 403
+      },
+      "actual": {
+        "httpStatus": 403,
+        "body": {
+          "error": "Administrator access is required."
+        },
+        "elapsedSeconds": 0.0005592410016106442
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Anonymous admin denial /api/admin/trains",
+      "timestamp": "2026-11-12T16:49:14.056423+00:00",
+      "expected": {
+        "httpStatus": 401
+      },
+      "actual": {
+        "httpStatus": 401,
+        "body": {
+          "error": "You are not logged in."
+        },
+        "elapsedSeconds": 0.0004497699992498383
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Passenger admin denial /api/admin/audit",
+      "timestamp": "2026-11-12T16:49:14.056990+00:00",
+      "expected": {
+        "httpStatus": 403
+      },
+      "actual": {
+        "httpStatus": 403,
+        "body": {
+          "error": "Administrator access is required."
+        },
+        "elapsedSeconds": 0.000508001001435332
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Anonymous admin denial /api/admin/audit",
+      "timestamp": "2026-11-12T16:49:14.057579+00:00",
+      "expected": {
+        "httpStatus": 401
+      },
+      "actual": {
+        "httpStatus": 401,
+        "body": {
+          "error": "You are not logged in."
+        },
+        "elapsedSeconds": 0.0005339119961718097
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Passenger admin write denied",
+      "timestamp": "2026-11-12T16:49:14.058139+00:00",
+      "expected": {
+        "httpStatus": 403
+      },
+      "actual": {
+        "httpStatus": 403,
+        "body": {
+          "error": "Administrator access is required."
+        },
+        "elapsedSeconds": 0.0005111639911774546
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Stopped-server admin promotion CLI",
+      "timestamp": "2026-11-12T16:49:14.069967+00:00",
+      "expected": "exit 0",
+      "actual": {
+        "returncode": 0
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Start HTTP server",
+      "timestamp": "2026-11-12T16:49:14.172851+00:00",
+      "expected": "Healthy isolated process within 15 seconds",
+      "actual": {
+        "port": 53851,
+        "pid": 714877,
+        "tls": false
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Promotion revokes old session",
+      "timestamp": "2026-11-12T16:49:14.173882+00:00",
+      "expected": {
+        "httpStatus": 401
+      },
+      "actual": {
+        "httpStatus": 401,
+        "body": {
+          "error": "You are not logged in."
+        },
+        "elapsedSeconds": 0.0009099910093937069
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Login admin@example.test",
+      "timestamp": "2026-11-12T16:49:14.244812+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "expiresAt": 1794588554,
+          "token": "[REDACTED]",
+          "user": {
+            "createdAt": "2026-11-12T16:49:13Z",
+            "email": "admin@example.test",
+            "id": 3,
+            "name": "System Passenger",
+            "phone": "9876543210",
+            "role": "ADMIN"
+          }
+        },
+        "elapsedSeconds": 0.07073434400081169
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Admin role",
+      "timestamp": "2026-11-12T16:49:14.246391+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "user": {
+            "email": "admin@example.test",
+            "id": 3,
+            "name": "System Passenger",
+            "role": "ADMIN"
+          }
+        },
+        "elapsedSeconds": 0.0014833590103080496
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Promoted role",
+      "timestamp": "2026-11-12T16:49:14.246420+00:00",
+      "expected": "ADMIN",
+      "actual": "ADMIN",
+      "status": "PASS"
+    },
+    {
+      "name": "Admin create train",
+      "timestamp": "2026-11-12T16:49:14.247955+00:00",
+      "expected": {
+        "httpStatus": 201
+      },
+      "actual": {
+        "httpStatus": 201,
+        "body": {
+          "train": {
+            "active": true,
+            "classes": [
+              {
+                "code": "SL",
+                "fare": 250,
+                "name": "Sleeper",
+                "totalSeats": 50
+              }
+            ],
+            "id": 6,
+            "name": "Validation Express",
+            "number": "94999",
+            "stops": [
+              {
+                "arrival": "",
+                "dayOffset": 0,
+                "departure": "08:00",
+                "station": "Cedar Jn"
+              },
+              {
+                "arrival": "10:00",
+                "dayOffset": 0,
+                "departure": "",
+                "station": "Maple Jn"
+              }
+            ]
+          }
+        },
+        "elapsedSeconds": 0.0014597590052289888
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Admin update train",
+      "timestamp": "2026-11-12T16:49:14.249418+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "train": {
+            "active": true,
+            "classes": [
+              {
+                "code": "SL",
+                "fare": 275,
+                "name": "Sleeper",
+                "totalSeats": 50
+              }
+            ],
+            "id": 6,
+            "name": "Updated Validation Express",
+            "number": "94999",
+            "stops": [
+              {
+                "arrival": "",
+                "dayOffset": 0,
+                "departure": "08:00",
+                "station": "Cedar Jn"
+              },
+              {
+                "arrival": "10:00",
+                "dayOffset": 0,
+                "departure": "",
+                "station": "Maple Jn"
+              }
+            ]
+          }
+        },
+        "elapsedSeconds": 0.001355861997581087
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Admin update reflected",
+      "timestamp": "2026-11-12T16:49:14.249449+00:00",
+      "expected": "Updated Validation Express",
+      "actual": {
+        "active": true,
+        "classes": [
+          {
+            "code": "SL",
+            "fare": 275,
+            "name": "Sleeper",
+            "totalSeats": 50
+          }
+        ],
+        "id": 6,
+        "name": "Updated Validation Express",
+        "number": "94999",
+        "stops": [
+          {
+            "arrival": "",
+            "dayOffset": 0,
+            "departure": "08:00",
+            "station": "Cedar Jn"
+          },
+          {
+            "arrival": "10:00",
+            "dayOffset": 0,
+            "departure": "",
+            "station": "Maple Jn"
+          }
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Created train public visibility",
+      "timestamp": "2026-11-12T16:49:14.250279+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "count": 1,
+          "date": "2026-11-15",
+          "trains": [
+            {
+              "arrival": "10:00",
+              "departure": "08:00",
+              "destination": "Maple Jn",
+              "durationMinutes": 120,
+              "fromFare": 275,
+              "id": 6,
+              "name": "Updated Validation Express",
+              "number": "94999",
+              "source": "Cedar Jn"
+            }
+          ]
+        },
+        "elapsedSeconds": 0.0007544599939137697
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Managed train searchable",
+      "timestamp": "2026-11-12T16:49:14.250389+00:00",
+      "expected": 6,
+      "actual": [
+        {
+          "arrival": "10:00",
+          "departure": "08:00",
+          "destination": "Maple Jn",
+          "durationMinutes": 120,
+          "fromFare": 275,
+          "id": 6,
+          "name": "Updated Validation Express",
+          "number": "94999",
+          "source": "Cedar Jn"
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "name": "Admin deactivate train",
+      "timestamp": "2026-11-12T16:49:14.251747+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "train": {
+            "active": false,
+            "classes": [
+              {
+                "code": "SL",
+                "fare": 275,
+                "name": "Sleeper",
+                "totalSeats": 50
+              }
+            ],
+            "id": 6,
+            "name": "Updated Validation Express",
+            "number": "94999",
+            "stops": [
+              {
+                "arrival": "",
+                "dayOffset": 0,
+                "departure": "08:00",
+                "station": "Cedar Jn"
+              },
+              {
+                "arrival": "10:00",
+                "dayOffset": 0,
+                "departure": "",
+                "station": "Maple Jn"
+              }
+            ]
+          }
+        },
+        "elapsedSeconds": 0.0012919620057800785
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Train inactive",
+      "timestamp": "2026-11-12T16:49:14.251793+00:00",
+      "expected": false,
+      "actual": false,
+      "status": "PASS"
+    },
+    {
+      "name": "Inactive train excluded from search",
+      "timestamp": "2026-11-12T16:49:14.252467+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "count": 0,
+          "date": "2026-11-15",
+          "trains": []
+        },
+        "elapsedSeconds": 0.0006181100034154952
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "No inactive results",
+      "timestamp": "2026-11-12T16:49:14.252503+00:00",
+      "expected": [],
+      "actual": [],
+      "status": "PASS"
+    },
+    {
+      "name": "Inactive schedule unavailable",
+      "timestamp": "2026-11-12T16:49:14.253172+00:00",
+      "expected": {
+        "httpStatus": 404
+      },
+      "actual": {
+        "httpStatus": 404,
+        "body": {
+          "error": "Train not found."
+        },
+        "elapsedSeconds": 0.0006250330043258145
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Admin audit",
+      "timestamp": "2026-11-12T16:49:14.254036+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "events": [
+            {
+              "bookingId": 1,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CANCELLED",
+              "id": 2,
+              "pnr": "6644215281",
+              "refundAmount": 342,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 1,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 1,
+              "pnr": "6644215281",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            }
+          ]
+        },
+        "elapsedSeconds": 0.0007991129969013855
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Booking audit correlates actor, booking, refund",
+      "timestamp": "2026-11-12T16:49:14.254081+00:00",
+      "expected": "creation + cancellation with correct actor/refund",
+      "actual": [
+        {
+          "bookingId": 1,
+          "createdAt": "2026-11-12T16:49:14Z",
+          "event": "BOOKING_CANCELLED",
+          "id": 2,
+          "pnr": "6644215281",
+          "refundAmount": 342,
+          "trainId": 2,
+          "userId": 1
+        },
+        {
+          "bookingId": 1,
+          "createdAt": "2026-11-12T16:49:14Z",
+          "event": "BOOKING_CREATED",
+          "id": 1,
+          "pnr": "6644215281",
+          "refundAmount": 0,
+          "trainId": 2,
+          "userId": 1
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "name": "Malformed JSON",
+      "timestamp": "2026-11-12T16:49:14.254959+00:00",
+      "expected": {
+        "httpStatus": 400
+      },
+      "actual": {
+        "httpStatus": 400,
+        "body": {
+          "error": "Request body must be a JSON object."
+        },
+        "elapsedSeconds": 0.0008183809986803681
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Malformed JSON safe error",
+      "timestamp": "2026-11-12T16:49:14.255000+00:00",
+      "expected": "JSON error without implementation details",
+      "actual": {
+        "error": "Request body must be a JSON object."
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid booking passengers",
+      "timestamp": "2026-11-12T16:49:14.256012+00:00",
+      "expected": {
+        "httpStatus": 400
+      },
+      "actual": {
+        "httpStatus": 400,
+        "body": {
+          "error": "Please correct the highlighted fields.",
+          "fields": {
+            "passengers": "Add at least one passenger."
+          }
+        },
+        "elapsedSeconds": 0.0009561769984429702
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid booking passengers safe error",
+      "timestamp": "2026-11-12T16:49:14.256054+00:00",
+      "expected": "JSON error without implementation details",
+      "actual": {
+        "error": "Please correct the highlighted fields.",
+        "fields": {
+          "passengers": "Add at least one passenger."
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid date",
+      "timestamp": "2026-11-12T16:49:14.256929+00:00",
+      "expected": {
+        "httpStatus": 400
+      },
+      "actual": {
+        "httpStatus": 400,
+        "body": {
+          "error": "Enter a valid travel date (YYYY-MM-DD).",
+          "fields": {
+            "date": "Enter a valid travel date (YYYY-MM-DD)."
+          }
+        },
+        "elapsedSeconds": 0.0008230359962908551
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid date safe error",
+      "timestamp": "2026-11-12T16:49:14.256973+00:00",
+      "expected": "JSON error without implementation details",
+      "actual": {
+        "error": "Enter a valid travel date (YYYY-MM-DD).",
+        "fields": {
+          "date": "Enter a valid travel date (YYYY-MM-DD)."
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Unknown endpoint",
+      "timestamp": "2026-11-12T16:49:14.257698+00:00",
+      "expected": {
+        "httpStatus": 404
+      },
+      "actual": {
+        "httpStatus": 404,
+        "body": {
+          "error": "Resource not found."
+        },
+        "elapsedSeconds": 0.0006634490127908066
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Unknown endpoint safe error",
+      "timestamp": "2026-11-12T16:49:14.257737+00:00",
+      "expected": "JSON error without implementation details",
+      "actual": {
+        "error": "Resource not found."
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid audit limit",
+      "timestamp": "2026-11-12T16:49:14.258519+00:00",
+      "expected": {
+        "httpStatus": 400
+      },
+      "actual": {
+        "httpStatus": 400,
+        "body": {
+          "error": "Limit must be between 1 and 500."
+        },
+        "elapsedSeconds": 0.000735053006792441
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid audit limit safe error",
+      "timestamp": "2026-11-12T16:49:14.258545+00:00",
+      "expected": "JSON error without implementation details",
+      "actual": {
+        "error": "Limit must be between 1 and 500."
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Anonymous booking",
+      "timestamp": "2026-11-12T16:49:14.259367+00:00",
+      "expected": {
+        "httpStatus": 401
+      },
+      "actual": {
+        "httpStatus": 401,
+        "body": {
+          "error": "You are not logged in."
+        },
+        "elapsedSeconds": 0.0007705560128670186
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Anonymous booking safe error",
+      "timestamp": "2026-11-12T16:49:14.259406+00:00",
+      "expected": "JSON error without implementation details",
+      "actual": {
+        "error": "You are not logged in."
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Unknown account login",
+      "timestamp": "2026-11-12T16:49:14.330466+00:00",
+      "expected": {
+        "httpStatus": 401
+      },
+      "actual": {
+        "httpStatus": 401,
+        "body": {
+          "error": "Invalid email or password."
+        },
+        "elapsedSeconds": 0.07096273699426092
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Wrong password login",
+      "timestamp": "2026-11-12T16:49:14.401485+00:00",
+      "expected": {
+        "httpStatus": 401
+      },
+      "actual": {
+        "httpStatus": 401,
+        "body": {
+          "error": "Invalid email or password."
+        },
+        "elapsedSeconds": 0.07088308400125243
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Login does not enumerate accounts",
+      "timestamp": "2026-11-12T16:49:14.401531+00:00",
+      "expected": {
+        "error": "Invalid email or password."
+      },
+      "actual": {
+        "error": "Invalid email or password."
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "search small-load p90",
+      "timestamp": "2026-11-12T16:49:14.413296+00:00",
+      "expected": "20 successful operations, 4 clients, p90 <3s",
+      "actual": {
+        "requests": 20,
+        "concurrency": 4,
+        "latencySeconds": [
+          0.0012503280013334006,
+          0.0016976770129986107,
+          0.001436582999303937,
+          0.0011669439991237596,
+          0.002905822009779513,
+          0.0020782390056410804,
+          0.0023840390058467165,
+          0.0015406989987241104,
+          0.0022564130049431697,
+          0.001544854007079266,
+          0.0016594870103290305,
+          0.0019442329939920455,
+          0.0018192270072177052,
+          0.0018146969960071146,
+          0.0019200699898647144,
+          0.001355366999632679,
+          0.0014763499930268154,
+          0.0015610550035489723,
+          0.0016499870107509196,
+          0.0012685510009760037
+        ],
+        "p90Seconds": 0.0022564130049431697,
+        "maxSeconds": 0.002905822009779513,
+        "wallSeconds": 0.011752606005757116,
+        "httpStatuses": [
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200
+        ],
+        "percentileMethod": "nearest rank ceil(0.9*n)",
+        "thresholdSeconds": 3
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "booking small-load p90",
+      "timestamp": "2026-11-12T16:49:14.438127+00:00",
+      "expected": "20 successful operations, 4 clients, p90 <3s",
+      "actual": {
+        "requests": 20,
+        "concurrency": 4,
+        "latencySeconds": [
+          0.003968642005929723,
+          0.0020593870140146464,
+          0.0032721320021664724,
+          0.002187509002396837,
+          0.002878501996747218,
+          0.005628541999612935,
+          0.0026993330102413893,
+          0.005939342998317443,
+          0.004958395002176985,
+          0.0061304219998419285,
+          0.0019430100073805079,
+          0.003495440003462136,
+          0.005757884006015956,
+          0.004067109999596141,
+          0.005028864994528703,
+          0.007036684997729026,
+          0.007966046003275551,
+          0.004306133007048629,
+          0.0018999879976036027,
+          0.00348660399322398
+        ],
+        "p90Seconds": 0.0061304219998419285,
+        "maxSeconds": 0.007966046003275551,
+        "wallSeconds": 0.024788681999780238,
+        "httpStatuses": [
+          201,
+          201,
+          201,
+          201,
+          201,
+          201,
+          201,
+          201,
+          201,
+          201,
+          201,
+          201,
+          201,
+          201,
+          201,
+          201,
+          201,
+          201,
+          201,
+          201
+        ],
+        "percentileMethod": "nearest rank ceil(0.9*n)",
+        "thresholdSeconds": 3
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Concurrent booking unique PNRs and seats",
+      "timestamp": "2026-11-12T16:49:14.438199+00:00",
+      "expected": "20 unique PNRs and 40 unique seats",
+      "actual": {
+        "pnrs": 20,
+        "seats": 40
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Pre-restart history",
+      "timestamp": "2026-11-12T16:49:14.441832+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "bookings": [
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 21,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-39"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-40"
+                }
+              ],
+              "pnr": "2296514474",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 20,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-37"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-38"
+                }
+              ],
+              "pnr": "7964127256",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 19,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-35"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-36"
+                }
+              ],
+              "pnr": "7252763143",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 18,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-33"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-34"
+                }
+              ],
+              "pnr": "7206996450",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 17,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-31"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-32"
+                }
+              ],
+              "pnr": "3825562038",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 16,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-29"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-30"
+                }
+              ],
+              "pnr": "9770251844",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 15,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-27"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-28"
+                }
+              ],
+              "pnr": "4772560776",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 14,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-25"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-26"
+                }
+              ],
+              "pnr": "8320759602",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 13,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-23"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-24"
+                }
+              ],
+              "pnr": "7638139355",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 12,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-21"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-22"
+                }
+              ],
+              "pnr": "1195871339",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 11,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-19"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-20"
+                }
+              ],
+              "pnr": "5103880670",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 10,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-17"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-18"
+                }
+              ],
+              "pnr": "4563024892",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 9,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-15"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-16"
+                }
+              ],
+              "pnr": "6299715896",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 8,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-13"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-14"
+                }
+              ],
+              "pnr": "2150957618",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 7,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-11"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-12"
+                }
+              ],
+              "pnr": "1232360429",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 6,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-9"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-10"
+                }
+              ],
+              "pnr": "7873609595",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 5,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-7"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-8"
+                }
+              ],
+              "pnr": "9904704973",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 4,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-5"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-6"
+                }
+              ],
+              "pnr": "6453166144",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 3,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-3"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-4"
+                }
+              ],
+              "pnr": "1311179743",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 2,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-1"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-2"
+                }
+              ],
+              "pnr": "8005272935",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "2026-11-12T16:49:14Z",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 1,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-1"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-2"
+                }
+              ],
+              "pnr": "6644215281",
+              "refundAmount": 342,
+              "status": "CANCELLED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            }
+          ]
+        },
+        "elapsedSeconds": 0.003538304998073727
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Start HTTP server",
+      "timestamp": "2026-11-12T16:49:14.548031+00:00",
+      "expected": "Healthy isolated process within 15 seconds",
+      "actual": {
+        "port": 44079,
+        "pid": 714904,
+        "tls": false
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Login owner@example.test",
+      "timestamp": "2026-11-12T16:49:14.620192+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "expiresAt": 1794588554,
+          "token": "[REDACTED]",
+          "user": {
+            "createdAt": "2026-11-12T16:49:13Z",
+            "email": "owner@example.test",
+            "id": 1,
+            "name": "Updated Passenger",
+            "phone": "9123456780",
+            "role": "PASSENGER"
+          }
+        },
+        "elapsedSeconds": 0.07201927700953092
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Persisted profile",
+      "timestamp": "2026-11-12T16:49:14.621359+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "user": {
+            "createdAt": "2026-11-12T16:49:13Z",
+            "email": "owner@example.test",
+            "id": 1,
+            "name": "Updated Passenger",
+            "phone": "9123456780",
+            "role": "PASSENGER"
+          }
+        },
+        "elapsedSeconds": 0.0010604999988572672
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Persisted bookings",
+      "timestamp": "2026-11-12T16:49:14.625039+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "bookings": [
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 21,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-39"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-40"
+                }
+              ],
+              "pnr": "2296514474",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 20,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-37"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-38"
+                }
+              ],
+              "pnr": "7964127256",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 19,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-35"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-36"
+                }
+              ],
+              "pnr": "7252763143",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 18,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-33"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-34"
+                }
+              ],
+              "pnr": "7206996450",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 17,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-31"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-32"
+                }
+              ],
+              "pnr": "3825562038",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 16,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-29"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-30"
+                }
+              ],
+              "pnr": "9770251844",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 15,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-27"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-28"
+                }
+              ],
+              "pnr": "4772560776",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 14,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-25"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-26"
+                }
+              ],
+              "pnr": "8320759602",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 13,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-23"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-24"
+                }
+              ],
+              "pnr": "7638139355",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 12,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-21"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-22"
+                }
+              ],
+              "pnr": "1195871339",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 11,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-19"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-20"
+                }
+              ],
+              "pnr": "5103880670",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 10,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-17"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-18"
+                }
+              ],
+              "pnr": "4563024892",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 9,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-15"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-16"
+                }
+              ],
+              "pnr": "6299715896",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 8,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-13"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-14"
+                }
+              ],
+              "pnr": "2150957618",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 7,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-11"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-12"
+                }
+              ],
+              "pnr": "1232360429",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 6,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-9"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-10"
+                }
+              ],
+              "pnr": "7873609595",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 5,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-7"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-8"
+                }
+              ],
+              "pnr": "9904704973",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 4,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-5"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-6"
+                }
+              ],
+              "pnr": "6453166144",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 3,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-3"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-4"
+                }
+              ],
+              "pnr": "1311179743",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 2,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-1"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-2"
+                }
+              ],
+              "pnr": "8005272935",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "2026-11-12T16:49:14Z",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 1,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-1"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-2"
+                }
+              ],
+              "pnr": "6644215281",
+              "refundAmount": 342,
+              "status": "CANCELLED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            }
+          ]
+        },
+        "elapsedSeconds": 0.003524471991113387
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Restart persistence exact history/profile",
+      "timestamp": "2026-11-12T16:49:14.625361+00:00",
+      "expected": "Same history and updated profile",
+      "actual": {
+        "bookings": 21,
+        "profile": {
+          "createdAt": "2026-11-12T16:49:13Z",
+          "email": "owner@example.test",
+          "id": 1,
+          "name": "Updated Passenger",
+          "phone": "9123456780",
+          "role": "PASSENGER"
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Seat inventory",
+      "timestamp": "2026-11-12T16:49:14.626578+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "classes": [
+            {
+              "availableSeats": 260,
+              "bookedSeats": 40,
+              "code": "SL",
+              "fare": 190,
+              "name": "Sleeper",
+              "totalSeats": 300
+            },
+            {
+              "availableSeats": 120,
+              "bookedSeats": 0,
+              "code": "CC",
+              "fare": 420,
+              "name": "AC Chair Car",
+              "totalSeats": 120
+            },
+            {
+              "availableSeats": 40,
+              "bookedSeats": 0,
+              "code": "2A",
+              "fare": 780,
+              "name": "AC 2 Tier",
+              "totalSeats": 40
+            }
+          ],
+          "date": "2026-11-15"
+        },
+        "elapsedSeconds": 0.0011438530054874718
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Seat inventory",
+      "timestamp": "2026-11-12T16:49:14.627492+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "classes": [
+            {
+              "availableSeats": 260,
+              "bookedSeats": 40,
+              "code": "SL",
+              "fare": 190,
+              "name": "Sleeper",
+              "totalSeats": 300
+            },
+            {
+              "availableSeats": 120,
+              "bookedSeats": 0,
+              "code": "CC",
+              "fare": 420,
+              "name": "AC Chair Car",
+              "totalSeats": 120
+            },
+            {
+              "availableSeats": 40,
+              "bookedSeats": 0,
+              "code": "2A",
+              "fare": 780,
+              "name": "AC 2 Tier",
+              "totalSeats": 40
+            }
+          ],
+          "date": "2026-11-15"
+        },
+        "elapsedSeconds": 0.0008135940006468445
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Restart inventory persists",
+      "timestamp": "2026-11-12T16:49:14.627536+00:00",
+      "expected": 260,
+      "actual": 260,
+      "status": "PASS"
+    },
+    {
+      "name": "Login admin@example.test",
+      "timestamp": "2026-11-12T16:49:14.697703+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "expiresAt": 1794588554,
+          "token": "[REDACTED]",
+          "user": {
+            "createdAt": "2026-11-12T16:49:13Z",
+            "email": "admin@example.test",
+            "id": 3,
+            "name": "System Passenger",
+            "phone": "9876543210",
+            "role": "ADMIN"
+          }
+        },
+        "elapsedSeconds": 0.07003686099778861
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Persisted admin train",
+      "timestamp": "2026-11-12T16:49:14.699075+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "train": {
+            "active": false,
+            "classes": [
+              {
+                "code": "SL",
+                "fare": 275,
+                "name": "Sleeper",
+                "totalSeats": 50
+              }
+            ],
+            "id": 6,
+            "name": "Updated Validation Express",
+            "number": "94999",
+            "stops": [
+              {
+                "arrival": "",
+                "dayOffset": 0,
+                "departure": "08:00",
+                "station": "Cedar Jn"
+              },
+              {
+                "arrival": "10:00",
+                "dayOffset": 0,
+                "departure": "",
+                "station": "Maple Jn"
+              }
+            ]
+          }
+        },
+        "elapsedSeconds": 0.0012321190006332472
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Persisted audit",
+      "timestamp": "2026-11-12T16:49:14.701401+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "events": [
+            {
+              "bookingId": 21,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 22,
+              "pnr": "2296514474",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 20,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 21,
+              "pnr": "7964127256",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 19,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 20,
+              "pnr": "7252763143",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 18,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 19,
+              "pnr": "7206996450",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 17,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 18,
+              "pnr": "3825562038",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 16,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 17,
+              "pnr": "9770251844",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 15,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 16,
+              "pnr": "4772560776",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 14,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 15,
+              "pnr": "8320759602",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 13,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 14,
+              "pnr": "7638139355",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 12,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 13,
+              "pnr": "1195871339",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 11,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 12,
+              "pnr": "5103880670",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 10,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 11,
+              "pnr": "4563024892",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 9,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 10,
+              "pnr": "6299715896",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 8,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 9,
+              "pnr": "2150957618",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 7,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 8,
+              "pnr": "1232360429",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 6,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 7,
+              "pnr": "7873609595",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 5,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 6,
+              "pnr": "9904704973",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 4,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 5,
+              "pnr": "6453166144",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 3,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 4,
+              "pnr": "1311179743",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 2,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 3,
+              "pnr": "8005272935",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 1,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CANCELLED",
+              "id": 2,
+              "pnr": "6644215281",
+              "refundAmount": 342,
+              "trainId": 2,
+              "userId": 1
+            },
+            {
+              "bookingId": 1,
+              "createdAt": "2026-11-12T16:49:14Z",
+              "event": "BOOKING_CREATED",
+              "id": 1,
+              "pnr": "6644215281",
+              "refundAmount": 0,
+              "trainId": 2,
+              "userId": 1
+            }
+          ]
+        },
+        "elapsedSeconds": 0.002218854002421722
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Admin state and audit survive restart",
+      "timestamp": "2026-11-12T16:49:14.701547+00:00",
+      "expected": "Inactive edited train and previous audit events",
+      "actual": {
+        "train": {
+          "active": false,
+          "classes": [
+            {
+              "code": "SL",
+              "fare": 275,
+              "name": "Sleeper",
+              "totalSeats": 50
+            }
+          ],
+          "id": 6,
+          "name": "Updated Validation Express",
+          "number": "94999",
+          "stops": [
+            {
+              "arrival": "",
+              "dayOffset": 0,
+              "departure": "08:00",
+              "station": "Cedar Jn"
+            },
+            {
+              "arrival": "10:00",
+              "dayOffset": 0,
+              "departure": "",
+              "station": "Maple Jn"
+            }
+          ]
+        },
+        "events": 22
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Abrupt process stop",
+      "timestamp": "2026-11-12T16:49:14.702757+00:00",
+      "expected": "Nonzero killed-process return code",
+      "actual": {
+        "returncode": -9
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Start HTTP server",
+      "timestamp": "2026-11-12T16:49:14.805720+00:00",
+      "expected": "Healthy isolated process within 15 seconds",
+      "actual": {
+        "port": 50155,
+        "pid": 714927,
+        "tls": false
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Login owner@example.test",
+      "timestamp": "2026-11-12T16:49:14.876234+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "expiresAt": 1794588554,
+          "token": "[REDACTED]",
+          "user": {
+            "createdAt": "2026-11-12T16:49:13Z",
+            "email": "owner@example.test",
+            "id": 1,
+            "name": "Updated Passenger",
+            "phone": "9123456780",
+            "role": "PASSENGER"
+          }
+        },
+        "elapsedSeconds": 0.07038392800313886
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Crash-recovered history",
+      "timestamp": "2026-11-12T16:49:14.880663+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "bookings": [
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 21,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-39"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-40"
+                }
+              ],
+              "pnr": "2296514474",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 20,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-37"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-38"
+                }
+              ],
+              "pnr": "7964127256",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 19,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-35"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-36"
+                }
+              ],
+              "pnr": "7252763143",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 18,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-33"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-34"
+                }
+              ],
+              "pnr": "7206996450",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 17,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-31"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-32"
+                }
+              ],
+              "pnr": "3825562038",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 16,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-29"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-30"
+                }
+              ],
+              "pnr": "9770251844",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 15,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-27"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-28"
+                }
+              ],
+              "pnr": "4772560776",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 14,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-25"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-26"
+                }
+              ],
+              "pnr": "8320759602",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 13,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-23"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-24"
+                }
+              ],
+              "pnr": "7638139355",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 12,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-21"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-22"
+                }
+              ],
+              "pnr": "1195871339",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 11,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-19"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-20"
+                }
+              ],
+              "pnr": "5103880670",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 10,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-17"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-18"
+                }
+              ],
+              "pnr": "4563024892",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 9,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-15"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-16"
+                }
+              ],
+              "pnr": "6299715896",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 8,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-13"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-14"
+                }
+              ],
+              "pnr": "2150957618",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 7,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-11"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-12"
+                }
+              ],
+              "pnr": "1232360429",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 6,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-9"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-10"
+                }
+              ],
+              "pnr": "7873609595",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 5,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-7"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-8"
+                }
+              ],
+              "pnr": "9904704973",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 4,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-5"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-6"
+                }
+              ],
+              "pnr": "6453166144",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 3,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-3"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-4"
+                }
+              ],
+              "pnr": "1311179743",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 2,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-1"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-2"
+                }
+              ],
+              "pnr": "8005272935",
+              "refundAmount": 0,
+              "status": "CONFIRMED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            },
+            {
+              "cancelledAt": "2026-11-12T16:49:14Z",
+              "class": "SL",
+              "className": "Sleeper",
+              "createdAt": "2026-11-12T16:49:14Z",
+              "date": "2026-11-15",
+              "farePerPassenger": 190,
+              "id": 1,
+              "passengerCount": 2,
+              "passengers": [
+                {
+                  "age": 30,
+                  "gender": "F",
+                  "name": "Asha Rao",
+                  "seatNumber": "SL-1"
+                },
+                {
+                  "age": 35,
+                  "gender": "M",
+                  "name": "Ravi Kumar",
+                  "seatNumber": "SL-2"
+                }
+              ],
+              "pnr": "6644215281",
+              "refundAmount": 342,
+              "status": "CANCELLED",
+              "totalFare": 380,
+              "trainId": 2,
+              "trainName": "Deccan Express",
+              "trainNumber": "11007"
+            }
+          ]
+        },
+        "elapsedSeconds": 0.00426492300175596
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Committed bookings survive abrupt stop",
+      "timestamp": "2026-11-12T16:49:14.881009+00:00",
+      "expected": [
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 21,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-39"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-40"
+            }
+          ],
+          "pnr": "2296514474",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 20,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-37"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-38"
+            }
+          ],
+          "pnr": "7964127256",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 19,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-35"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-36"
+            }
+          ],
+          "pnr": "7252763143",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 18,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-33"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-34"
+            }
+          ],
+          "pnr": "7206996450",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 17,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-31"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-32"
+            }
+          ],
+          "pnr": "3825562038",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 16,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-29"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-30"
+            }
+          ],
+          "pnr": "9770251844",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 15,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-27"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-28"
+            }
+          ],
+          "pnr": "4772560776",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 14,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-25"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-26"
+            }
+          ],
+          "pnr": "8320759602",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 13,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-23"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-24"
+            }
+          ],
+          "pnr": "7638139355",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 12,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-21"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-22"
+            }
+          ],
+          "pnr": "1195871339",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 11,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-19"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-20"
+            }
+          ],
+          "pnr": "5103880670",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 10,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-17"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-18"
+            }
+          ],
+          "pnr": "4563024892",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 9,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-15"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-16"
+            }
+          ],
+          "pnr": "6299715896",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 8,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-13"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-14"
+            }
+          ],
+          "pnr": "2150957618",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 7,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-11"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-12"
+            }
+          ],
+          "pnr": "1232360429",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 6,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-9"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-10"
+            }
+          ],
+          "pnr": "7873609595",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 5,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-7"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-8"
+            }
+          ],
+          "pnr": "9904704973",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 4,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-5"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-6"
+            }
+          ],
+          "pnr": "6453166144",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 3,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-3"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-4"
+            }
+          ],
+          "pnr": "1311179743",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 2,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-1"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-2"
+            }
+          ],
+          "pnr": "8005272935",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "2026-11-12T16:49:14Z",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 1,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-1"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-2"
+            }
+          ],
+          "pnr": "6644215281",
+          "refundAmount": 342,
+          "status": "CANCELLED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        }
+      ],
+      "actual": [
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 21,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-39"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-40"
+            }
+          ],
+          "pnr": "2296514474",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 20,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-37"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-38"
+            }
+          ],
+          "pnr": "7964127256",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 19,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-35"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-36"
+            }
+          ],
+          "pnr": "7252763143",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 18,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-33"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-34"
+            }
+          ],
+          "pnr": "7206996450",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 17,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-31"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-32"
+            }
+          ],
+          "pnr": "3825562038",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 16,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-29"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-30"
+            }
+          ],
+          "pnr": "9770251844",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 15,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-27"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-28"
+            }
+          ],
+          "pnr": "4772560776",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 14,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-25"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-26"
+            }
+          ],
+          "pnr": "8320759602",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 13,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-23"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-24"
+            }
+          ],
+          "pnr": "7638139355",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 12,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-21"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-22"
+            }
+          ],
+          "pnr": "1195871339",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 11,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-19"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-20"
+            }
+          ],
+          "pnr": "5103880670",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 10,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-17"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-18"
+            }
+          ],
+          "pnr": "4563024892",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 9,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-15"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-16"
+            }
+          ],
+          "pnr": "6299715896",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 8,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-13"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-14"
+            }
+          ],
+          "pnr": "2150957618",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 7,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-11"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-12"
+            }
+          ],
+          "pnr": "1232360429",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 6,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-9"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-10"
+            }
+          ],
+          "pnr": "7873609595",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 5,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-7"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-8"
+            }
+          ],
+          "pnr": "9904704973",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 4,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-5"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-6"
+            }
+          ],
+          "pnr": "6453166144",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 3,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-3"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-4"
+            }
+          ],
+          "pnr": "1311179743",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 2,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-1"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-2"
+            }
+          ],
+          "pnr": "8005272935",
+          "refundAmount": 0,
+          "status": "CONFIRMED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        },
+        {
+          "cancelledAt": "2026-11-12T16:49:14Z",
+          "class": "SL",
+          "className": "Sleeper",
+          "createdAt": "2026-11-12T16:49:14Z",
+          "date": "2026-11-15",
+          "farePerPassenger": 190,
+          "id": 1,
+          "passengerCount": 2,
+          "passengers": [
+            {
+              "age": 30,
+              "gender": "F",
+              "name": "Asha Rao",
+              "seatNumber": "SL-1"
+            },
+            {
+              "age": 35,
+              "gender": "M",
+              "name": "Ravi Kumar",
+              "seatNumber": "SL-2"
+            }
+          ],
+          "pnr": "6644215281",
+          "refundAmount": 342,
+          "status": "CANCELLED",
+          "totalFare": 380,
+          "trainId": 2,
+          "trainName": "Deccan Express",
+          "trainNumber": "11007"
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "name": "Seat inventory",
+      "timestamp": "2026-11-12T16:49:14.882200+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "classes": [
+            {
+              "availableSeats": 260,
+              "bookedSeats": 40,
+              "code": "SL",
+              "fare": 190,
+              "name": "Sleeper",
+              "totalSeats": 300
+            },
+            {
+              "availableSeats": 120,
+              "bookedSeats": 0,
+              "code": "CC",
+              "fare": 420,
+              "name": "AC Chair Car",
+              "totalSeats": 120
+            },
+            {
+              "availableSeats": 40,
+              "bookedSeats": 0,
+              "code": "2A",
+              "fare": 780,
+              "name": "AC 2 Tier",
+              "totalSeats": 40
+            }
+          ],
+          "date": "2026-11-15"
+        },
+        "elapsedSeconds": 0.0008246189972851425
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Seat inventory",
+      "timestamp": "2026-11-12T16:49:14.883240+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "classes": [
+            {
+              "availableSeats": 260,
+              "bookedSeats": 40,
+              "code": "SL",
+              "fare": 190,
+              "name": "Sleeper",
+              "totalSeats": 300
+            },
+            {
+              "availableSeats": 120,
+              "bookedSeats": 0,
+              "code": "CC",
+              "fare": 420,
+              "name": "AC Chair Car",
+              "totalSeats": 120
+            },
+            {
+              "availableSeats": 40,
+              "bookedSeats": 0,
+              "code": "2A",
+              "fare": 780,
+              "name": "AC 2 Tier",
+              "totalSeats": 40
+            }
+          ],
+          "date": "2026-11-15"
+        },
+        "elapsedSeconds": 0.0009450740035390481
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Crash-recovered inventory",
+      "timestamp": "2026-11-12T16:49:14.883283+00:00",
+      "expected": 260,
+      "actual": 260,
+      "status": "PASS"
+    },
+    {
+      "name": "Recovered SQLite integrity",
+      "timestamp": "2026-11-12T16:49:14.884023+00:00",
+      "expected": [
+        [
+          "ok"
+        ]
+      ],
+      "actual": [
+        [
+          "ok"
+        ]
+      ],
+      "status": "PASS"
+    },
+    {
+      "name": "Logout",
+      "timestamp": "2026-11-12T16:49:14.884910+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "message": "Logged out."
+        },
+        "elapsedSeconds": 0.0008240239985752851
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Logged-out session denied",
+      "timestamp": "2026-11-12T16:49:14.885691+00:00",
+      "expected": {
+        "httpStatus": 401
+      },
+      "actual": {
+        "httpStatus": 401,
+        "body": {
+          "error": "You are not logged in."
+        },
+        "elapsedSeconds": 0.0007310460059670731
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Generate temporary TLS certificate",
+      "timestamp": "2026-11-12T16:49:14.899534+00:00",
+      "expected": "openssl exit 0",
+      "actual": {
+        "returncode": 0
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Start HTTPS server",
+      "timestamp": "2026-11-12T16:49:15.046556+00:00",
+      "expected": "Healthy isolated process within 15 seconds",
+      "actual": {
+        "port": 51575,
+        "pid": 714946,
+        "tls": true
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Real verified TLS handshake",
+      "timestamp": "2026-11-12T16:49:15.049834+00:00",
+      "expected": "TLSv1.2 or TLSv1.3 with hostname verification",
+      "actual": {
+        "protocol": "TLSv1.3",
+        "cipher": [
+          "TLS_AES_256_GCM_SHA384",
+          "TLSv1.3",
+          256
+        ],
+        "peerCertificateSha256": "f7720a88adf167192db7f1fbaf956446fb30b64cc8e8ff8b833a977ad61ece50",
+        "hostnameVerified": true,
+        "certificateVerification": "CERT_REQUIRED using temporary CA certificate"
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "HTTPS health and security headers",
+      "timestamp": "2026-11-12T16:49:15.094276+00:00",
+      "expected": "200 healthy, HSTS, nosniff, DENY",
+      "actual": {
+        "status": 200,
+        "body": {
+          "status": "ok"
+        },
+        "headers": {
+          "Strict-Transport-Security": "max-age=31536000",
+          "X-Content-Type-Options": "nosniff",
+          "Referrer-Policy": "no-referrer",
+          "Keep-Alive": "timeout=5, max=100",
+          "X-Frame-Options": "DENY",
+          "Content-Length": "15",
+          "Content-Type": "application/json"
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Login owner@example.test",
+      "timestamp": "2026-11-12T16:49:15.166616+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "expiresAt": 1794588555,
+          "token": "[REDACTED]",
+          "user": {
+            "createdAt": "2026-11-12T16:49:13Z",
+            "email": "owner@example.test",
+            "id": 1,
+            "name": "Updated Passenger",
+            "phone": "9123456780",
+            "role": "PASSENGER"
+          }
+        },
+        "elapsedSeconds": 0.07214703399222344
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated profile over real TLS",
+      "timestamp": "2026-11-12T16:49:15.210135+00:00",
+      "expected": {
+        "httpStatus": 200
+      },
+      "actual": {
+        "httpStatus": 200,
+        "body": {
+          "user": {
+            "createdAt": "2026-11-12T16:49:13Z",
+            "email": "owner@example.test",
+            "id": 1,
+            "name": "Updated Passenger",
+            "phone": "9123456780",
+            "role": "PASSENGER"
+          }
+        },
+        "elapsedSeconds": 0.043359050003346056
+      },
+      "status": "PASS"
+    },
+    {
+      "name": "Server logs contain no generated credentials",
+      "timestamp": "2026-11-12T16:49:15.211447+00:00",
+      "expected": "No passwords or bearer tokens in subprocess logs",
+      "actual": {
+        "credentialLeakDetected": false,
+        "logBytes": 6971,
+        "processesStopped": true
+      },
+      "status": "PASS"
+    }
+  ],
+  "performance": {
+    "search": {
+      "requests": 20,
+      "concurrency": 4,
+      "latencySeconds": [
+        0.0012503280013334006,
+        0.0016976770129986107,
+        0.001436582999303937,
+        0.0011669439991237596,
+        0.002905822009779513,
+        0.0020782390056410804,
+        0.0023840390058467165,
+        0.0015406989987241104,
+        0.0022564130049431697,
+        0.001544854007079266,
+        0.0016594870103290305,
+        0.0019442329939920455,
+        0.0018192270072177052,
+        0.0018146969960071146,
+        0.0019200699898647144,
+        0.001355366999632679,
+        0.0014763499930268154,
+        0.0015610550035489723,
+        0.0016499870107509196,
+        0.0012685510009760037
+      ],
+      "p90Seconds": 0.0022564130049431697,
+      "maxSeconds": 0.002905822009779513,
+      "wallSeconds": 0.011752606005757116,
+      "httpStatuses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200
+      ],
+      "percentileMethod": "nearest rank ceil(0.9*n)",
+      "thresholdSeconds": 3
+    },
+    "booking": {
+      "requests": 20,
+      "concurrency": 4,
+      "latencySeconds": [
+        0.003968642005929723,
+        0.0020593870140146464,
+        0.0032721320021664724,
+        0.002187509002396837,
+        0.002878501996747218,
+        0.005628541999612935,
+        0.0026993330102413893,
+        0.005939342998317443,
+        0.004958395002176985,
+        0.0061304219998419285,
+        0.0019430100073805079,
+        0.003495440003462136,
+        0.005757884006015956,
+        0.004067109999596141,
+        0.005028864994528703,
+        0.007036684997729026,
+        0.007966046003275551,
+        0.004306133007048629,
+        0.0018999879976036027,
+        0.00348660399322398
+      ],
+      "p90Seconds": 0.0061304219998419285,
+      "maxSeconds": 0.007966046003275551,
+      "wallSeconds": 0.024788681999780238,
+      "httpStatuses": [
+        201,
+        201,
+        201,
+        201,
+        201,
+        201,
+        201,
+        201,
+        201,
+        201,
+        201,
+        201,
+        201,
+        201,
+        201,
+        201,
+        201,
+        201,
+        201,
+        201
+      ],
+      "percentileMethod": "nearest rank ceil(0.9*n)",
+      "thresholdSeconds": 3
+    }
+  },
+  "travelDate": "2026-11-15",
+  "temporaryDataRemoved": true,
+  "finishedAt": "2026-11-12T16:49:15.211579+00:00",
+  "sourceShaAtFinish": "6b5464298c949806ebba0b7bd1d903c962b5255d",
+  "summary": {
+    "PASS": 122,
+    "FAIL": 0
+  },
+  "status": "PASS"
+}
