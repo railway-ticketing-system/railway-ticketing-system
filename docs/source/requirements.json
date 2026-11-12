@@ -1,0 +1,370 @@
+[
+  {
+    "id": "RTS-F-001",
+    "title": "Passenger registration",
+    "text": "The system shall register a passenger using name, email, phone and password, normalize email, and reject duplicate email or invalid fields without creating an account.",
+    "acceptance": "POST /api/auth/register returns 201 for valid data, 409 for duplicate email, and 400 for invalid data; no password or hash is returned.",
+    "cases": [
+      "TC-REG-01",
+      "TC-REG-02"
+    ],
+    "module": "UserService / Routes",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-F-002",
+    "title": "Authentication and session lifecycle",
+    "text": "The system shall authenticate valid credentials, issue an opaque bearer session, reject invalid credentials, expire sessions after 24 hours, and invalidate the current session on logout.",
+    "acceptance": "Valid login returns 200 and token; wrong credentials return generic 401; five failures trigger a 300-second lock (429); expired or logged-out tokens fail protected requests.",
+    "cases": [
+      "TC-AUTH-01",
+      "TC-AUTH-02",
+      "TC-AUTH-03",
+      "TC-AUTH-04"
+    ],
+    "module": "AuthService / Routes",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-F-003",
+    "title": "Train search",
+    "text": "The system shall search active trains by source, destination and date, requiring source to precede destination in the stored stop sequence.",
+    "acceptance": "GET search uses date=YYYY-MM-DD, returns 200 with matching trains or an empty list; invalid criteria return 400; class, fare, time and sort filters obey documented inputs.",
+    "cases": [
+      "TC-SEARCH-01",
+      "TC-SEARCH-03",
+      "TC-SEARCH-04"
+    ],
+    "module": "TrainService / Routes",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-F-004",
+    "title": "Train details",
+    "text": "The system shall display train number/name, requested route, departure, arrival, duration and fare, with ordered schedule and class fares available for inspection.",
+    "acceptance": "Search summary, schedule and fares endpoints agree with fixture values; unknown train returns 404.",
+    "cases": [
+      "TC-SEARCH-02"
+    ],
+    "module": "TrainService / web/app.js",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-F-005",
+    "title": "Seat availability",
+    "text": "The system shall return class-wise current available seats for a train and date.",
+    "acceptance": "For each class, availableSeats equals totalSeats minus sum of seat_reservations.seats for the same train/date/class; reservations on another date do not reduce it.",
+    "cases": [
+      "TC-AVAIL-01",
+      "TC-AVAIL-02"
+    ],
+    "module": "TrainService / seat_reservations",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-F-006",
+    "title": "Passenger booking form",
+    "text": "The system shall let an authenticated passenger select a train, date and class, enter one to six passengers and obtain a fare/availability preview before confirmation.",
+    "acceptance": "Valid preview returns 200 with passengerCount, farePerPassenger, totalFare and availableSeats, and writes no booking; unauthenticated preview returns 401.",
+    "cases": [
+      "TC-BOOK-01"
+    ],
+    "module": "BookingService / web/app.js",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-F-007",
+    "title": "Passenger validation",
+    "text": "The system shall validate all passenger fields before preview and confirmation.",
+    "acceptance": "Name is 2–60 permitted characters; age is an integer 1–120; gender is M/F/O; zero or more than six passengers is rejected; indexed errors identify the failing passenger and no partial booking is written.",
+    "cases": [
+      "TC-BOOK-02",
+      "TC-BOOK-06"
+    ],
+    "module": "BookingService / Validation",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-F-008",
+    "title": "Final availability check",
+    "text": "The system shall recheck active train, class and available capacity inside the confirmation transaction.",
+    "acceptance": "If seats were consumed after preview, confirmation returns 409 and creates no booking, passenger, inventory or success audit rows.",
+    "cases": [
+      "TC-BOOK-03"
+    ],
+    "module": "BookingService / Database",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-F-009",
+    "title": "Unique PNR",
+    "text": "The system shall create a unique ten-digit nonsequential PNR for every successfully confirmed reservation.",
+    "acceptance": "Two successful bookings have distinct ten-digit PNR strings persisted under a UNIQUE database constraint; PNR lookup retrieves the owner ticket.",
+    "cases": [
+      "TC-BOOK-04"
+    ],
+    "module": "BookingService / bookings",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-F-010",
+    "title": "Atomic seat reservation",
+    "text": "The system shall allocate one distinct seat per passenger and reduce available inventory by exactly the passenger count on successful confirmation.",
+    "acceptance": "For n passengers, exactly n seats and one linked quantity-n reservation are committed; availability drops by n once, and failed confirmation leaves it unchanged.",
+    "cases": [
+      "TC-BOOK-05",
+      "TC-CONC-01"
+    ],
+    "module": "BookingService / Database",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-F-011",
+    "title": "Ticket confirmation",
+    "text": "The system shall display confirmed booking reference, train, travel date, class, passengers, seat numbers and fare.",
+    "acceptance": "POST booking returns 201; authenticated GET /api/bookings/{pnr} returns 200 with the same ticket; unknown or another owner PNR returns 404.",
+    "cases": [
+      "TC-TICKET-01"
+    ],
+    "module": "BookingService / web/app.js",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-F-012",
+    "title": "Booking history",
+    "text": "The system shall display the authenticated passenger’s confirmed and cancelled bookings in newest-first order.",
+    "acceptance": "GET /api/bookings returns only the current user’s records including ticket details; a new account has an empty list.",
+    "cases": [
+      "TC-HISTORY-01"
+    ],
+    "module": "BookingService / Routes",
+    "priority": "Medium"
+  },
+  {
+    "id": "RTS-F-013",
+    "title": "Eligible cancellation",
+    "text": "The system shall permit the owner to cancel a confirmed booking when the configured cutoff is satisfied, and reject duplicate or late cancellation.",
+    "acceptance": "Default cutoff is 24 hours before the first stored departure interpreted in UTC including first-stop day offset; below cutoff or already cancelled returns 409; successful cancellation returns 200 and CANCELLED.",
+    "cases": [
+      "TC-CANCEL-01",
+      "TC-CANCEL-04"
+    ],
+    "module": "BookingService",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-F-014",
+    "title": "Refund quotation and recording",
+    "text": "The system shall display the eligible refund before confirmation and persist the calculated refund on successful cancellation.",
+    "acceptance": "Read-only quote shows eligibility and policy; default refund is floor(totalFare × 90 / 100) integer rupees; configured 0–100 percent is honored; this is a record, not fund settlement.",
+    "cases": [
+      "TC-CANCEL-02"
+    ],
+    "module": "BookingService",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-F-015",
+    "title": "Seat restoration",
+    "text": "The system shall restore only the cancelled booking’s seats exactly once within the cancellation transaction.",
+    "acceptance": "Linked reservation is removed; availability increases by passengerCount; second cancellation does not increase it; released seats can be reused without active duplicates; failure rolls back refund/status/inventory/audit.",
+    "cases": [
+      "TC-CANCEL-03",
+      "TC-CANCEL-05"
+    ],
+    "module": "BookingService / Database",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-F-016",
+    "title": "Booking ownership",
+    "text": "The system shall prevent a passenger from viewing, quoting or cancelling another passenger’s booking, irrespective of supplied owner fields.",
+    "acceptance": "Other-owner requests return 404; missing/invalid/revoked bearer sessions return 401; cancellation service checks the authenticated owner inside its transaction.",
+    "cases": [
+      "TC-SEC-03"
+    ],
+    "module": "Authorization / BookingService",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-F-017",
+    "title": "Administrative train management",
+    "text": "The system shall allow active administrator sessions to create, update and deactivate train, ordered stop and class/fare/capacity data.",
+    "acceptance": "Passenger access is 403 and unauthenticated access 401; valid changes appear in search/details; deactivation hides new bookings while old tickets/cancellation remain accessible; invalid/failed changes roll back.",
+    "cases": [
+      "TC-ADMIN-01",
+      "TC-ADMIN-02",
+      "TC-ADMIN-03",
+      "TC-ADMIN-04"
+    ],
+    "module": "AdminTrainService / AdminRoutes",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-F-018",
+    "title": "Booking audit events",
+    "text": "The system shall persist timestamped booking-created and booking-cancelled events with actor, booking, train and PNR identifiers.",
+    "acceptance": "One matching event is committed with each successful transition; failed transactions leave no success event; authorized admin can retrieve events.",
+    "cases": [
+      "TC-AUDIT-01",
+      "TC-AUDIT-03"
+    ],
+    "module": "AuditService / audit_events",
+    "priority": "Medium"
+  },
+  {
+    "id": "RTS-NF-001",
+    "title": "Response time",
+    "text": "Search and normal booking shall provide a user-visible response within 3 seconds for at least 90% of requests under normal project load.",
+    "acceptance": "Measure search and booking separately; each p90 ≤3 seconds. Local runner: 20 search and 20 booking requests at four clients; browser rendering is separately inspected and the local result is not production capacity certification.",
+    "cases": [
+      "TC-PERF-01"
+    ],
+    "module": "TrainService / BookingService / browser",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-NF-002",
+    "title": "Concurrent integrity",
+    "text": "The system shall prevent allocation of one train/date/class seat to two concurrent confirmed bookings.",
+    "acceptance": "Simultaneous reservation tests show no duplicate active seat and no overselling; direct duplicate inserts are rejected by the seat trigger.",
+    "cases": [
+      "TC-CONC-01",
+      "TC-CONC-02"
+    ],
+    "module": "Database / BookingService",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-NF-003",
+    "title": "Safe errors",
+    "text": "The system shall return clear validation and safe error messages without database internals, stack traces or credentials.",
+    "acceptance": "Invalid JSON, wrong types, oversized bodies/IDs and simulated database failures return controlled errors with no SQL/stack/secret disclosure.",
+    "cases": [
+      "TC-ERR-01",
+      "TC-ERR-02"
+    ],
+    "module": "Routes / Validation",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-NF-004",
+    "title": "Availability and recovery",
+    "text": "The system shall support normal project use and recover gracefully from temporary application/database failures while retaining consistent committed data.",
+    "acceptance": "Restart after clean stop and abrupt process termination preserves committed tickets/inventory/audit; SQLite integrity check is ok; rollback tests retain consistent data. Unrecoverable media corruption is outside this acceptance test.",
+    "cases": [
+      "TC-REC-01",
+      "TC-CANCEL-05"
+    ],
+    "module": "Database / executable",
+    "priority": "Medium"
+  },
+  {
+    "id": "RTS-NF-005",
+    "title": "Password protection",
+    "text": "The system shall persist passwords only as salted secure one-way hashes.",
+    "acceptance": "Stored PBKDF2-HMAC-SHA256 values differ for identical passwords; production default 600000 iterations; no plaintext password is persisted or returned.",
+    "cases": [
+      "TC-SEC-01"
+    ],
+    "module": "PasswordHasher / UserService",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-NF-006",
+    "title": "Role enforcement",
+    "text": "The system shall restrict all administrator functions to currently authorized administrator sessions.",
+    "acceptance": "Passenger/anonymous/revoked sessions are rejected; role is reloaded from database on every authenticated request; public registration cannot choose ADMIN.",
+    "cases": [
+      "TC-SEC-02",
+      "TC-ADMIN-02"
+    ],
+    "module": "Authorization / AuthService",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-NF-007",
+    "title": "Responsive user interface",
+    "text": "The system shall provide a readable, usable core booking flow on common desktop and mobile viewports.",
+    "acceptance": "At 390×844 and 1366×900, controls/text remain reachable and no horizontal page overflow prevents use; browser evidence must identify each flow actually exercised on each viewport.",
+    "cases": [
+      "TC-UX-01"
+    ],
+    "module": "web/index.html / style.css / app.js",
+    "priority": "Medium"
+  },
+  {
+    "id": "RTS-NF-008",
+    "title": "Auditability",
+    "text": "The system shall maintain persistent auditable timestamped records of successful booking and cancellation actions.",
+    "acceptance": "Events can be correlated to ticket/actor and retrieved through admin audit; preserved after restart; failed actions have no success event.",
+    "cases": [
+      "TC-AUDIT-01",
+      "TC-AUDIT-03",
+      "TC-REC-01"
+    ],
+    "module": "AuditService / Database",
+    "priority": "Medium"
+  },
+  {
+    "id": "RTS-SR-001",
+    "title": "One-way password storage",
+    "text": "The system shall never store plaintext passwords and shall use salted PBKDF2-HMAC-SHA256 with bounded iteration parsing and constant-time derived-hash comparison.",
+    "acceptance": "Hash inspection and verification tests pass; identical passwords have distinct salts; malformed or implausible stored iteration counts fail safely; weaker hashes upgrade after successful login.",
+    "cases": [
+      "TC-SEC-01",
+      "TC-SEC-07"
+    ],
+    "module": "PasswordHasher / AuthService",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-SR-002",
+    "title": "Authentication and authorization",
+    "text": "The system shall enforce authentication, current role and booking ownership for every protected operation.",
+    "acceptance": "Anonymous/invalid sessions fail with 401; passenger admin attempts fail with 403; foreign bookings are hidden with 404; session hashes only are persisted and logout revokes access.",
+    "cases": [
+      "TC-AUTH-03",
+      "TC-SEC-02",
+      "TC-SEC-03"
+    ],
+    "module": "AuthService / Authorization",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-SR-003",
+    "title": "Secure communication",
+    "text": "The system shall support HTTPS/TLS for credential and reservation exchange in a supported deployment and validate it over a live connection.",
+    "acceptance": "Real executable with certificate/key completes trusted local TLS handshake and authenticated HTTPS workflow; incomplete TLS configuration fails startup. Plain HTTP development mode is not evidence of compliance for a hosted deployment.",
+    "cases": [
+      "TC-SEC-04"
+    ],
+    "module": "TlsConfig / main / cpp-httplib",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-SR-004",
+    "title": "Input safety",
+    "text": "The system shall validate untrusted input, use parameterized SQL and safely render user-derived content to reduce injection risks.",
+    "acceptance": "SQL/script/control-character/wrong-type/oversized inputs cannot alter schema or execute unintended scripts; invalid data produces controlled errors and no unintended writes.",
+    "cases": [
+      "TC-SEC-05",
+      "TC-BOOK-02",
+      "TC-ERR-02"
+    ],
+    "module": "Validation / Database / web/app.js",
+    "priority": "High"
+  },
+  {
+    "id": "RTS-SR-005",
+    "title": "Secret-safe diagnostics",
+    "text": "The system shall exclude passwords and bearer authentication values from logs, URLs and error messages.",
+    "acceptance": "Access logs include method/path/status while dropping query values; secret redaction tests and error/URL inspections show no submitted password or raw token.",
+    "cases": [
+      "TC-SEC-06",
+      "TC-AUDIT-02"
+    ],
+    "module": "Log / Routes / web/app.js",
+    "priority": "High"
+  }
+]

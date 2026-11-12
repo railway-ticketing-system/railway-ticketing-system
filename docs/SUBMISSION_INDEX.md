@@ -10,7 +10,7 @@ Prepared on **12 November 2026** for Team 15, Railway Ticket Reservation System,
 | 2 | At least one UML use-case diagram | SRS and [diagram](diagrams/use_cases.png) | Included |
 | 3 | At least two security objectives and requirements | SRS security section; five RTS-SR requirements | Included |
 | 4 | Updated IEEE-style Test Plan; sections 3, 4, 5 and security validation 5.1 | [Word](Railway_Ticket_Reservation_System_Test_Plan_Final.docx), [PDF](Railway_Ticket_Reservation_System_Test_Plan_Final.pdf) | Prepared for QA review |
-| 5 | At least 7–10 test cases updated after sprint work | Test Plan detailed cases and [machine-readable cases](source/test_cases.json) | Detailed inputs, steps, expected results, requirement and test mappings included |
+| 5 | At least 7–10 test cases updated after sprint work | Test Plan detailed cases and [machine-readable cases](source/test_cases.json) | 46 detailed cases with inputs, steps, expected results, requirement and test mappings included |
 | 6 | Updated IEEE-style architecture/design | [Word](Railway_Ticket_Reservation_System_SAD_Final.docx), [PDF](Railway_Ticket_Reservation_System_SAD_Final.pdf) | Prepared for review; describes actual C++ stack |
 | 7 | Two UML sequence diagrams, API design and error handling | SAD; [booking sequence](diagrams/booking_sequence.png), [cancellation sequence](diagrams/cancellation_sequence.png), [component diagram](diagrams/components.png) | Included |
 

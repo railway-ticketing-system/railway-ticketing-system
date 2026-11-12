@@ -27,7 +27,7 @@ def actor(d,x,y,name):
 im,d=canvas(1500,1080);text(d,(750,40),'Railway reservation use cases',30);d.rectangle((300,95,1200,1010),outline='#294e73',width=3);text(d,(750,125),'Railway Ticket Reservation System',22);actor(d,150,450,'Passenger');actor(d,1350,450,'Administrator')
 items=[('Register and manage profile',510,220),('Log in and log out',990,220),('Search and view schedules',510,390),('View fares and availability',990,390),('Book and view ticket',510,560),('View booking history',990,560),('Cancel own ticket and view refund',510,730),('Manage train records',990,730),('Read booking audit trail',990,900)]
 for label,x,y in items:
- d.ellipse((x-195,y-50,x+195,y+50),outline='#294e73',width=3,fill='#eef4fa');text(d,(x,y),label,24)
+ d.ellipse((x-195,y-50,x+195,y+50),outline='#294e73',width=3,fill='#eef4fa');text(d,(x,y),textwrap.fill(label,26),26)
  if 'Manage train' in label or 'audit trail' in label:d.line([(1318,450),(x+195,y)],fill='#526f8d',width=2)
  else:d.line([(180,450),(x-195,y)],fill='#526f8d',width=2)
 im.save(OUT/'use_cases.png')
