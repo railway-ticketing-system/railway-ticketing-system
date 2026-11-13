@@ -79,3 +79,31 @@ TEST(TransportSecurityTest, AddsHstsWhenOriginalRequestWasHttps) {
     ASSERT_EQ(res->status, 200);
     EXPECT_EQ(res->get_header_value("Strict-Transport-Security"), "max-age=31536000");
 }
+
+TEST(TlsConfigTest, KeyWithoutCertificateIsRejected) {
+    TlsConfig config;
+    config.keyPath = "key.pem";
+    std::string error;
+    EXPECT_TRUE(config.enabled());
+    EXPECT_FALSE(config.valid(error));
+    EXPECT_NE(error.find("both"), std::string::npos);
+}
+
+TEST(TlsConfigTest, MissingCertificateIsRejectedBeforeKey) {
+    TlsConfig config;
+    config.certPath = std::string(testing::TempDir()) + "rtrs-nonexistent-dir/cert.pem";
+    config.keyPath = "key.pem";
+    std::string error;
+    EXPECT_FALSE(config.valid(error));
+    EXPECT_NE(error.find("CERT"), std::string::npos);
+}
+
+TEST(TlsConfigTest, MissingKeyIsRejectedWithReadableCertificate) {
+    TlsConfig config;
+    config.certPath = writeTemp("rtrs-coverage-cert.pem", "certificate");
+    config.keyPath = std::string(testing::TempDir()) + "rtrs-nonexistent-dir/key.pem";
+    std::string error;
+    EXPECT_FALSE(config.valid(error));
+    EXPECT_NE(error.find("KEY"), std::string::npos);
+    std::remove(config.certPath.c_str());
+}
