@@ -1,0 +1,241 @@
+{
+  "checked_at": "2026-11-13T05:33:34.822767+00:00",
+  "status": "PASS",
+  "checks": [
+    {
+      "check": "Artifact docs/SUBMISSION_INDEX.md",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/Railway_Ticket_Reservation_System_SRS.docx",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/Railway_Ticket_Reservation_System_SRS.pdf",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/Railway_Ticket_Reservation_System_SAD_Final.docx",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/Railway_Ticket_Reservation_System_SAD_Final.pdf",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/Railway_Ticket_Reservation_System_Test_Plan_Final.docx",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/Railway_Ticket_Reservation_System_Test_Plan_Final.pdf",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/DEVIATIONS.md",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/planning/BACKLOG.md",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/planning/FEATURE_FREEZE.md",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/evidence/github-backlog-import.json",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/demo/LIVE_DEMO_RUNBOOK.md",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/demo/VIVA_PREP.md",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/demo/VIDEO_HANDOFF.md",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/reports/Browser_Validation_Report.md",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/reports/Unit_Test_Report.md",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/reports/Unit_Test_Report.pdf",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/reports/System_Validation_Report.md",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/reports/System_Validation_Report.pdf",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/reports/Code_Coverage_Report.md",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/reports/Code_Coverage_Report.pdf",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/reports/Branch_Coverage_Report.md",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Artifact docs/reports/Branch_Coverage_Report.pdf",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "All local Markdown links resolve",
+      "status": "PASS",
+      "detail": []
+    },
+    {
+      "check": "31 FR NFR and security requirements",
+      "status": "PASS",
+      "detail": 31
+    },
+    {
+      "check": "At least ten detailed test cases",
+      "status": "PASS",
+      "detail": 46
+    },
+    {
+      "check": "Every requirement maps to existing cases",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Named automated tests exist in executed XML",
+      "status": "PASS",
+      "detail": []
+    },
+    {
+      "check": "Unit run has no errors or failures",
+      "status": "PASS",
+      "detail": "201"
+    },
+    {
+      "check": "System run complete and passing",
+      "status": "PASS",
+      "detail": {
+        "PASS": 122,
+        "FAIL": 0
+      }
+    },
+    {
+      "check": "Coverage counts within totals",
+      "status": "PASS",
+      "detail": {
+        "line": 94.7,
+        "branch": 46.7,
+        "function": 100.0
+      }
+    },
+    {
+      "check": "Railway_Ticket_Reservation_System_SRS.docx embedded diagrams",
+      "status": "PASS",
+      "detail": 1
+    },
+    {
+      "check": "Railway_Ticket_Reservation_System_SAD_Final.docx embedded diagrams",
+      "status": "PASS",
+      "detail": 3
+    },
+    {
+      "check": "32 live Jira stories Done",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Six implementation epics Done",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Six original Jira sprints closed",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Original Jira dates preserved",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Jira stories have submission estimates",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "32 stories imported to GitHub Project",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "GitHub Project public",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "GitHub Project fields and views verified",
+      "status": "PASS",
+      "detail": {
+        "32 source stories present": true,
+        "public project": true,
+        "repository linked": true,
+        "no duplicate content URLs": true,
+        "story status Done": true,
+        "story assignees correct": true,
+        "estimates match": true,
+        "course dates match": true,
+        "original Jira dates match": true,
+        "original sprint memberships match": true,
+        "PR links match": true,
+        "commit links match": true,
+        "delivery board exists": true,
+        "three course sprint boards exist": true,
+        "original Jira table exists": true,
+        "current PR remains in review": true
+      }
+    }
+  ],
+  "external_actions_pending": [
+    "Friend uploads 60-second and 120-second videos",
+    "Amar performs final human acceptance and reviews/merges submission",
+    "Product owner/mentor record actual acceptance"
+  ],
+  "meaning": "Artifact consistency only; pending external actions prevent claiming the whole course submission accepted"
+}

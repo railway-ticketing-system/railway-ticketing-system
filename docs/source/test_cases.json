@@ -1,0 +1,904 @@
+[
+  {
+    "id": "TC-REG-01",
+    "title": "Create passenger account",
+    "requirements": [
+      "RTS-F-001"
+    ],
+    "inputs": "New email; name Test Rider; phone 9876543210; password Journey123.",
+    "steps": [
+      "Reset isolated DB.",
+      "POST all four registration fields.",
+      "Inspect response and users row."
+    ],
+    "expected": "201; normalized unique email; PASSENGER role; no password/hash in response.",
+    "tests": [
+      "RegisterApi.CreatesAccountAndNeverEchoesSecrets"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-REG-02",
+    "title": "Reject duplicate and invalid registration",
+    "requirements": [
+      "RTS-F-001"
+    ],
+    "inputs": "Existing email with changed case; missing phone; malformed JSON.",
+    "steps": [
+      "Register baseline account.",
+      "Repeat email using uppercase.",
+      "Submit missing phone then malformed JSON.",
+      "Compare account row count."
+    ],
+    "expected": "409 duplicate; 400 invalid; no extra accounts; field errors identify invalid data.",
+    "tests": [
+      "RegisterApi.DuplicateEmailReturns409",
+      "RegisterApi.ValidationErrorsListEachField",
+      "RegisterApi.MalformedAndNonObjectJsonReturn400"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-AUTH-01",
+    "title": "Valid login",
+    "requirements": [
+      "RTS-F-002"
+    ],
+    "inputs": "Registered passenger and correct password.",
+    "steps": [
+      "POST /api/auth/login.",
+      "Use returned token as Authorization: Bearer on GET /api/users/me.",
+      "Inspect sessions storage."
+    ],
+    "expected": "200 login/profile; opaque token is usable; stored token_hash differs from raw bearer.",
+    "tests": [
+      "LoginApi.SuccessReturnsTokenAndUserWithoutHash",
+      "SecurityApi.SessionTokensAreStoredOnlyAsHashes"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-AUTH-02",
+    "title": "Invalid login and lockout",
+    "requirements": [
+      "RTS-F-002"
+    ],
+    "inputs": "Unknown email; wrong password; five failures for one account.",
+    "steps": [
+      "Compare wrong-password and unknown-user responses.",
+      "Repeat failures five times.",
+      "Try correct password during lock.",
+      "Advance injected clock past 300 seconds and retry."
+    ],
+    "expected": "Generic 401 responses match; lock returns 429; after expiry valid login succeeds.",
+    "tests": [
+      "LoginApi.BadCredentialsReturnTheSame401Body",
+      "LoginApi.RepeatedFailuresReturn429",
+      "AuthServiceTest.LockExpiresAndSuccessResetsCounter"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-AUTH-03",
+    "title": "Reject invalid session",
+    "requirements": [
+      "RTS-F-002",
+      "RTS-SR-002"
+    ],
+    "inputs": "Missing, garbage and expired tokens.",
+    "steps": [
+      "Request protected booking/profile endpoints with each token.",
+      "Advance test clock beyond 24-hour TTL.",
+      "Retry expired token."
+    ],
+    "expected": "401; no protected state disclosed or changed.",
+    "tests": [
+      "AuthServiceTest.SessionExpires",
+      "BookingCancelSecurityApi.QuoteAndCancellationRejectMissingInvalidAndRevokedSessions"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-AUTH-04",
+    "title": "Logout and password session revocation",
+    "requirements": [
+      "RTS-F-002",
+      "RTS-SR-002"
+    ],
+    "inputs": "Two valid sessions for same user.",
+    "steps": [
+      "Logout one session and request profile.",
+      "Change password using current password from remaining session.",
+      "Verify other sessions revoked and current session retained."
+    ],
+    "expected": "Logged-out token fails; password update keeps current session and revokes others.",
+    "tests": [
+      "LogoutApi.LogsOutAndTokenStopsWorking",
+      "ProfileApiTest.PasswordChangeKeepsCurrentSessionAndRevokesOthers"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-SEARCH-01",
+    "title": "Search ordered route",
+    "requirements": [
+      "RTS-F-003"
+    ],
+    "inputs": "Fixture Alpha → Beta; future valid date D.",
+    "steps": [
+      "GET /api/trains/search?source=Alpha&destination=Beta&date=D.",
+      "Compare returned train and route against fixture.",
+      "Reverse route."
+    ],
+    "expected": "200 matches forward stop order; reverse route cannot match that forward-only schedule.",
+    "tests": [
+      "SearchApi.ReturnsMatchingTrainsAsJson"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-SEARCH-02",
+    "title": "Inspect schedule and fares",
+    "requirements": [
+      "RTS-F-004"
+    ],
+    "inputs": "Known train ID with ordered stops and class fares.",
+    "steps": [
+      "Search fixture route.",
+      "GET train schedule and fares.",
+      "Compare number/name, stops, times, duration and fares."
+    ],
+    "expected": "Summary and details match fixture; stop order/day offsets and class fare values preserved.",
+    "tests": [
+      "ScheduleApi.ReturnsTrainAndStops",
+      "FaresApi.ReturnsClassFares"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-SEARCH-03",
+    "title": "No results and invalid criteria",
+    "requirements": [
+      "RTS-F-003"
+    ],
+    "inputs": "Unknown route; absent date; invalid calendar date.",
+    "steps": [
+      "Search unmatched valid route.",
+      "Omit required parameters.",
+      "Submit invalid date."
+    ],
+    "expected": "200 with empty list for no matches; 400 with field errors for invalid criteria.",
+    "tests": [
+      "SearchApi.NoMatchReturnsEmptyList",
+      "SearchApi.MissingParametersReturnFieldErrors"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-SEARCH-04",
+    "title": "Filter and sort",
+    "requirements": [
+      "RTS-F-003"
+    ],
+    "inputs": "Multiple trains with different class, fare and departure values.",
+    "steps": [
+      "Search using class, maxFare and departure range.",
+      "Sort by price/duration/departure with order.",
+      "Submit invalid filter."
+    ],
+    "expected": "Only eligible trains returned in requested order; invalid filter yields field error.",
+    "tests": [
+      "FilterApi.AppliesClassFareAndSortParameters",
+      "FilterApi.InvalidFilterReturnsFieldError"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-AVAIL-01",
+    "title": "Class inventory equation",
+    "requirements": [
+      "RTS-F-005"
+    ],
+    "inputs": "Train class capacity C; reserve n seats on date D.",
+    "steps": [
+      "GET availability before booking.",
+      "Book n passengers.",
+      "GET availability for D and D+1.",
+      "Compare reservation sums."
+    ],
+    "expected": "Available seats are C−n on D and unaffected on D+1.",
+    "tests": [
+      "AvailabilityApi.ReturnsClassWiseAvailability",
+      "BookingAvailabilityApi.AvailabilityIsPerDate"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-AVAIL-02",
+    "title": "Sold-out and bad availability query",
+    "requirements": [
+      "RTS-F-005"
+    ],
+    "inputs": "Class with zero remaining capacity; invalid date; unknown ID.",
+    "steps": [
+      "Fill class.",
+      "Inspect availability and attempt preview.",
+      "Request invalid date and unknown train."
+    ],
+    "expected": "Zero available; sold-out preview rejected; invalid date 400 and missing train 404.",
+    "tests": [
+      "BookingAvailabilityApi.SoldOutClassIsRejected",
+      "AvailabilityApi.MissingOrInvalidDateReturns400",
+      "AvailabilityApi.UnknownTrainReturns404"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-BOOK-01",
+    "title": "Preview without mutation",
+    "requirements": [
+      "RTS-F-006"
+    ],
+    "inputs": "Logged-in passenger; valid train/date/class; two passengers.",
+    "steps": [
+      "Count bookings/reservations.",
+      "POST /api/bookings/preview.",
+      "Inspect total fare, count and availability.",
+      "Recount rows."
+    ],
+    "expected": "200; totalFare=2×farePerPassenger; no booking or reservation created.",
+    "tests": [
+      "BookingPreviewApi.ReturnsFareAndAvailability"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-BOOK-02",
+    "title": "Passenger field boundaries",
+    "requirements": [
+      "RTS-F-007",
+      "RTS-SR-004"
+    ],
+    "inputs": "Names with digits/script, age 0/121/non-numeric, invalid gender.",
+    "steps": [
+      "POST preview and confirm with invalid data.",
+      "Inspect indexed field errors.",
+      "Query booking/passenger rows."
+    ],
+    "expected": "400; correct passenger index and field; no partial booking.",
+    "tests": [
+      "BookingValidationApi.RejectsInvalidNameAgeAndGender",
+      "BookingValidationApi.ReportsTheCorrectPassengerIndex",
+      "InputValidationApi.OverlongAndScriptPassengerNamesAreRejected"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-BOOK-03",
+    "title": "Stale preview conflict",
+    "requirements": [
+      "RTS-F-008"
+    ],
+    "inputs": "One remaining seat; two logged-in passengers.",
+    "steps": [
+      "Preview one seat for user A.",
+      "User B confirms last seat.",
+      "A confirms original preview.",
+      "Inspect all state."
+    ],
+    "expected": "B succeeds; A gets 409; no A booking/passenger/reservation/success audit.",
+    "tests": [
+      "BookingConfirmApi.RejectsWhenSeatsRanOutAfterPreview"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-BOOK-04",
+    "title": "Distinct persisted PNR",
+    "requirements": [
+      "RTS-F-009"
+    ],
+    "inputs": "Capacity for multiple bookings.",
+    "steps": [
+      "Confirm two bookings.",
+      "Check PNR format/uniqueness.",
+      "Query bookings table and retrieve tickets by PNR."
+    ],
+    "expected": "Each PNR is a distinct ten-digit string stored on its booking.",
+    "tests": [
+      "BookingPnrApi.ReturnsTenDigitPnr",
+      "BookingPnrApi.PnrIsUniqueAcrossBookings",
+      "BookingPnrApi.PnrIsStoredOnTheBooking"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-BOOK-05",
+    "title": "Seat decrement exactly once",
+    "requirements": [
+      "RTS-F-010"
+    ],
+    "inputs": "Capacity 10; three valid passengers.",
+    "steps": [
+      "Read starting availability.",
+      "Confirm three passengers once.",
+      "Inspect passengers and linked reservation.",
+      "Read availability."
+    ],
+    "expected": "201; three distinct seats; one quantity-3 linked reservation; availability drops from 10 to 7.",
+    "tests": [
+      "BookingConfirmApi.ReservesSeatsAndReducesAvailability",
+      "BookingConfirmApi.CreatesConfirmedBookingWithSeatsAndPnr"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-BOOK-06",
+    "title": "Passenger count boundaries",
+    "requirements": [
+      "RTS-F-007"
+    ],
+    "inputs": "Passenger arrays of size 0, 1, 6 and 7.",
+    "steps": [
+      "Preview each array on class with sufficient seats.",
+      "Confirm valid boundaries in isolated fixtures."
+    ],
+    "expected": "0 and 7 rejected; 1 and 6 accepted if all fields valid and capacity sufficient.",
+    "tests": [
+      "BookingPreviewApi.RejectsMissingPassengers",
+      "BookingPreviewApi.RejectsMoreThanSixPassengers",
+      "BookingAvailabilityApi.AllowsBookingExactlyTheRemainingSeats"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-TICKET-01",
+    "title": "Owner ticket by PNR",
+    "requirements": [
+      "RTS-F-011"
+    ],
+    "inputs": "Confirmed booking; owner bearer token.",
+    "steps": [
+      "GET /api/bookings/{pnr}.",
+      "Compare PNR, date, class, train, passengers, seats and fare with confirmation.",
+      "Request unknown PNR."
+    ],
+    "expected": "200 correct ticket; unknown PNR 404; URL uses PNR, not numeric internal ID.",
+    "tests": [
+      "BookingTicketApi.OwnerCanViewTicket",
+      "BookingTicketApi.UnknownPnrReturnsNotFound"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-HISTORY-01",
+    "title": "Isolated newest-first history",
+    "requirements": [
+      "RTS-F-012"
+    ],
+    "inputs": "Two accounts; multiple confirmed/cancelled bookings.",
+    "steps": [
+      "GET history for new account.",
+      "Create bookings for both users and cancel one own booking.",
+      "GET history for each."
+    ],
+    "expected": "New account list empty; each user sees only own records newest-first including cancelled ticket details.",
+    "tests": [
+      "BookingHistoryApi.ReturnsEmptyListWhenNoBookings",
+      "BookingHistoryApi.ReturnsBookingsNewestFirst",
+      "BookingHistoryApi.DoesNotIncludeOtherUsersBookings"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-CANCEL-01",
+    "title": "Eligible owner cancellation",
+    "requirements": [
+      "RTS-F-013"
+    ],
+    "inputs": "Own confirmed future booking outside 24-hour cutoff.",
+    "steps": [
+      "GET cancellation quote using numeric booking id.",
+      "POST or PUT /api/bookings/{id}/cancel.",
+      "Retrieve ticket."
+    ],
+    "expected": "Quote eligible; cancellation 200; ticket CANCELLED with cancelledAt and recorded refund.",
+    "tests": [
+      "BookingCancelApi.CancelsEligibleBooking"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-CANCEL-02",
+    "title": "Refund quote and floor rule",
+    "requirements": [
+      "RTS-F-014"
+    ],
+    "inputs": "Booking totalFare; default 90 percent and configured alternate percentage.",
+    "steps": [
+      "GET quote and verify no row mutation.",
+      "Compute floor(totalFare×percent/100).",
+      "Cancel and compare persisted refund."
+    ],
+    "expected": "Quote/persisted refund equal integer floor; configured percentage honored; no payment operation occurs.",
+    "tests": [
+      "BookingRefundApi.QuotePreviewsRefundWithoutChangingBooking",
+      "BookingRefundApi.RefundUsesConfiguredPercentageAndRoundsDown"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-CANCEL-03",
+    "title": "Restore own seats once",
+    "requirements": [
+      "RTS-F-015"
+    ],
+    "inputs": "Two bookings on same train/date/class.",
+    "steps": [
+      "Cancel first booking.",
+      "Read availability and reservations.",
+      "Attempt second cancellation.",
+      "Rebook freed seats."
+    ],
+    "expected": "Only first booking quantity restored; repeated cancellation 409; freed seats reusable without active duplicates.",
+    "tests": [
+      "BookingRestoreApi.CancellationRestoresOnlyItsOwnSeatsExactlyOnce",
+      "BookingRestoreApi.RebookingReusesFreedSeatsWithoutDuplicatingActiveSeats"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-CANCEL-04",
+    "title": "Reject late or repeated cancellation",
+    "requirements": [
+      "RTS-F-013"
+    ],
+    "inputs": "Booking within cutoff; already cancelled booking; alternate cutoff.",
+    "steps": [
+      "Request quote and cancel for late booking.",
+      "Cancel eligible booking twice.",
+      "Repeat with configured cutoff fixture."
+    ],
+    "expected": "Late quote ineligible, zero refund; cancellation 409; repeated cancellation 409; policy honored.",
+    "tests": [
+      "BookingCancelApi.RejectsCancellationAfterCutoff",
+      "BookingCancelApi.RejectsSecondCancellation",
+      "BookingCancelApi.HonoursConfiguredCutoff"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-CANCEL-05",
+    "title": "Cancellation rollback",
+    "requirements": [
+      "RTS-F-015",
+      "RTS-NF-004"
+    ],
+    "inputs": "Confirmed booking; injected inventory deletion failure.",
+    "steps": [
+      "Capture ticket/reservation/audit state.",
+      "Inject failure inside cancellation transaction.",
+      "Attempt cancellation.",
+      "Compare state."
+    ],
+    "expected": "No partial cancellation, refund, seat restoration or success audit survives failure.",
+    "tests": [
+      "BookingRestoreApi.InventoryFailureRollsBackCancellationAndRefund"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-SEC-01",
+    "title": "Salted password storage",
+    "requirements": [
+      "RTS-NF-005",
+      "RTS-SR-001"
+    ],
+    "inputs": "Two accounts with identical valid password.",
+    "steps": [
+      "Register accounts.",
+      "Inspect password_hash fields.",
+      "Verify correct/wrong password; inspect API responses."
+    ],
+    "expected": "Only PBKDF2 hashes stored; distinct salts; correct verifies, wrong fails; no password/hash disclosure.",
+    "tests": [
+      "SecurityApi.PasswordsAreStoredOnlyAsSaltedHashes",
+      "PasswordHasher.SamePasswordGetsDifferentSalts"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-SEC-02",
+    "title": "Current role authorization",
+    "requirements": [
+      "RTS-NF-006",
+      "RTS-SR-002"
+    ],
+    "inputs": "Passenger, admin and revoked sessions.",
+    "steps": [
+      "Attempt admin list/create/update/audit with passenger/anonymous tokens.",
+      "Change admin role in DB and retry existing token.",
+      "Try role=ADMIN in registration."
+    ],
+    "expected": "401/403 as appropriate; changed role enforced immediately; registration remains PASSENGER.",
+    "tests": [
+      "SecurityApi.AdminRoleIsRecheckedOnEveryRequest",
+      "AdminAuthApi.PublicRegistrationCannotChooseAdminRole",
+      "SecurityApi.PassengerCannotUseAdminOperations"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-SEC-03",
+    "title": "Ownership despite spoofed fields",
+    "requirements": [
+      "RTS-F-016",
+      "RTS-SR-002"
+    ],
+    "inputs": "A owns booking; B has valid session and knows id/PNR.",
+    "steps": [
+      "As B read ticket, quote and cancel A booking.",
+      "Supply A owner id in body.",
+      "Call service owner check under test."
+    ],
+    "expected": "404; no disclosure or state change; service enforces actual owner inside transaction.",
+    "tests": [
+      "BookingCancelSecurityApi.AnotherUserCannotPreviewOrCancelEvenWithSpoofedOwner",
+      "BookingCancelSecurityApi.ServiceEnforcesOwnerInsideCancellationTransaction",
+      "BookingTicketApi.OtherUsersCannotViewTicket"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-SEC-04",
+    "title": "Live TLS and configuration rejection",
+    "requirements": [
+      "RTS-SR-003"
+    ],
+    "inputs": "Temporary local certificate/key and explicit client trust; standalone executable.",
+    "steps": [
+      "Start with RTRS_TLS_CERT and RTRS_TLS_KEY.",
+      "Connect using trusted SSLContext and record negotiated protocol.",
+      "Run authenticated HTTPS request.",
+      "Start with only one TLS path."
+    ],
+    "expected": "Trusted local TLS connection succeeds; selected system run negotiates TLS 1.3; incomplete configuration fails startup.",
+    "tests": [
+      "TlsConfigTest.RequiresBothCertificateAndKey",
+      "TlsConfigTest.AcceptsReadableCertificateAndKey"
+    ],
+    "kind": "System runner + configuration tests"
+  },
+  {
+    "id": "TC-SEC-05",
+    "title": "Injection and unsafe input",
+    "requirements": [
+      "RTS-SR-004"
+    ],
+    "inputs": "SQL/script strings; control characters; wrong JSON types.",
+    "steps": [
+      "Submit adversarial login/search/registration/passenger/admin data.",
+      "Verify schema and row counts.",
+      "Inspect browser rendering of dynamic content."
+    ],
+    "expected": "Controlled rejection; no SQL execution, unintended write or script execution; dynamic content escaped/text assigned.",
+    "tests": [
+      "InputValidationApi.ScriptAndInjectionInputsAreRejected",
+      "InputValidationApi.WrongJsonTypesCannotBypassValidation",
+      "LoginApi.SqlInjectionInEmailDoesNotAuthenticate"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-SEC-06",
+    "title": "Secrets absent from diagnostics",
+    "requirements": [
+      "RTS-SR-005"
+    ],
+    "inputs": "Distinct password/token markers; requests with query/control characters.",
+    "steps": [
+      "Run login and protected API calls.",
+      "Capture logs and error bodies.",
+      "Search markers and inspect browser request URLs."
+    ],
+    "expected": "No raw password/token in logs, URLs or errors; access targets omit query values and control characters.",
+    "tests": [
+      "LoggingUtil.RedactsAuthenticationSecrets",
+      "LoggingUtil.AccessLogOmitsCredentialsAndQueryValues",
+      "LoggingUtil.RequestTargetDropsQueryAndControlCharacters"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-SEC-07",
+    "title": "Hash upgrade and invalid encoded values",
+    "requirements": [
+      "RTS-SR-001"
+    ],
+    "inputs": "Weaker stored PBKDF2 hash; malformed and extreme iteration counts.",
+    "steps": [
+      "Login successfully against weaker valid hash.",
+      "Inspect upgraded hash.",
+      "Attempt malformed/extreme hash verification."
+    ],
+    "expected": "Successful login upgrades weak hash; invalid/extreme values rejected without unbounded work.",
+    "tests": [
+      "SecurityApi.LoginUpgradesWeakerStoredHashes",
+      "PasswordHasherSecurity.RejectsImplausibleIterationCounts"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-ADMIN-01",
+    "title": "Create and update complete train",
+    "requirements": [
+      "RTS-F-017"
+    ],
+    "inputs": "Admin; new train number; ordered stops; classes/capacity/fares.",
+    "steps": [
+      "POST /api/admin/trains.",
+      "Search and inspect details.",
+      "PUT /api/admin/trains/{id} with revised schedule/fare.",
+      "Recheck search/details and old booking fare."
+    ],
+    "expected": "Valid changes visible; existing booking fare snapshot retained.",
+    "tests": [
+      "AdminTrainCreateApi.CreatesCompleteTrainVisibleInPassengerSearchAndDetails",
+      "AdminTrainUpdateApi.UpdatesSearchScheduleAndFaresWithoutChangingExistingBookingFare"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-ADMIN-02",
+    "title": "Deny unauthorized admin access",
+    "requirements": [
+      "RTS-F-017",
+      "RTS-NF-006"
+    ],
+    "inputs": "No token, passenger token and revoked admin token.",
+    "steps": [
+      "Attempt admin reads and writes with each.",
+      "Compare database before/after."
+    ],
+    "expected": "Anonymous/revoked 401; passenger 403; no write.",
+    "tests": [
+      "AdminTrainCreateApi.ReadAndWriteRequireAnActiveAdminSession",
+      "AdminAuthApi.RejectsUnauthenticatedPassengerAndRevokedSessions"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-ADMIN-03",
+    "title": "Deactivate with existing bookings",
+    "requirements": [
+      "RTS-F-017"
+    ],
+    "inputs": "Active train and confirmed booking; stale preview.",
+    "steps": [
+      "PUT /api/admin/trains/{id}/deactivate.",
+      "Search and attempt stale confirmation.",
+      "Read existing ticket/history and cancel eligible booking.",
+      "Restart."
+    ],
+    "expected": "Train hidden; new confirmation rejected; existing ticket/history/cancel work; inactive state persists.",
+    "tests": [
+      "AdminTrainDeactivateApi.HidesServiceAndRejectsBookingsFromStalePreviews",
+      "AdminTrainDeactivateApi.ExistingTicketsHistoryAndCancellationStillWork",
+      "AdminTrainDeactivateApi.MigratesExistingTrainRecordsAndPreservesInactiveStateOnRestart"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-ADMIN-04",
+    "title": "Atomic validation and update guards",
+    "requirements": [
+      "RTS-F-017"
+    ],
+    "inputs": "Duplicate train number; invalid stops; referenced class; capacity below assigned seats.",
+    "steps": [
+      "Submit each invalid create/update.",
+      "Inject class-update database failure.",
+      "Compare train/stop/class state."
+    ],
+    "expected": "400/409 as implemented; no partial write; referenced class removal/capacity shrink rejected.",
+    "tests": [
+      "AdminTrainCreateApi.DuplicateTrainNumberReturnsConflict",
+      "AdminTrainUpdateApi.CannotRemoveReferencedClassOrShrinkBelowAssignedSeats",
+      "AdminTrainUpdateApi.FailedClassUpdateRollsBackTrainAndStopChanges"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-AUDIT-01",
+    "title": "Timestamped transition audit",
+    "requirements": [
+      "RTS-F-018",
+      "RTS-NF-008"
+    ],
+    "inputs": "One successful booking followed by cancellation.",
+    "steps": [
+      "Read audit baseline.",
+      "Confirm then cancel.",
+      "Query audit_events and admin audit API.",
+      "Correlate booking/user/train/PNR/timestamp."
+    ],
+    "expected": "Exactly one event for each successful transition; actor and identifiers match persisted ticket.",
+    "tests": [
+      "AuditApi.RecordsTimestampedBookingAndCancellationEvents",
+      "AuditApi.AdministratorCanReadTheAuditTrail"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-AUDIT-02",
+    "title": "Secret-safe audit and access log",
+    "requirements": [
+      "RTS-SR-005"
+    ],
+    "inputs": "Booking/cancellation with distinct credential markers.",
+    "steps": [
+      "Read generated audit fields and captured access logs.",
+      "Search raw credential/token markers."
+    ],
+    "expected": "Audit has identifiers/timestamp/refund only; no credentials or bearer values.",
+    "tests": [
+      "LoggingUtil.AccessLogOmitsCredentialsAndQueryValues",
+      "AuditApi.RecordsTimestampedBookingAndCancellationEvents"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-AUDIT-03",
+    "title": "No false success audit",
+    "requirements": [
+      "RTS-F-018",
+      "RTS-NF-008"
+    ],
+    "inputs": "Failed booking and injected cancellation transaction failure.",
+    "steps": [
+      "Capture audit count.",
+      "Trigger failed operations.",
+      "Compare audit and booking state."
+    ],
+    "expected": "No success event for rolled-back/failed operation.",
+    "tests": [
+      "AuditApi.FailedBookingDoesNotLeaveAnAuditEvent",
+      "BookingRestoreApi.InventoryFailureRollsBackCancellationAndRefund"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-PERF-01",
+    "title": "Separate search and booking p90",
+    "requirements": [
+      "RTS-NF-001"
+    ],
+    "inputs": "Standalone server; local fixture; four clients; 20 searches and 20 bookings.",
+    "steps": [
+      "Run system runner on isolated DB.",
+      "Record latency per request and status.",
+      "Compute separate p90 for search and booking and retain raw samples.",
+      "Inspect selected UI flow responsiveness separately."
+    ],
+    "expected": "Both p90 ≤3 seconds; no failed requests silently discarded; record machine/load; no production throughput inference.",
+    "tests": [
+      "PerformanceApi.P90SearchLatencyStaysUnderThreeSeconds"
+    ],
+    "kind": "System runner + browser evidence"
+  },
+  {
+    "id": "TC-CONC-01",
+    "title": "Concurrent booking consistency",
+    "requirements": [
+      "RTS-NF-002",
+      "RTS-F-010"
+    ],
+    "inputs": "Limited capacity; competing clients against same train/date/class.",
+    "steps": [
+      "Launch concurrent booking attempts.",
+      "Collect responses.",
+      "Query active seat assignments, reservation sums and capacity."
+    ],
+    "expected": "No duplicate active seat; no overselling; successful quantities reconcile with inventory.",
+    "tests": [
+      "ConcurrencyApi.ConcurrentBookingsAllocateEachSeatOnlyOnce"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-CONC-02",
+    "title": "Database duplicate-seat defense",
+    "requirements": [
+      "RTS-NF-002"
+    ],
+    "inputs": "Two confirmed bookings with same inventory key.",
+    "steps": [
+      "Insert passenger seat on first booking.",
+      "Directly attempt same seat for second.",
+      "Inspect rows after rejection."
+    ],
+    "expected": "Trigger rejects duplicate active seat; existing allocation preserved.",
+    "tests": [
+      "ConcurrencyDatabase.UniqueSeatTriggerRejectsDirectDuplicates"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-ERR-01",
+    "title": "Safe validation and server errors",
+    "requirements": [
+      "RTS-NF-003"
+    ],
+    "inputs": "Malformed JSON; unknown endpoint; injected database failure.",
+    "steps": [
+      "Submit malformed request.",
+      "Request unknown route/wrong method.",
+      "Trigger service failure.",
+      "Inspect response and state."
+    ],
+    "expected": "Controlled JSON errors; no database/stack/credential detail; no partial mutation.",
+    "tests": [
+      "SafeErrorsApi.MalformedJsonIsRejectedSafely",
+      "SafeErrorsApi.UnknownRouteReturnsGenericJson",
+      "AdminTrainCreateApi.DatabaseFailureRollsBackTrainStopsAndClasses"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-ERR-02",
+    "title": "Body and identifier boundaries",
+    "requirements": [
+      "RTS-NF-003",
+      "RTS-SR-004"
+    ],
+    "inputs": "Body >64 KiB; oversized numeric ID; wrong JSON field types.",
+    "steps": [
+      "POST oversized body.",
+      "GET oversized resource path.",
+      "Submit wrong types.",
+      "Confirm server health."
+    ],
+    "expected": "Controlled rejection (413 oversized payload or safe endpoint validation); no crash and health remains available.",
+    "tests": [
+      "SafeErrorsApi.OversizedRequestBodyIsRejectedSafely",
+      "SafeErrorsApi.OversizedResourceIdDoesNotCrashTheServer",
+      "InputValidationApi.WrongJsonTypesCannotBypassValidation"
+    ],
+    "kind": "Automated / manual replay"
+  },
+  {
+    "id": "TC-REC-01",
+    "title": "Restart and abrupt-stop persistence",
+    "requirements": [
+      "RTS-NF-004",
+      "RTS-NF-008"
+    ],
+    "inputs": "File-backed isolated DB; committed booking/cancellation/audit state.",
+    "steps": [
+      "Start real executable, write committed state and stop cleanly.",
+      "Restart same database and compare state.",
+      "Write committed state, terminate abruptly, restart.",
+      "Run PRAGMA integrity_check and reconcile inventory/audit."
+    ],
+    "expected": "Committed records retained after both stops; integrity_check=ok; available capacity and active reservations reconcile.",
+    "tests": [],
+    "kind": "System runner"
+  },
+  {
+    "id": "TC-UX-01",
+    "title": "Responsive passenger workflow",
+    "requirements": [
+      "RTS-NF-007"
+    ],
+    "inputs": "Mobile 390×844; desktop 1366×900; browser against real server.",
+    "steps": [
+      "At mobile, search, preview, confirm ticket, view and cancel; inspect overflow/reachability.",
+      "At desktop, register/login/search and inspect overflow.",
+      "Retain screenshots and viewport/action metadata.",
+      "Record unexercised desktop steps as not independently repeated."
+    ],
+    "expected": "Selected mobile booking/cancel and desktop registration/login/search are usable without horizontal page overflow; full desktop booking/cancel remains a separate planned repetition.",
+    "tests": [],
+    "kind": "Browser validation"
+  }
+]

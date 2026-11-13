@@ -1,0 +1,1097 @@
+{
+  "captured_on": "2026-11-13",
+  "captured_at": "2026-11-13T05:21:38.675906+00:00",
+  "source": "Live Jira REST API authenticated as Deeptanshu Kumar; no credentials or account identifiers included",
+  "site": "https://amarworkspace.atlassian.net",
+  "board_id": 67,
+  "is_current_as_of_capture": true,
+  "issues": [
+    {
+      "key": "RTRS-3",
+      "summary": "User Authentication & Management",
+      "description": "Manage user registration, login, logout, authentication, and user profile details for the railway ticket reservation system.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:07:55.974+0530",
+      "updated_at_capture": "2026-11-13T10:48:54.230+0530",
+      "resolution_date": "2026-11-13T10:48:54.209+0530",
+      "type": "Epic",
+      "parent": null,
+      "sprints_at_capture": [],
+      "story_points_at_capture": null,
+      "labels": []
+    },
+    {
+      "key": "RTRS-4",
+      "summary": "Train Search & Availability",
+      "description": "Manage train search, route selection, train schedules, seat availability, and fare information for users.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:10:13.901+0530",
+      "updated_at_capture": "2026-11-13T10:48:55.350+0530",
+      "resolution_date": "2026-11-13T10:48:55.332+0530",
+      "type": "Epic",
+      "parent": null,
+      "sprints_at_capture": [],
+      "story_points_at_capture": null,
+      "labels": []
+    },
+    {
+      "key": "RTRS-5",
+      "summary": "Ticket Booking",
+      "description": "Manage the complete ticket booking process, including passenger details, seat selection, fare calculation, and booking confirmation.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:10:43.727+0530",
+      "updated_at_capture": "2026-11-13T10:48:56.541+0530",
+      "resolution_date": "2026-11-13T10:48:56.521+0530",
+      "type": "Epic",
+      "parent": null,
+      "sprints_at_capture": [],
+      "story_points_at_capture": null,
+      "labels": []
+    },
+    {
+      "key": "RTRS-6",
+      "summary": "Ticket Cancellation & Refund",
+      "description": "Manage ticket cancellation requests, cancellation rules, refund calculation, and refund processing.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:11:06.958+0530",
+      "updated_at_capture": "2026-11-13T10:48:57.628+0530",
+      "resolution_date": "2026-11-13T10:48:57.610+0530",
+      "type": "Epic",
+      "parent": null,
+      "sprints_at_capture": [],
+      "story_points_at_capture": null,
+      "labels": []
+    },
+    {
+      "key": "RTRS-7",
+      "summary": "Admin & System Management",
+      "description": "Provide administrators with features to manage trains, routes, schedules, users, bookings, and system operations.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:11:30.337+0530",
+      "updated_at_capture": "2026-11-13T10:48:58.730+0530",
+      "resolution_date": "2026-11-13T10:48:58.724+0530",
+      "type": "Epic",
+      "parent": null,
+      "sprints_at_capture": [],
+      "story_points_at_capture": null,
+      "labels": []
+    },
+    {
+      "key": "RTRS-8",
+      "summary": "Security, Audit & Quality",
+      "description": "Ensure system security, data validation, audit logging, error handling, testing, and overall system reliability.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:11:53.035+0530",
+      "updated_at_capture": "2026-11-13T10:48:59.869+0530",
+      "resolution_date": "2026-11-13T10:48:59.863+0530",
+      "type": "Epic",
+      "parent": null,
+      "sprints_at_capture": [],
+      "story_points_at_capture": null,
+      "labels": []
+    },
+    {
+      "key": "RTRS-9",
+      "summary": "User Registration",
+      "description": "As a new user, I want to register an account using my personal details so that I can access the railway ticket reservation system.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:13:34.010+0530",
+      "updated_at_capture": "2026-11-13T10:47:26.887+0530",
+      "resolution_date": "2026-10-16T11:09:29.620+0530",
+      "type": "Story",
+      "parent": "RTRS-3",
+      "sprints_at_capture": [
+        {
+          "id": 102,
+          "name": "RTRS Sprint 1",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "**Sprint 1 Goal:**\n\nTo implement and test the core user authentication and account management features, including user registration, login, logout, and profile management, so that passengers can securely access and manage their accounts.",
+          "startDate": "2026-10-13T15:48:37.877Z",
+          "endDate": "2026-10-20T15:48:33.000Z",
+          "completeDate": "2026-10-16T05:40:02.085Z"
+        }
+      ],
+      "story_points_at_capture": 3.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-10",
+      "summary": "User Login",
+      "description": "As a registered user, I want to log in securely so that I can access my account and use the reservation system.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:14:21.493+0530",
+      "updated_at_capture": "2026-11-13T10:47:28.374+0530",
+      "resolution_date": "2026-10-16T11:09:36.734+0530",
+      "type": "Story",
+      "parent": "RTRS-3",
+      "sprints_at_capture": [
+        {
+          "id": 102,
+          "name": "RTRS Sprint 1",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "**Sprint 1 Goal:**\n\nTo implement and test the core user authentication and account management features, including user registration, login, logout, and profile management, so that passengers can securely access and manage their accounts.",
+          "startDate": "2026-10-13T15:48:37.877Z",
+          "endDate": "2026-10-20T15:48:33.000Z",
+          "completeDate": "2026-10-16T05:40:02.085Z"
+        }
+      ],
+      "story_points_at_capture": 3.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-11",
+      "summary": "User Logout",
+      "description": "As a logged-in user, I want to log out of my account so that my session is securely terminated.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:14:55.158+0530",
+      "updated_at_capture": "2026-11-13T10:47:29.673+0530",
+      "resolution_date": "2026-10-16T11:09:39.353+0530",
+      "type": "Story",
+      "parent": "RTRS-3",
+      "sprints_at_capture": [
+        {
+          "id": 102,
+          "name": "RTRS Sprint 1",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "**Sprint 1 Goal:**\n\nTo implement and test the core user authentication and account management features, including user registration, login, logout, and profile management, so that passengers can securely access and manage their accounts.",
+          "startDate": "2026-10-13T15:48:37.877Z",
+          "endDate": "2026-10-20T15:48:33.000Z",
+          "completeDate": "2026-10-16T05:40:02.085Z"
+        }
+      ],
+      "story_points_at_capture": 3.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-12",
+      "summary": "Manage User Profile",
+      "description": "As a user, I want to view and update my profile information so that my personal details remain accurate.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:15:34.045+0530",
+      "updated_at_capture": "2026-11-13T10:47:31.175+0530",
+      "resolution_date": "2026-10-16T11:09:43.043+0530",
+      "type": "Story",
+      "parent": "RTRS-3",
+      "sprints_at_capture": [
+        {
+          "id": 102,
+          "name": "RTRS Sprint 1",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "**Sprint 1 Goal:**\n\nTo implement and test the core user authentication and account management features, including user registration, login, logout, and profile management, so that passengers can securely access and manage their accounts.",
+          "startDate": "2026-10-13T15:48:37.877Z",
+          "endDate": "2026-10-20T15:48:33.000Z",
+          "completeDate": "2026-10-16T05:40:02.085Z"
+        }
+      ],
+      "story_points_at_capture": 3.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-13",
+      "summary": "Search Trains",
+      "description": "As a user, I want to search for trains between a source and destination on a selected date so that I can find suitable trains.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:17:38.649+0530",
+      "updated_at_capture": "2026-11-13T10:47:32.430+0530",
+      "resolution_date": "2026-10-20T14:49:55.285+0530",
+      "type": "Story",
+      "parent": "RTRS-4",
+      "sprints_at_capture": [
+        {
+          "id": 103,
+          "name": "RTRS Sprint 2",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-16T05:42:59.226Z",
+          "endDate": "2026-10-23T05:42:04.000Z",
+          "completeDate": "2026-10-20T09:20:12.822Z"
+        }
+      ],
+      "story_points_at_capture": 3.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-14",
+      "summary": "View Train Schedule",
+      "description": "As a user, I want to view train departure and arrival times so that I can choose a convenient train.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:18:08.361+0530",
+      "updated_at_capture": "2026-11-13T10:47:33.710+0530",
+      "resolution_date": "2026-10-20T14:49:58.084+0530",
+      "type": "Story",
+      "parent": "RTRS-4",
+      "sprints_at_capture": [
+        {
+          "id": 103,
+          "name": "RTRS Sprint 2",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-16T05:42:59.226Z",
+          "endDate": "2026-10-23T05:42:04.000Z",
+          "completeDate": "2026-10-20T09:20:12.822Z"
+        }
+      ],
+      "story_points_at_capture": 3.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-15",
+      "summary": "Check Seat Availability",
+      "description": "As a user, I want to check the availability of seats in different classes so that I can decide whether to book a train.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:18:40.716+0530",
+      "updated_at_capture": "2026-11-13T10:47:35.097+0530",
+      "resolution_date": "2026-10-20T14:50:00.614+0530",
+      "type": "Story",
+      "parent": "RTRS-4",
+      "sprints_at_capture": [
+        {
+          "id": 103,
+          "name": "RTRS Sprint 2",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-16T05:42:59.226Z",
+          "endDate": "2026-10-23T05:42:04.000Z",
+          "completeDate": "2026-10-20T09:20:12.822Z"
+        }
+      ],
+      "story_points_at_capture": 3.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-16",
+      "summary": "View Fare Details",
+      "description": "As a user, I want to view the fare for different travel classes so that I can select an appropriate option.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:19:20.547+0530",
+      "updated_at_capture": "2026-11-13T10:47:36.420+0530",
+      "resolution_date": "2026-10-20T14:50:03.477+0530",
+      "type": "Story",
+      "parent": "RTRS-4",
+      "sprints_at_capture": [
+        {
+          "id": 103,
+          "name": "RTRS Sprint 2",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-16T05:42:59.226Z",
+          "endDate": "2026-10-23T05:42:04.000Z",
+          "completeDate": "2026-10-20T09:20:12.822Z"
+        }
+      ],
+      "story_points_at_capture": 3.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-17",
+      "summary": "Filter and Sort Trains",
+      "description": "As a user, I want to filter and sort available trains based on relevant criteria so that I can quickly find the most suitable train.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:19:47.314+0530",
+      "updated_at_capture": "2026-11-13T10:47:37.556+0530",
+      "resolution_date": "2026-10-20T14:50:06.310+0530",
+      "type": "Story",
+      "parent": "RTRS-4",
+      "sprints_at_capture": [
+        {
+          "id": 103,
+          "name": "RTRS Sprint 2",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-16T05:42:59.226Z",
+          "endDate": "2026-10-23T05:42:04.000Z",
+          "completeDate": "2026-10-20T09:20:12.822Z"
+        }
+      ],
+      "story_points_at_capture": 3.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-18",
+      "summary": "Enter Passenger Details",
+      "description": "As a passenger, I want to enter the required passenger details for a selected train so that I can proceed with my ticket booking.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:20:37.577+0530",
+      "updated_at_capture": "2026-11-13T10:47:38.983+0530",
+      "resolution_date": "2026-10-29T09:00:55.933+0530",
+      "type": "Story",
+      "parent": "RTRS-5",
+      "sprints_at_capture": [
+        {
+          "id": 104,
+          "name": "RTRS Sprint 3",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-20T09:20:28.502Z",
+          "endDate": "2026-11-03T09:20:19.000Z",
+          "completeDate": "2026-10-29T03:31:26.974Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-19",
+      "summary": "Validate Passenger Details",
+      "description": "As a passenger, I want the system to validate my passenger details so that invalid information is not submitted for booking.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:21:10.226+0530",
+      "updated_at_capture": "2026-11-13T10:47:40.392+0530",
+      "resolution_date": "2026-10-29T09:00:58.676+0530",
+      "type": "Story",
+      "parent": "RTRS-5",
+      "sprints_at_capture": [
+        {
+          "id": 104,
+          "name": "RTRS Sprint 3",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-20T09:20:28.502Z",
+          "endDate": "2026-11-03T09:20:19.000Z",
+          "completeDate": "2026-10-29T03:31:26.974Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-20",
+      "summary": "Verify Seat Availability Before Booking",
+      "description": "As a passenger, I want the system to verify seat availability before confirming my booking so that I cannot book an unavailable seat",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:21:38.653+0530",
+      "updated_at_capture": "2026-11-13T10:47:41.625+0530",
+      "resolution_date": "2026-10-29T09:01:14.768+0530",
+      "type": "Story",
+      "parent": "RTRS-5",
+      "sprints_at_capture": [
+        {
+          "id": 104,
+          "name": "RTRS Sprint 3",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-20T09:20:28.502Z",
+          "endDate": "2026-11-03T09:20:19.000Z",
+          "completeDate": "2026-10-29T03:31:26.974Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-21",
+      "summary": "Confirm Ticket Booking",
+      "description": "As a passenger, I want to confirm my ticket booking after providing valid details so that my reservation is successfully created.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:22:04.882+0530",
+      "updated_at_capture": "2026-11-13T10:47:42.982+0530",
+      "resolution_date": "2026-10-29T09:01:07.219+0530",
+      "type": "Story",
+      "parent": "RTRS-5",
+      "sprints_at_capture": [
+        {
+          "id": 104,
+          "name": "RTRS Sprint 3",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-20T09:20:28.502Z",
+          "endDate": "2026-11-03T09:20:19.000Z",
+          "completeDate": "2026-10-29T03:31:26.974Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-22",
+      "summary": "Generate PNR",
+      "description": "As a passenger, I want to receive a unique PNR number after successful booking so that I can identify and track my reservation.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:22:32.682+0530",
+      "updated_at_capture": "2026-11-13T10:47:44.410+0530",
+      "resolution_date": "2026-10-29T09:01:01.621+0530",
+      "type": "Story",
+      "parent": "RTRS-5",
+      "sprints_at_capture": [
+        {
+          "id": 104,
+          "name": "RTRS Sprint 3",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-20T09:20:28.502Z",
+          "endDate": "2026-11-03T09:20:19.000Z",
+          "completeDate": "2026-10-29T03:31:26.974Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-23",
+      "summary": "View Confirmed Ticket",
+      "description": "As a passenger, I want to view my confirmed ticket with journey and booking details so that I have a record of my reservation.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:22:56.191+0530",
+      "updated_at_capture": "2026-11-13T10:47:45.565+0530",
+      "resolution_date": "2026-10-29T09:01:10.089+0530",
+      "type": "Story",
+      "parent": "RTRS-5",
+      "sprints_at_capture": [
+        {
+          "id": 104,
+          "name": "RTRS Sprint 3",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-20T09:20:28.502Z",
+          "endDate": "2026-11-03T09:20:19.000Z",
+          "completeDate": "2026-10-29T03:31:26.974Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-24",
+      "summary": "View Booking History",
+      "description": "As a passenger, I want to view my active and previous bookings so that I can track my reservations",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:23:25.013+0530",
+      "updated_at_capture": "2026-11-13T10:47:46.698+0530",
+      "resolution_date": "2026-10-29T09:01:04.592+0530",
+      "type": "Story",
+      "parent": "RTRS-5",
+      "sprints_at_capture": [
+        {
+          "id": 104,
+          "name": "RTRS Sprint 3",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-20T09:20:28.502Z",
+          "endDate": "2026-11-03T09:20:19.000Z",
+          "completeDate": "2026-10-29T03:31:26.974Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-25",
+      "summary": "Cancel Eligible Ticket",
+      "description": "As a passenger, I want to cancel an eligible booking before the configured cancellation cutoff so that I can cancel my reservation when I no longer need it.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:24:57.720+0530",
+      "updated_at_capture": "2026-11-13T10:47:47.751+0530",
+      "resolution_date": "2026-10-29T12:01:50.260+0530",
+      "type": "Story",
+      "parent": "RTRS-6",
+      "sprints_at_capture": [
+        {
+          "id": 105,
+          "name": "RTRS Sprint 4",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-29T03:19:13.046Z",
+          "endDate": "2026-11-05T03:19:04.000Z",
+          "completeDate": "2026-10-29T06:32:03.581Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-26",
+      "summary": "Calculate and Display Refund",
+      "description": "As a passenger, I want to see the applicable refund amount before confirming cancellation so that I know the refund I will receive.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:25:31.157+0530",
+      "updated_at_capture": "2026-11-13T10:47:48.984+0530",
+      "resolution_date": "2026-10-29T12:01:53.013+0530",
+      "type": "Story",
+      "parent": "RTRS-6",
+      "sprints_at_capture": [
+        {
+          "id": 105,
+          "name": "RTRS Sprint 4",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-29T03:19:13.046Z",
+          "endDate": "2026-11-05T03:19:04.000Z",
+          "completeDate": "2026-10-29T06:32:03.581Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-27",
+      "summary": "Restore Seats After Cancellation",
+      "description": "As a system, I want cancelled seat quantities to be restored to available inventory so that those seats can be booked again.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:25:57.979+0530",
+      "updated_at_capture": "2026-11-13T10:47:50.343+0530",
+      "resolution_date": "2026-10-29T12:01:55.882+0530",
+      "type": "Story",
+      "parent": "RTRS-6",
+      "sprints_at_capture": [
+        {
+          "id": 105,
+          "name": "RTRS Sprint 4",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-29T03:19:13.046Z",
+          "endDate": "2026-11-05T03:19:04.000Z",
+          "completeDate": "2026-10-29T06:32:03.581Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-28",
+      "summary": "Prevent Unauthorized Cancellation",
+      "description": "As a passenger, I should only be able to cancel my own eligible booking so that another passenger's reservation cannot be cancelled.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:26:30.753+0530",
+      "updated_at_capture": "2026-11-13T10:47:51.612+0530",
+      "resolution_date": "2026-10-29T12:01:59.000+0530",
+      "type": "Story",
+      "parent": "RTRS-6",
+      "sprints_at_capture": [
+        {
+          "id": 105,
+          "name": "RTRS Sprint 4",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-29T03:19:13.046Z",
+          "endDate": "2026-11-05T03:19:04.000Z",
+          "completeDate": "2026-10-29T06:32:03.581Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-29",
+      "summary": "Admin Authentication",
+      "description": "As an administrator, I want to authenticate using authorized credentials so that only authorized users can access administrative functions.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:27:26.465+0530",
+      "updated_at_capture": "2026-11-13T10:47:52.860+0530",
+      "resolution_date": "2026-11-03T17:36:07.884+0530",
+      "type": "Story",
+      "parent": "RTRS-7",
+      "sprints_at_capture": [
+        {
+          "id": 106,
+          "name": "RTRS Sprint 5",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-29T09:04:37.574Z",
+          "endDate": "2026-11-05T09:04:32.000Z",
+          "completeDate": "2026-11-03T12:06:26.515Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-30",
+      "summary": "Add Train and Schedule Record",
+      "description": "As an administrator, I want to add train and schedule records so that new train services can be made available in the system.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:27:55.586+0530",
+      "updated_at_capture": "2026-11-13T10:47:54.164+0530",
+      "resolution_date": "2026-11-03T17:36:10.780+0530",
+      "type": "Story",
+      "parent": "RTRS-7",
+      "sprints_at_capture": [
+        {
+          "id": 106,
+          "name": "RTRS Sprint 5",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-29T09:04:37.574Z",
+          "endDate": "2026-11-05T09:04:32.000Z",
+          "completeDate": "2026-11-03T12:06:26.515Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-31",
+      "summary": "Update Train and Schedule Record",
+      "description": "As an administrator, I want to update train and schedule records so that changes to train services can be reflected in the system.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:28:20.423+0530",
+      "updated_at_capture": "2026-11-13T10:47:55.365+0530",
+      "resolution_date": "2026-11-03T17:36:17.232+0530",
+      "type": "Story",
+      "parent": "RTRS-7",
+      "sprints_at_capture": [
+        {
+          "id": 106,
+          "name": "RTRS Sprint 5",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-29T09:04:37.574Z",
+          "endDate": "2026-11-05T09:04:32.000Z",
+          "completeDate": "2026-11-03T12:06:26.515Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-32",
+      "summary": "Deactivate Train and Schedule Record",
+      "description": "As an administrator, I want to deactivate train and schedule records so that unavailable train services are not offered for booking.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:28:44.691+0530",
+      "updated_at_capture": "2026-11-13T10:47:56.526+0530",
+      "resolution_date": "2026-11-03T17:36:13.900+0530",
+      "type": "Story",
+      "parent": "RTRS-7",
+      "sprints_at_capture": [
+        {
+          "id": 106,
+          "name": "RTRS Sprint 5",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-29T09:04:37.574Z",
+          "endDate": "2026-11-05T09:04:32.000Z",
+          "completeDate": "2026-11-03T12:06:26.515Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-33",
+      "summary": "Audit Booking and Cancellation Events",
+      "description": "As a system administrator, I want booking and cancellation events to be recorded with timestamps and relevant identifiers so that system activities can be audited.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:29:31.733+0530",
+      "updated_at_capture": "2026-11-13T10:47:58.747+0530",
+      "resolution_date": "2026-11-13T10:47:58.724+0530",
+      "type": "Story",
+      "parent": "RTRS-8",
+      "sprints_at_capture": [
+        {
+          "id": 107,
+          "name": "RTRS Sprint 6",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "Audit, security and quality implementation delivered in the existing 3 November code baseline. Administrative closure recorded on 13 November 2026 after reconciling current tickets with merged PR 12 and verification refreshed on 12 November. Human UAT, videos and product acceptance are separate actions.",
+          "startDate": "2026-11-03T12:06:00.754Z",
+          "endDate": "2026-11-10T12:06:47.000Z",
+          "completeDate": "2026-11-13T05:20:13.204Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-34",
+      "summary": "Meet Response Time Requirement",
+      "description": "As a user, I want normal system requests to respond within the required time so that the application provides acceptable performance.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:29:53.885+0530",
+      "updated_at_capture": "2026-11-13T10:48:01.339+0530",
+      "resolution_date": "2026-11-13T10:48:01.321+0530",
+      "type": "Story",
+      "parent": "RTRS-8",
+      "sprints_at_capture": [
+        {
+          "id": 107,
+          "name": "RTRS Sprint 6",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "Audit, security and quality implementation delivered in the existing 3 November code baseline. Administrative closure recorded on 13 November 2026 after reconciling current tickets with merged PR 12 and verification refreshed on 12 November. Human UAT, videos and product acceptance are separate actions.",
+          "startDate": "2026-11-03T12:06:00.754Z",
+          "endDate": "2026-11-10T12:06:47.000Z",
+          "completeDate": "2026-11-13T05:20:13.204Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-35",
+      "summary": "Prevent Double Seat Allocation",
+      "description": "As a passenger, I want seat allocation to remain consistent during concurrent bookings so that the same seat is not allocated to multiple passengers.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:30:22.388+0530",
+      "updated_at_capture": "2026-11-13T10:48:03.798+0530",
+      "resolution_date": "2026-11-13T10:48:03.781+0530",
+      "type": "Story",
+      "parent": "RTRS-8",
+      "sprints_at_capture": [
+        {
+          "id": 107,
+          "name": "RTRS Sprint 6",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "Audit, security and quality implementation delivered in the existing 3 November code baseline. Administrative closure recorded on 13 November 2026 after reconciling current tickets with merged PR 12 and verification refreshed on 12 November. Human UAT, videos and product acceptance are separate actions.",
+          "startDate": "2026-11-03T12:06:00.754Z",
+          "endDate": "2026-11-10T12:06:47.000Z",
+          "completeDate": "2026-11-13T05:20:13.204Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-36",
+      "summary": "Provide Safe Error Messages",
+      "description": "As a user, I want the system to display safe and understandable error messages so that failures do not expose sensitive technical information.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:30:53.663+0530",
+      "updated_at_capture": "2026-11-13T10:48:06.134+0530",
+      "resolution_date": "2026-11-13T10:48:06.115+0530",
+      "type": "Story",
+      "parent": "RTRS-8",
+      "sprints_at_capture": [
+        {
+          "id": 107,
+          "name": "RTRS Sprint 6",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "Audit, security and quality implementation delivered in the existing 3 November code baseline. Administrative closure recorded on 13 November 2026 after reconciling current tickets with merged PR 12 and verification refreshed on 12 November. Human UAT, videos and product acceptance are separate actions.",
+          "startDate": "2026-11-03T12:06:00.754Z",
+          "endDate": "2026-11-10T12:06:47.000Z",
+          "completeDate": "2026-11-13T05:20:13.204Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-37",
+      "summary": "Secure Passwords and Access",
+      "description": "As a system administrator, I want passwords to be securely stored and access to be controlled based on user roles so that unauthorized users cannot access protected functions.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:31:20.581+0530",
+      "updated_at_capture": "2026-11-13T10:48:08.555+0530",
+      "resolution_date": "2026-11-13T10:48:08.533+0530",
+      "type": "Story",
+      "parent": "RTRS-8",
+      "sprints_at_capture": [
+        {
+          "id": 107,
+          "name": "RTRS Sprint 6",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "Audit, security and quality implementation delivered in the existing 3 November code baseline. Administrative closure recorded on 13 November 2026 after reconciling current tickets with merged PR 12 and verification refreshed on 12 November. Human UAT, videos and product acceptance are separate actions.",
+          "startDate": "2026-11-03T12:06:00.754Z",
+          "endDate": "2026-11-10T12:06:47.000Z",
+          "completeDate": "2026-11-13T05:20:13.204Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-38",
+      "summary": "Secure Communication",
+      "description": "As a user, I want communication between the application and server to be secured so that sensitive information is protected during transmission.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:31:50.664+0530",
+      "updated_at_capture": "2026-11-13T10:48:10.853+0530",
+      "resolution_date": "2026-11-13T10:48:10.847+0530",
+      "type": "Story",
+      "parent": "RTRS-8",
+      "sprints_at_capture": [
+        {
+          "id": 107,
+          "name": "RTRS Sprint 6",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "Audit, security and quality implementation delivered in the existing 3 November code baseline. Administrative closure recorded on 13 November 2026 after reconciling current tickets with merged PR 12 and verification refreshed on 12 November. Human UAT, videos and product acceptance are separate actions.",
+          "startDate": "2026-11-03T12:06:00.754Z",
+          "endDate": "2026-11-10T12:06:47.000Z",
+          "completeDate": "2026-11-13T05:20:13.204Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-39",
+      "summary": "Validate User Input",
+      "description": "As a system, I want user inputs to be validated so that invalid or potentially harmful data cannot be processed.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:32:19.575+0530",
+      "updated_at_capture": "2026-11-13T10:48:12.989+0530",
+      "resolution_date": "2026-11-13T10:48:12.984+0530",
+      "type": "Story",
+      "parent": "RTRS-8",
+      "sprints_at_capture": [
+        {
+          "id": 107,
+          "name": "RTRS Sprint 6",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "Audit, security and quality implementation delivered in the existing 3 November code baseline. Administrative closure recorded on 13 November 2026 after reconciling current tickets with merged PR 12 and verification refreshed on 12 November. Human UAT, videos and product acceptance are separate actions.",
+          "startDate": "2026-11-03T12:06:00.754Z",
+          "endDate": "2026-11-10T12:06:47.000Z",
+          "completeDate": "2026-11-13T05:20:13.204Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    },
+    {
+      "key": "RTRS-40",
+      "summary": "Protect Sensitive Information in Logs",
+      "description": "As a system administrator, I want sensitive user information to be protected from being exposed in logs so that confidential data remains secure.",
+      "status_at_capture": "Done",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:32:49.032+0530",
+      "updated_at_capture": "2026-11-13T10:48:15.470+0530",
+      "resolution_date": "2026-11-13T10:48:15.451+0530",
+      "type": "Story",
+      "parent": "RTRS-8",
+      "sprints_at_capture": [
+        {
+          "id": 107,
+          "name": "RTRS Sprint 6",
+          "state": "closed",
+          "boardId": 67,
+          "goal": "Audit, security and quality implementation delivered in the existing 3 November code baseline. Administrative closure recorded on 13 November 2026 after reconciling current tickets with merged PR 12 and verification refreshed on 12 November. Human UAT, videos and product acceptance are separate actions.",
+          "startDate": "2026-11-03T12:06:00.754Z",
+          "endDate": "2026-11-10T12:06:47.000Z",
+          "completeDate": "2026-11-13T05:20:13.204Z"
+        }
+      ],
+      "story_points_at_capture": 5.0,
+      "labels": [
+        "submission-estimate-2026-11-13"
+      ]
+    }
+  ],
+  "sprints": [
+    {
+      "id": 102,
+      "self": "https://amarworkspace.atlassian.net/rest/agile/1.0/sprint/102",
+      "state": "closed",
+      "name": "RTRS Sprint 1",
+      "startDate": "2026-10-13T15:48:37.877Z",
+      "endDate": "2026-10-20T15:48:33.000Z",
+      "completeDate": "2026-10-16T05:40:02.085Z",
+      "createdDate": "2026-09-07T05:26:22.444Z",
+      "originBoardId": 67,
+      "goal": "**Sprint 1 Goal:**\n\nTo implement and test the core user authentication and account management features, including user registration, login, logout, and profile management, so that passengers can securely access and manage their accounts."
+    },
+    {
+      "id": 103,
+      "self": "https://amarworkspace.atlassian.net/rest/agile/1.0/sprint/103",
+      "state": "closed",
+      "name": "RTRS Sprint 2",
+      "startDate": "2026-10-16T05:42:59.226Z",
+      "endDate": "2026-10-23T05:42:04.000Z",
+      "completeDate": "2026-10-20T09:20:12.822Z",
+      "createdDate": "2026-09-07T06:09:29.447Z",
+      "originBoardId": 67,
+      "goal": ""
+    },
+    {
+      "id": 104,
+      "self": "https://amarworkspace.atlassian.net/rest/agile/1.0/sprint/104",
+      "state": "closed",
+      "name": "RTRS Sprint 3",
+      "startDate": "2026-10-20T09:20:28.502Z",
+      "endDate": "2026-11-03T09:20:19.000Z",
+      "completeDate": "2026-10-29T03:31:26.974Z",
+      "createdDate": "2026-09-07T06:10:43.631Z",
+      "originBoardId": 67,
+      "goal": ""
+    },
+    {
+      "id": 105,
+      "self": "https://amarworkspace.atlassian.net/rest/agile/1.0/sprint/105",
+      "state": "closed",
+      "name": "RTRS Sprint 4",
+      "startDate": "2026-10-29T03:19:13.046Z",
+      "endDate": "2026-11-05T03:19:04.000Z",
+      "completeDate": "2026-10-29T06:32:03.581Z",
+      "createdDate": "2026-09-07T06:12:10.497Z",
+      "originBoardId": 67,
+      "goal": ""
+    },
+    {
+      "id": 106,
+      "self": "https://amarworkspace.atlassian.net/rest/agile/1.0/sprint/106",
+      "state": "closed",
+      "name": "RTRS Sprint 5",
+      "startDate": "2026-10-29T09:04:37.574Z",
+      "endDate": "2026-11-05T09:04:32.000Z",
+      "completeDate": "2026-11-03T12:06:26.515Z",
+      "createdDate": "2026-09-07T06:12:47.976Z",
+      "originBoardId": 67,
+      "goal": ""
+    },
+    {
+      "id": 107,
+      "self": "https://amarworkspace.atlassian.net/rest/agile/1.0/sprint/107",
+      "state": "closed",
+      "name": "RTRS Sprint 6",
+      "startDate": "2026-11-03T12:06:00.754Z",
+      "endDate": "2026-11-10T12:06:47.000Z",
+      "completeDate": "2026-11-13T05:20:13.204Z",
+      "createdDate": "2026-09-07T06:13:15.368Z",
+      "originBoardId": 67,
+      "goal": "Audit, security and quality implementation delivered in the existing 3 November code baseline. Administrative closure recorded on 13 November 2026 after reconciling current tickets with merged PR 12 and verification refreshed on 12 November. Human UAT, videos and product acceptance are separate actions."
+    }
+  ],
+  "reconciliation": {
+    "story_estimates_added_now": 32,
+    "estimate_basis": "Retrospective submission estimates recorded on 13 November 2026; not original sprint planning estimates",
+    "remote_github_issue_links_added": 32,
+    "stories_marked_done_now": [
+      "RTRS-33",
+      "RTRS-34",
+      "RTRS-35",
+      "RTRS-36",
+      "RTRS-37",
+      "RTRS-38",
+      "RTRS-39",
+      "RTRS-40"
+    ],
+    "implementation_epics_rolled_up_now": [
+      "RTRS-3",
+      "RTRS-4",
+      "RTRS-5",
+      "RTRS-6",
+      "RTRS-7",
+      "RTRS-8"
+    ],
+    "sprint_closed_now": 107,
+    "original_issue_creation_dates_preserved": true,
+    "original_sprint_start_and_end_dates_preserved": true,
+    "human_acceptance_and_videos": "Pending; implementation Done is not a human sign-off"
+  }
+}

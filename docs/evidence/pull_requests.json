@@ -1,0 +1,182 @@
+[
+  {
+    "author": {
+      "id": "U_kgDOC3ZgQA",
+      "is_bot": false,
+      "login": "Amar1919",
+      "name": "Amar"
+    },
+    "baseRefName": "main",
+    "createdAt": "2026-11-03T12:57:07Z",
+    "mergedAt": "2026-11-03T13:02:29Z",
+    "number": 12,
+    "state": "MERGED",
+    "title": "Test",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/pull/12"
+  },
+  {
+    "author": {
+      "id": "U_kgDOC3ZgQA",
+      "is_bot": false,
+      "login": "Amar1919",
+      "name": "Amar"
+    },
+    "baseRefName": "main",
+    "createdAt": "2026-11-03T12:01:53Z",
+    "mergedAt": "2026-11-03T12:05:49Z",
+    "number": 11,
+    "state": "MERGED",
+    "title": "Test",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/pull/11"
+  },
+  {
+    "author": {
+      "id": "U_kgDOC3ZgQA",
+      "is_bot": false,
+      "login": "Amar1919",
+      "name": "Amar"
+    },
+    "baseRefName": "main",
+    "createdAt": "2026-10-29T06:27:58Z",
+    "mergedAt": "2026-10-29T06:31:11Z",
+    "number": 10,
+    "state": "MERGED",
+    "title": "Test",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/pull/10"
+  },
+  {
+    "author": {
+      "id": "U_kgDOC3ZgQA",
+      "is_bot": false,
+      "login": "Amar1919",
+      "name": "Amar"
+    },
+    "baseRefName": "main",
+    "createdAt": "2026-10-29T03:50:08Z",
+    "mergedAt": "2026-10-29T03:51:11Z",
+    "number": 9,
+    "state": "MERGED",
+    "title": "Test",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/pull/9"
+  },
+  {
+    "author": {
+      "id": "U_kgDOC3ZgQA",
+      "is_bot": false,
+      "login": "Amar1919",
+      "name": "Amar"
+    },
+    "baseRefName": "main",
+    "createdAt": "2026-10-20T09:10:07Z",
+    "mergedAt": "2026-10-20T09:14:05Z",
+    "number": 8,
+    "state": "MERGED",
+    "title": "Merge new sprint changes into main",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/pull/8"
+  },
+  {
+    "author": {
+      "id": "U_kgDOC3ZgQA",
+      "is_bot": false,
+      "login": "Amar1919",
+      "name": "Amar"
+    },
+    "baseRefName": "main",
+    "createdAt": "2026-10-15T12:47:50Z",
+    "mergedAt": "2026-10-15T12:53:18Z",
+    "number": 7,
+    "state": "MERGED",
+    "title": "Merge tested features from test into main",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/pull/7"
+  },
+  {
+    "author": {
+      "id": "MDQ6VXNlcjcwOTg5ODE3",
+      "is_bot": false,
+      "login": "deeptanshukumar",
+      "name": "Deeptanshu Kumar"
+    },
+    "baseRefName": "test",
+    "createdAt": "2026-10-13T17:34:27Z",
+    "mergedAt": "2026-10-15T06:50:02Z",
+    "number": 6,
+    "state": "MERGED",
+    "title": "RTRS-12: Manage User Profile",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/pull/6"
+  },
+  {
+    "author": {
+      "id": "MDQ6VXNlcjcwOTg5ODE3",
+      "is_bot": false,
+      "login": "deeptanshukumar",
+      "name": "Deeptanshu Kumar"
+    },
+    "baseRefName": "test",
+    "createdAt": "2026-10-13T17:33:34Z",
+    "mergedAt": "2026-10-15T06:45:10Z",
+    "number": 5,
+    "state": "MERGED",
+    "title": "RTRS-11: User Logout",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/pull/5"
+  },
+  {
+    "author": {
+      "id": "MDQ6VXNlcjcwOTg5ODE3",
+      "is_bot": false,
+      "login": "deeptanshukumar",
+      "name": "Deeptanshu Kumar"
+    },
+    "baseRefName": "test",
+    "createdAt": "2026-10-13T17:33:02Z",
+    "mergedAt": "2026-10-13T18:33:56Z",
+    "number": 4,
+    "state": "MERGED",
+    "title": "RTRS-10: User Login",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/pull/4"
+  },
+  {
+    "author": {
+      "id": "MDQ6VXNlcjcwOTg5ODE3",
+      "is_bot": false,
+      "login": "deeptanshukumar",
+      "name": "Deeptanshu Kumar"
+    },
+    "baseRefName": "test",
+    "createdAt": "2026-10-13T17:31:46Z",
+    "mergedAt": "2026-10-13T18:19:34Z",
+    "number": 3,
+    "state": "MERGED",
+    "title": "RTRS-9: User Registration",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/pull/3"
+  },
+  {
+    "author": {
+      "id": "MDQ6VXNlcjcwOTg5ODE3",
+      "is_bot": false,
+      "login": "deeptanshukumar",
+      "name": "Deeptanshu Kumar"
+    },
+    "baseRefName": "test",
+    "createdAt": "2026-10-13T17:16:29Z",
+    "mergedAt": "2026-10-13T17:54:30Z",
+    "number": 2,
+    "state": "MERGED",
+    "title": "Project setup: C++ skeleton, Docker, CI/CD",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/pull/2"
+  },
+  {
+    "author": {
+      "id": "U_kgDOC3ZgQA",
+      "is_bot": false,
+      "login": "Amar1919",
+      "name": "Amar"
+    },
+    "baseRefName": "main",
+    "createdAt": "2026-09-06T11:19:29Z",
+    "mergedAt": null,
+    "number": 1,
+    "state": "CLOSED",
+    "title": "Update product owner and testing names in README",
+    "url": "https://github.com/railway-ticketing-system/railway-ticketing-system/pull/1"
+  }
+]
