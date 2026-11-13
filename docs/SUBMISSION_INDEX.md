@@ -2,6 +2,8 @@
 
 Prepared on **12 November 2026** for Team 15, Railway Ticket Reservation System, UE24CS341A. This index maps the five course handouts to concrete repository artifacts. Application feature baseline: `6b5464298c949806ebba0b7bd1d903c962b5255d`; tester's main integration: `fb1b4d55957ab8022e136396d656bec870c08375` (PR 12). Current reports are fresh verification, with actual run dates.
 
+Planning/account reconciliation completed on **13 November 2026**. The [planning addendum](planning/RECONCILIATION.md) ([PDF](planning/RECONCILIATION.pdf)) supersedes the access-related pending actions in the 12 November specification baseline; product requirements and test results are unchanged.
+
 ## Documents and diagrams
 
 | # | Deliverable | Artifact | Status / remaining action |
@@ -18,9 +20,9 @@ Prepared on **12 November 2026** for Team 15, Railway Ticket Reservation System,
 
 | # | Deliverable | Artifact | Status / remaining action |
 |---|---|---|---|
-| 8 | GitHub Project linked to repository | [Board import script](../scripts/submission/import_github_project.py) | **Blocked by missing GitHub Projects scope**; repository access alone cannot create the visual board |
-| 9 | FR/NFR backlog, estimates and member assignments | [Backlog](planning/BACKLOG.md), [data](planning/backlog.json), [published issue manifest](evidence/github-backlog-import.json) | Repository-backed stories published with owner and course milestone. Points are explicitly retrospective estimates pending original Jira reconciliation |
-| 10 | Sprint 1 and 2 plans | [Course sprint mapping](planning/BACKLOG.md), repository milestones | Course dates stored as scheduled windows. Original six-sprint membership is preserved in the recovered 13 October snapshot; later live dates/statuses require connection |
+| 8 | GitHub Project linked to repository | [Public Project](https://github.com/orgs/railway-ticketing-system/projects/1), [import evidence](evidence/github-project-import.json) | Created and repository-linked; delivery board, table and three course sprint views |
+| 9 | FR/NFR backlog, estimates and member assignments | [Backlog](planning/BACKLOG.md), [data](planning/backlog.json), [published issue manifest](evidence/github-backlog-import.json) | Repository-backed stories published with owner and course milestone. Points are explicitly retrospective estimates recorded in Jira and GitHub on 13 November |
+| 10 | Sprint 1 and 2 plans | [Course sprint mapping](planning/BACKLOG.md), repository milestones | Course dates stored as scheduled windows. Original six-sprint membership is preserved in the recovered 13 October snapshot; live dates/statuses were verified and reconciled on 13 November |
 | 11 | GitHub Actions automation | [CI](../.github/workflows/ci.yml), [CodeQL](../.github/workflows/codeql.yml), [CD](../.github/workflows/cd.yml), [run evidence](evidence/ci_runs.json) | Build/test/coverage/static checks/Docker; CD publishes image on main. New system validation and raw result artifacts added to CI |
 | 12 | Individual PR and review evidence | [PR records](evidence/pull_requests.json), [commits](evidence/commits.tsv), [formal review records](evidence/formal-pr-reviews.json), [viva attribution](demo/VIVA_PREP.md) | Genuine developer/tester authorship and merges preserved. Formal submitted reviews are not fabricated; existing merges do not prove an independent review |
 | 13 | Sprint 1 working increment | Existing authentication/search/booking implementation; historical PRs linked in backlog | Implemented; course Sprint 1 builds on earlier dry-run authentication work |
@@ -49,12 +51,13 @@ Local system performance: search p90 **2.256 ms**, booking p90 **6.130 ms**, eac
 | 23 | Final live demo | [Runbook](demo/LIVE_DEMO_RUNBOOK.md) | Setup, synthetic fixtures, workflows, negative cases and recovery ready; team must present live |
 | 24 | Individual viva | [Preparation guide](demo/VIVA_PREP.md) | Implementation Q&A and authentic individual evidence prepared; each member must explain their work |
 
-## Actions requiring people or account access
+## Remaining team actions
 
-1. Connect the Atlassian integration, or provide a current Jira export/screenshots, to reconcile the recovered [13 October snapshot](evidence/jira-snapshot-2026-10-13.json) with later sprint dates and status changes. The snapshot preserves descriptions and six-sprint membership but returned no story-point fields. Do not paste an API token into chat.
-2. Authorize the GitHub CLI `project` scope to create the visual Project; then run the idempotent board importer. The published issues/milestones are available independently.
-3. Friend records/uploads the two videos. Amar reviews the submission PR, performs human acceptance and merges the tested final package into main.
-4. Aaryaprasad reviews the architecture/policy deviations and records genuine acceptance; mentor/team approval fields remain unsigned until actual approval.
+1. Friend records/uploads the 60-second and 120-second videos.
+2. Amar reviews [PR 45](https://github.com/railway-ticketing-system/railway-ticketing-system/pull/45), performs final human acceptance and integrates the package through test into main.
+3. Aaryaprasad/mentor record genuine requirements, policy and document acceptance; signature fields remain pending until actual approval.
+
+Jira was accessed directly through its REST API on 13 November; an MCP connection is not required. The [sanitized live snapshot](evidence/jira-current.json) verifies 32 Done stories, six Done implementation epics, six closed sprints, preserved original start/end/creation dates, and the new labelled estimates and GitHub links. No credential is included in the repository.
 
 No commits, reviews, approvals or creation timestamps have been backdated. Scheduled course date fields and retrospective records are labelled separately from original activity.
 

@@ -1,6 +1,6 @@
 # Backlog and Course Sprint Plan
 
-This board reconstruction was prepared on 12 November 2026 from existing commits and merged PRs. Scheduled dates below are the course windows, not GitHub creation dates. Original Jira descriptions and six sprint memberships are preserved from a recovered 13 October snapshot; current live Jira dates/statuses remain unverified. No story-point values were returned for RTRS in that snapshot. Retrospective estimates are labelled explicitly and can be replaced after live Jira verification.
+This board reconstruction was prepared on 12 November 2026 from existing commits and merged PRs. Scheduled dates below are the course windows, not GitHub creation dates. Original Jira descriptions and six sprint memberships are preserved from a recovered 13 October snapshot. Live Jira metadata was verified and reconciled on 13 November; the original six sprint start/end dates were preserved. Story points were empty in live Jira; the labelled retrospective estimates below were recorded in both Jira and GitHub on 13 November.
 
 | Milestone | Course window | Scope mapped from repository | Evidence |
 |---|---|---|---|
@@ -46,7 +46,7 @@ Sprint 3 uses the explicitly permitted spillover window; the complete applicatio
 | [RTRS-39](https://amarworkspace.atlassian.net/browse/RTRS-39) | RTS-SR-004 | Validate User Input | deeptanshukumar | 5 | Course Sprint 3 / RTRS Sprint 6 | 2026-11-03 | [commit](https://github.com/railway-ticketing-system/railway-ticketing-system/commit/3bd89dd1dd8fdce680793bec02f50244ed5693f1) / [PR 12](https://github.com/railway-ticketing-system/railway-ticketing-system/pull/12) |
 | [RTRS-40](https://amarworkspace.atlassian.net/browse/RTRS-40) | RTS-SR-005 | Protect Sensitive Information in Logs | deeptanshukumar | 5 | Course Sprint 3 / RTRS Sprint 6 | 2026-11-03 | [commit](https://github.com/railway-ticketing-system/railway-ticketing-system/commit/760c5c1c6fc051ed0f03c943374d02b83fc06405) / [PR 12](https://github.com/railway-ticketing-system/railway-ticketing-system/pull/12) |
 
-*Points are retrospective estimates, not imported Jira data. Course Sprint 1 includes foundation work already completed during the dry run. Current Github timestamps remain the true import time.
+*Points are current submission estimates recorded in Jira and GitHub on 13 November, not original planning estimates. Course Sprint 1 includes foundation work already completed during the dry run. Current Github timestamps remain the true import time.
 
 ## Remaining team actions
 
@@ -54,12 +54,21 @@ Sprint 3 uses the explicitly permitted spillover window; the complete applicatio
 |---|---|---|
 | Amar | Upload both sprint videos and perform final human acceptance/demo | Pending external team action |
 | Aaryaprasad | Review requirements/deviations and record acceptance | Pending external team action |
-| Deeptanshu | Verify imported board against original Jira sprint dates and story points once connected | Awaiting Jira access |
+| Deeptanshu | Preserve source Jira dates and the separately labelled course milestone mapping | Live Jira reconciled on 13 Nov |
 
 ## Scope not fully represented by an original implementation ticket
 
 RTS-NF-004 recovery and RTS-NF-007 responsive UI receive new verification evidence in the System Validation and Browser Validation reports. They are not assigned invented historical Jira tickets.
 
-## Publishing and reconciliation
+## Live Jira source dates
 
-The 32 repository issues are published with actual import timestamps and links to their original Jira description/sprint snapshot. Reproduction order: `build_backlog.py`, `publish_backlog.py`, `reconcile_jira_snapshot.py`, then `import_github_project.py` after granting the GitHub `project` scope. Original Jira sprint1 dates in the 13 Oct snapshot are 13–20 Oct; dates for the five future sprints were not returned. The course milestone dates above remain separate from those original Jira fields.
+| Original Jira sprint | Actual start | Original scheduled end | Recorded closure | State |
+|---|---|---|---|---|
+| RTRS Sprint 1 | 2026-10-13 | 2026-10-20 | 2026-10-16 | closed |
+| RTRS Sprint 2 | 2026-10-16 | 2026-10-23 | 2026-10-20 | closed |
+| RTRS Sprint 3 | 2026-10-20 | 2026-11-03 | 2026-10-29 | closed |
+| RTRS Sprint 4 | 2026-10-29 | 2026-11-05 | 2026-10-29 | closed |
+| RTRS Sprint 5 | 2026-10-29 | 2026-11-05 | 2026-11-03 | closed |
+| RTRS Sprint 6 | 2026-11-03 | 2026-11-10 | 2026-11-13 | closed |
+
+See [the planning reconciliation addendum](RECONCILIATION.md) for completed account/import actions and remaining human acceptance.

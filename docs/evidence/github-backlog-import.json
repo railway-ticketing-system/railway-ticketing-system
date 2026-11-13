@@ -278,7 +278,8 @@
       "closed_at": null
     }
   ],
-  "basis": "Original Jira description/sprint membership from dated snapshot plus later Git/PR delivery evidence; live state not queried",
+  "basis": "Original Jira description/sprint membership from dated snapshot plus later Git/PR delivery evidence; live Jira read and reconciled 13 November",
   "jira_snapshot_reconciled_on": "2026-11-12",
-  "original_jira_snapshot_date": "2026-10-13"
+  "original_jira_snapshot_date": "2026-10-13",
+  "live_jira_reconciled_on": "2026-11-13"
 }

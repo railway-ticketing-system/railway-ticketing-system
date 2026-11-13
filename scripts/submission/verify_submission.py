@@ -31,8 +31,23 @@ def main():
     n=z.read('word/document.xml').count(b'<wp:inline')+z.read('word/document.xml').count(b'<wp:anchor')
    check(file+' embedded diagrams',n>=min_images,n)
  board=ROOT/'docs/evidence/github-project-import.json'
- human=['Friend uploads 60-second and 120-second videos','Amar performs final human acceptance and reviews/merges submission','Product owner/mentor record actual acceptance','Connect Jira or supply current export to reconcile the recovered13Oct snapshot with later dates/statuses and original story points']
+ human=['Friend uploads 60-second and 120-second videos','Amar performs final human acceptance and reviews/merges submission','Product owner/mentor record actual acceptance']
  if not board.exists():human.append('Grant GitHub Projects scope and run visual board importer')
+ jira=ROOT/'docs/evidence/jira-current.json'
+ if jira.exists():
+  live=json.loads(jira.read_text());stories=[i for i in live['issues']if i['type']=='Story'];epics=[i for i in live['issues']if i['type']=='Epic']
+  check('32 live Jira stories Done',len(stories)==32 and all(i['status_at_capture']=='Done'for i in stories))
+  check('Six implementation epics Done',len(epics)==6 and all(i['status_at_capture']=='Done'for i in epics))
+  check('Six original Jira sprints closed',len(live['sprints'])==6 and all(i['state']=='closed'for i in live['sprints']))
+  check('Original Jira dates preserved',live['reconciliation']['original_issue_creation_dates_preserved']and live['reconciliation']['original_sprint_start_and_end_dates_preserved'])
+  check('Jira stories have submission estimates',all(i['story_points_at_capture']is not None for i in stories))
+ else:human.append('Connect Jira or supply a current export for reconciliation')
+ if board.exists():
+  imported=json.loads(board.read_text());check('32 stories imported to GitHub Project',len(imported['imported_items'])==32);check('GitHub Project public',imported['project']['public'])
+ pv=ROOT/'docs/evidence/github-project-verification.json'
+ if pv.exists():
+  verification=json.loads(pv.read_text());check('GitHub Project fields and views verified',verification['status']=='PASS',verification['checks'])
+
  result={'checked_at':datetime.now(timezone.utc).isoformat(),'status':'PASS' if all(c['status']=='PASS'for c in checks)else 'FAIL','checks':checks,'external_actions_pending':human,'meaning':'Artifact consistency only; pending external actions prevent claiming the whole course submission accepted'}
  (ROOT/'docs/evidence/submission-validation.json').write_text(json.dumps(result,indent=2)+'\n')
  for c in checks:

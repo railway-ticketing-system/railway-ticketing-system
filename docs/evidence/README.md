@@ -13,4 +13,6 @@ This folder contains genuine repository metadata and synthetic browser observati
 | `issues.json` | Pre-import GitHub issue snapshot; Jira items are not implied by this file |
 | `browser-validation.json`, `ui-*.png` | Genuine browser observations and screenshots from disposable demo data |
 
-See `../reports/` for current unit XML, coverage JSON/HTML, system validation and readable reports. GitHub Project import evidence is created only after the account grants the Projects scope. `jira-snapshot-2026-10-13.json` preserves the recovered historical RTRS descriptions/sprint metadata, filtered to this project with account identifiers omitted. Live/current Jira history/screenshots still require connection or a current export.
+See `../reports/` for current unit XML, coverage JSON/HTML, system validation and readable reports. `github-project-import.json` records the created repository-linked public Project; `github-project-verification.json` records field/view consistency checks. `jira-snapshot-2026-10-13.json` preserves the recovered historical RTRS descriptions/sprint metadata, filtered to this project with account identifiers omitted. `jira-current.json` records live Jira data reconciled on 13 November, with account identifiers and credentials omitted.
+
+`github-delivery-board.png`, `github-course-sprint-1.png` and `github-original-jira-table.png` are genuine browser captures of the public Project. They show visible UI rows, while `github-project-verification.json` checks all 32 stories and their source dates/links.

@@ -43,9 +43,16 @@
       "sha256": "789f2b1522fe98fb1c0a757672689a9fec895f60e9dcdea551c62298540ad073",
       "pages": 1,
       "words_outside_page_safety_margin": []
+    },
+    {
+      "file": "docs/planning/RECONCILIATION.pdf",
+      "sha256": "ce2e122c01b5bbfc7a1d6458a7a4cc36e351c312527e62b24ebe4372863910a0",
+      "pages": 1,
+      "words_outside_page_safety_margin": []
     }
   ],
   "source_requirements": 31,
   "detailed_cases": 46,
-  "scope": "Document consistency/layout, not human course acceptance"
+  "scope": "Document consistency/layout, not human course acceptance",
+  "planning_addendum_review_date": "2026-11-13"
 }

@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-12T17:22:05.562823+00:00",
+  "checked_at": "2026-11-13T05:33:34.822767+00:00",
   "status": "PASS",
   "checks": [
     {
@@ -173,14 +173,69 @@
       "check": "Railway_Ticket_Reservation_System_SAD_Final.docx embedded diagrams",
       "status": "PASS",
       "detail": 3
+    },
+    {
+      "check": "32 live Jira stories Done",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Six implementation epics Done",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Six original Jira sprints closed",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Original Jira dates preserved",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Jira stories have submission estimates",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "32 stories imported to GitHub Project",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "GitHub Project public",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "GitHub Project fields and views verified",
+      "status": "PASS",
+      "detail": {
+        "32 source stories present": true,
+        "public project": true,
+        "repository linked": true,
+        "no duplicate content URLs": true,
+        "story status Done": true,
+        "story assignees correct": true,
+        "estimates match": true,
+        "course dates match": true,
+        "original Jira dates match": true,
+        "original sprint memberships match": true,
+        "PR links match": true,
+        "commit links match": true,
+        "delivery board exists": true,
+        "three course sprint boards exist": true,
+        "original Jira table exists": true,
+        "current PR remains in review": true
+      }
     }
   ],
   "external_actions_pending": [
     "Friend uploads 60-second and 120-second videos",
     "Amar performs final human acceptance and reviews/merges submission",
-    "Product owner/mentor record actual acceptance",
-    "Connect Jira or supply current export to reconcile the recovered13Oct snapshot with later dates/statuses and original story points",
-    "Grant GitHub Projects scope and run visual board importer"
+    "Product owner/mentor record actual acceptance"
   ],
   "meaning": "Artifact consistency only; pending external actions prevent claiming the whole course submission accepted"
 }

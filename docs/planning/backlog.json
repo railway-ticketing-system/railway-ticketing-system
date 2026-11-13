@@ -1,6 +1,6 @@
 {
   "reconstructed_on": "2026-11-12",
-  "source": "Existing repository history plus recovered13Oct Jira snapshot; not current live Jira",
+  "source": "Existing delivery commits and live Jira metadata reconciled 13 Nov;13Oct historical snapshot retained",
   "items": [
     {
       "key": "RTRS-9",
@@ -12,7 +12,7 @@
       "planned_start": "2026-10-19",
       "planned_end": "2026-10-23",
       "story_points": 3,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "4994d0255c70e517931aa547aff58940a2c809bf",
       "actual_commit_date": "2026-10-13T23:01:41+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -20,23 +20,24 @@
         3
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-9",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Add user registration (API, validation, PBKDF2 hashing, UI, tests)",
       "jira_description": "As a new user, I want to register an account using my personal details so that I can access the railway ticket reservation system.",
       "original_jira_sprints": [
         {
           "id": 102,
           "name": "RTRS Sprint 1",
-          "state": "active",
+          "state": "closed",
           "boardId": 67,
           "goal": "**Sprint 1 Goal:**\n\nTo implement and test the core user authentication and account management features, including user registration, login, logout, and profile management, so that passengers can securely access and manage their accounts.",
           "startDate": "2026-10-13T15:48:37.877Z",
-          "endDate": "2026-10-20T15:48:33.000Z"
+          "endDate": "2026-10-20T15:48:33.000Z",
+          "completeDate": "2026-10-16T05:40:02.085Z"
         }
       ],
-      "original_jira_status_at_capture": "In Progress",
+      "original_jira_status_at_capture": "Done",
       "original_jira_assignee_at_capture": "Deeptanshu Kumar",
-      "jira_snapshot_date": "2026-10-13"
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-10",
@@ -48,7 +49,7 @@
       "planned_start": "2026-10-19",
       "planned_end": "2026-10-23",
       "story_points": 3,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "f4b8f48d3f43629967913fed1fc7df7f270644e0",
       "actual_commit_date": "2026-10-13T23:02:58+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -56,23 +57,24 @@
         4
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-10",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Add user login with hashed session tokens and failed-attempt lockout",
       "jira_description": "As a registered user, I want to log in securely so that I can access my account and use the reservation system.",
       "original_jira_sprints": [
         {
           "id": 102,
           "name": "RTRS Sprint 1",
-          "state": "active",
+          "state": "closed",
           "boardId": 67,
           "goal": "**Sprint 1 Goal:**\n\nTo implement and test the core user authentication and account management features, including user registration, login, logout, and profile management, so that passengers can securely access and manage their accounts.",
           "startDate": "2026-10-13T15:48:37.877Z",
-          "endDate": "2026-10-20T15:48:33.000Z"
+          "endDate": "2026-10-20T15:48:33.000Z",
+          "completeDate": "2026-10-16T05:40:02.085Z"
         }
       ],
-      "original_jira_status_at_capture": "In Progress",
+      "original_jira_status_at_capture": "Done",
       "original_jira_assignee_at_capture": "Deeptanshu Kumar",
-      "jira_snapshot_date": "2026-10-13"
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-11",
@@ -84,7 +86,7 @@
       "planned_start": "2026-10-19",
       "planned_end": "2026-10-23",
       "story_points": 3,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "4120cf72a21ee1b0704224e371871fe7ad575554",
       "actual_commit_date": "2026-10-13T23:03:31+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -92,23 +94,24 @@
         5
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-11",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Add user logout that invalidates the session server-side",
       "jira_description": "As a logged-in user, I want to log out of my account so that my session is securely terminated.",
       "original_jira_sprints": [
         {
           "id": 102,
           "name": "RTRS Sprint 1",
-          "state": "active",
+          "state": "closed",
           "boardId": 67,
           "goal": "**Sprint 1 Goal:**\n\nTo implement and test the core user authentication and account management features, including user registration, login, logout, and profile management, so that passengers can securely access and manage their accounts.",
           "startDate": "2026-10-13T15:48:37.877Z",
-          "endDate": "2026-10-20T15:48:33.000Z"
+          "endDate": "2026-10-20T15:48:33.000Z",
+          "completeDate": "2026-10-16T05:40:02.085Z"
         }
       ],
-      "original_jira_status_at_capture": "In Progress",
+      "original_jira_status_at_capture": "Done",
       "original_jira_assignee_at_capture": "Deeptanshu Kumar",
-      "jira_snapshot_date": "2026-10-13"
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-12",
@@ -120,7 +123,7 @@
       "planned_start": "2026-10-19",
       "planned_end": "2026-10-23",
       "story_points": 3,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "99367b1ed7f33bc08247c29d9b738fd26e0fb4f3",
       "actual_commit_date": "2026-10-13T23:04:23+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -129,23 +132,24 @@
         7
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-12",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Add profile view/edit and password change",
       "jira_description": "As a user, I want to view and update my profile information so that my personal details remain accurate.",
       "original_jira_sprints": [
         {
           "id": 102,
           "name": "RTRS Sprint 1",
-          "state": "active",
+          "state": "closed",
           "boardId": 67,
           "goal": "**Sprint 1 Goal:**\n\nTo implement and test the core user authentication and account management features, including user registration, login, logout, and profile management, so that passengers can securely access and manage their accounts.",
           "startDate": "2026-10-13T15:48:37.877Z",
-          "endDate": "2026-10-20T15:48:33.000Z"
+          "endDate": "2026-10-20T15:48:33.000Z",
+          "completeDate": "2026-10-16T05:40:02.085Z"
         }
       ],
-      "original_jira_status_at_capture": "In Progress",
+      "original_jira_status_at_capture": "Done",
       "original_jira_assignee_at_capture": "Deeptanshu Kumar",
-      "jira_snapshot_date": "2026-10-13"
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-13",
@@ -157,7 +161,7 @@
       "planned_start": "2026-10-19",
       "planned_end": "2026-10-23",
       "story_points": 3,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "401093057a3d661d93504851132d7f3ce583ef37",
       "actual_commit_date": "2026-10-20T11:43:02+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -165,20 +169,24 @@
         8
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-13",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Add train search by source, destination and date",
       "jira_description": "As a user, I want to search for trains between a source and destination on a selected date so that I can find suitable trains.",
       "original_jira_sprints": [
         {
           "id": 103,
           "name": "RTRS Sprint 2",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-16T05:42:59.226Z",
+          "endDate": "2026-10-23T05:42:04.000Z",
+          "completeDate": "2026-10-20T09:20:12.822Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-14",
@@ -190,7 +198,7 @@
       "planned_start": "2026-10-19",
       "planned_end": "2026-10-23",
       "story_points": 3,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "5eeee4665ebdef21965f5a14959b15d415540b71",
       "actual_commit_date": "2026-10-20T11:46:54+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -198,20 +206,24 @@
         8
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-14",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Add train schedule view",
       "jira_description": "As a user, I want to view train departure and arrival times so that I can choose a convenient train.",
       "original_jira_sprints": [
         {
           "id": 103,
           "name": "RTRS Sprint 2",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-16T05:42:59.226Z",
+          "endDate": "2026-10-23T05:42:04.000Z",
+          "completeDate": "2026-10-20T09:20:12.822Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-15",
@@ -223,7 +235,7 @@
       "planned_start": "2026-10-19",
       "planned_end": "2026-10-23",
       "story_points": 3,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "c592bf90397e4eebdb1c2db85f11b720d5052ae7",
       "actual_commit_date": "2026-10-20T11:50:12+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -231,20 +243,24 @@
         8
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-15",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Add class-wise seat availability",
       "jira_description": "As a user, I want to check the availability of seats in different classes so that I can decide whether to book a train.",
       "original_jira_sprints": [
         {
           "id": 103,
           "name": "RTRS Sprint 2",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-16T05:42:59.226Z",
+          "endDate": "2026-10-23T05:42:04.000Z",
+          "completeDate": "2026-10-20T09:20:12.822Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-16",
@@ -256,7 +272,7 @@
       "planned_start": "2026-10-19",
       "planned_end": "2026-10-23",
       "story_points": 3,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "c74ee667338741f833033c2c1240ae768273171a",
       "actual_commit_date": "2026-10-20T11:51:48+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -264,20 +280,24 @@
         8
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-16",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Add fare details per travel class",
-      "jira_description": "\u200c\n\n> As a user, I want to view the fare for different travel classes so that I can select an appropriate option.",
+      "jira_description": "As a user, I want to view the fare for different travel classes so that I can select an appropriate option.",
       "original_jira_sprints": [
         {
           "id": 103,
           "name": "RTRS Sprint 2",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-16T05:42:59.226Z",
+          "endDate": "2026-10-23T05:42:04.000Z",
+          "completeDate": "2026-10-20T09:20:12.822Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-17",
@@ -289,7 +309,7 @@
       "planned_start": "2026-10-19",
       "planned_end": "2026-10-23",
       "story_points": 3,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "c2f21d844f94766f9baf5058a7916b52cfc86144",
       "actual_commit_date": "2026-10-20T11:53:35+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -297,20 +317,24 @@
         8
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-17",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Add train filters and sorting",
       "jira_description": "As a user, I want to filter and sort available trains based on relevant criteria so that I can quickly find the most suitable train.",
       "original_jira_sprints": [
         {
           "id": 103,
           "name": "RTRS Sprint 2",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-16T05:42:59.226Z",
+          "endDate": "2026-10-23T05:42:04.000Z",
+          "completeDate": "2026-10-20T09:20:12.822Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-18",
@@ -322,7 +346,7 @@
       "planned_start": "2026-10-19",
       "planned_end": "2026-10-23",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "7dc5c1cdb5e8958b06395be72ae83540479088a2",
       "actual_commit_date": "2026-10-20T23:06:56+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -330,20 +354,24 @@
         8
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-18",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Add passenger details entry for booking",
       "jira_description": "As a passenger, I want to enter the required passenger details for a selected train so that I can proceed with my ticket booking.",
       "original_jira_sprints": [
         {
           "id": 104,
           "name": "RTRS Sprint 3",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-20T09:20:28.502Z",
+          "endDate": "2026-11-03T09:20:19.000Z",
+          "completeDate": "2026-10-29T03:31:26.974Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-19",
@@ -355,7 +383,7 @@
       "planned_start": "2026-10-19",
       "planned_end": "2026-10-23",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "02274d90b4b3aeea8c8e072efbd1f8cc9e2fa67e",
       "actual_commit_date": "2026-10-20T23:08:26+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -363,20 +391,24 @@
         8
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-19",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Validate passenger details",
       "jira_description": "As a passenger, I want the system to validate my passenger details so that invalid information is not submitted for booking.",
       "original_jira_sprints": [
         {
           "id": 104,
           "name": "RTRS Sprint 3",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-20T09:20:28.502Z",
+          "endDate": "2026-11-03T09:20:19.000Z",
+          "completeDate": "2026-10-29T03:31:26.974Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-20",
@@ -388,7 +420,7 @@
       "planned_start": "2026-10-19",
       "planned_end": "2026-10-23",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "dc37ecc8f6aa3e75c0b1072d7304af051afbe7bb",
       "actual_commit_date": "2026-10-20T23:09:45+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -396,20 +428,24 @@
         8
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-20",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Verify seat availability before booking",
       "jira_description": "As a passenger, I want the system to verify seat availability before confirming my booking so that I cannot book an unavailable seat",
       "original_jira_sprints": [
         {
           "id": 104,
           "name": "RTRS Sprint 3",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-20T09:20:28.502Z",
+          "endDate": "2026-11-03T09:20:19.000Z",
+          "completeDate": "2026-10-29T03:31:26.974Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-21",
@@ -421,7 +457,7 @@
       "planned_start": "2026-10-19",
       "planned_end": "2026-10-23",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "bfa3c147fdf85f1821fc1c783a88475d3c81536a",
       "actual_commit_date": "2026-10-20T23:14:02+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -429,20 +465,24 @@
         8
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-21",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Confirm ticket booking",
       "jira_description": "As a passenger, I want to confirm my ticket booking after providing valid details so that my reservation is successfully created.",
       "original_jira_sprints": [
         {
           "id": 104,
           "name": "RTRS Sprint 3",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-20T09:20:28.502Z",
+          "endDate": "2026-11-03T09:20:19.000Z",
+          "completeDate": "2026-10-29T03:31:26.974Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-22",
@@ -454,7 +494,7 @@
       "planned_start": "2026-10-19",
       "planned_end": "2026-10-23",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "fed8f36daf9c0cdeccf2ff1d7a9b433b67019d6f",
       "actual_commit_date": "2026-10-20T23:15:36+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -462,20 +502,24 @@
         8
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-22",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Generate unique PNR",
       "jira_description": "As a passenger, I want to receive a unique PNR number after successful booking so that I can identify and track my reservation.",
       "original_jira_sprints": [
         {
           "id": 104,
           "name": "RTRS Sprint 3",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-20T09:20:28.502Z",
+          "endDate": "2026-11-03T09:20:19.000Z",
+          "completeDate": "2026-10-29T03:31:26.974Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-23",
@@ -487,7 +531,7 @@
       "planned_start": "2026-10-19",
       "planned_end": "2026-10-23",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "61476eba3a1626fc2813f4ff9442023e4b7c9c8d",
       "actual_commit_date": "2026-10-20T23:19:15+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -495,20 +539,24 @@
         8
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-23",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "View confirmed ticket",
       "jira_description": "As a passenger, I want to view my confirmed ticket with journey and booking details so that I have a record of my reservation.",
       "original_jira_sprints": [
         {
           "id": 104,
           "name": "RTRS Sprint 3",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-20T09:20:28.502Z",
+          "endDate": "2026-11-03T09:20:19.000Z",
+          "completeDate": "2026-10-29T03:31:26.974Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-24",
@@ -520,7 +568,7 @@
       "planned_start": "2026-10-19",
       "planned_end": "2026-10-23",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "f54ab03a8bfcb680b4cf7092b0b236e35bb6ad0d",
       "actual_commit_date": "2026-10-20T23:22:24+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -528,20 +576,24 @@
         8
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-24",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "View booking history",
       "jira_description": "As a passenger, I want to view my active and previous bookings so that I can track my reservations",
       "original_jira_sprints": [
         {
           "id": 104,
           "name": "RTRS Sprint 3",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-20T09:20:28.502Z",
+          "endDate": "2026-11-03T09:20:19.000Z",
+          "completeDate": "2026-10-29T03:31:26.974Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-25",
@@ -553,7 +605,7 @@
       "planned_start": "2026-10-26",
       "planned_end": "2026-10-30",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "94a302c08b8a783b976fdb23cc2ec57065b7ffa8",
       "actual_commit_date": "2026-10-29T11:18:31+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -562,20 +614,24 @@
         10
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-25",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Cancel eligible bookings before configured cutoff",
       "jira_description": "As a passenger, I want to cancel an eligible booking before the configured cancellation cutoff so that I can cancel my reservation when I no longer need it.",
       "original_jira_sprints": [
         {
           "id": 105,
           "name": "RTRS Sprint 4",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-29T03:19:13.046Z",
+          "endDate": "2026-11-05T03:19:04.000Z",
+          "completeDate": "2026-10-29T06:32:03.581Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-26",
@@ -587,7 +643,7 @@
       "planned_start": "2026-10-26",
       "planned_end": "2026-10-30",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "6b4a213b1a3a3d260437f919c09c5a61cc173de3",
       "actual_commit_date": "2026-10-29T11:20:56+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -596,20 +652,24 @@
         10
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-26",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Preview and record configurable cancellation refunds",
       "jira_description": "As a passenger, I want to see the applicable refund amount before confirming cancellation so that I know the refund I will receive.",
       "original_jira_sprints": [
         {
           "id": 105,
           "name": "RTRS Sprint 4",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-29T03:19:13.046Z",
+          "endDate": "2026-11-05T03:19:04.000Z",
+          "completeDate": "2026-10-29T06:32:03.581Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-27",
@@ -621,7 +681,7 @@
       "planned_start": "2026-10-26",
       "planned_end": "2026-10-30",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "5410dcbc4fb9999244299d9d0ae9d1e0bcdc49b6",
       "actual_commit_date": "2026-10-29T11:22:00+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -630,20 +690,24 @@
         10
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-27",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Restore cancelled seats atomically and reuse free seat numbers",
       "jira_description": "As a system, I want cancelled seat quantities to be restored to available inventory so that those seats can be booked again.",
       "original_jira_sprints": [
         {
           "id": 105,
           "name": "RTRS Sprint 4",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-29T03:19:13.046Z",
+          "endDate": "2026-11-05T03:19:04.000Z",
+          "completeDate": "2026-10-29T06:32:03.581Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-28",
@@ -655,7 +719,7 @@
       "planned_start": "2026-10-26",
       "planned_end": "2026-10-30",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "7c5abfcc993c7e1c74c2fd4b1aea80be86fc869c",
       "actual_commit_date": "2026-10-29T11:24:22+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -664,20 +728,24 @@
         10
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-28",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Enforce booking ownership for cancellation and refund previews",
       "jira_description": "As a passenger, I should only be able to cancel my own eligible booking so that another passenger's reservation cannot be cancelled.",
       "original_jira_sprints": [
         {
           "id": 105,
           "name": "RTRS Sprint 4",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-29T03:19:13.046Z",
+          "endDate": "2026-11-05T03:19:04.000Z",
+          "completeDate": "2026-10-29T06:32:03.581Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-29",
@@ -689,7 +757,7 @@
       "planned_start": "2026-11-02",
       "planned_end": "2026-11-06",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "db1f25c9cfa65cf5a315ebf15cfdd725f4822d09",
       "actual_commit_date": "2026-11-03T11:37:10+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -697,20 +765,24 @@
         11
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-29",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Authenticate administrators and protect administrative access",
       "jira_description": "As an administrator, I want to authenticate using authorized credentials so that only authorized users can access administrative functions.",
       "original_jira_sprints": [
         {
           "id": 106,
           "name": "RTRS Sprint 5",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-29T09:04:37.574Z",
+          "endDate": "2026-11-05T09:04:32.000Z",
+          "completeDate": "2026-11-03T12:06:26.515Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-30",
@@ -722,7 +794,7 @@
       "planned_start": "2026-11-02",
       "planned_end": "2026-11-06",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "274f0dd3f6e0b6cd705cc0a4d9c83c8fd30a2d51",
       "actual_commit_date": "2026-11-03T11:40:51+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -730,20 +802,24 @@
         11
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-30",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Add validated train schedules fares and seat capacities",
       "jira_description": "As an administrator, I want to add train and schedule records so that new train services can be made available in the system.",
       "original_jira_sprints": [
         {
           "id": 106,
           "name": "RTRS Sprint 5",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-29T09:04:37.574Z",
+          "endDate": "2026-11-05T09:04:32.000Z",
+          "completeDate": "2026-11-03T12:06:26.515Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-31",
@@ -755,7 +831,7 @@
       "planned_start": "2026-11-02",
       "planned_end": "2026-11-06",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "f2a393827af5f47bb7e2de11c23caf456e0dd43d",
       "actual_commit_date": "2026-11-03T11:42:15+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -763,20 +839,24 @@
         11
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-31",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Update train schedules without invalidating existing reservations",
       "jira_description": "As an administrator, I want to update train and schedule records so that changes to train services can be reflected in the system.",
       "original_jira_sprints": [
         {
           "id": 106,
           "name": "RTRS Sprint 5",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-29T09:04:37.574Z",
+          "endDate": "2026-11-05T09:04:32.000Z",
+          "completeDate": "2026-11-03T12:06:26.515Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-32",
@@ -788,7 +868,7 @@
       "planned_start": "2026-11-02",
       "planned_end": "2026-11-06",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "dbf0b23137bc0f34ed73e5adcada4b3f7f807712",
       "actual_commit_date": "2026-11-03T11:46:12+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -796,20 +876,24 @@
         11
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-32",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Deactivate train services and prevent new reservations",
       "jira_description": "As an administrator, I want to deactivate train and schedule records so that unavailable train services are not offered for booking.",
       "original_jira_sprints": [
         {
           "id": 106,
           "name": "RTRS Sprint 5",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "",
+          "startDate": "2026-10-29T09:04:37.574Z",
+          "endDate": "2026-11-05T09:04:32.000Z",
+          "completeDate": "2026-11-03T12:06:26.515Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-33",
@@ -821,7 +905,7 @@
       "planned_start": "2026-11-02",
       "planned_end": "2026-11-06",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "8f4d9572ea61c90bf6a2c7fa3d8d4aa69c855468",
       "actual_commit_date": "2026-11-03T18:04:36+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -829,20 +913,24 @@
         12
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-33",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Record timestamped audit events for bookings and cancellations",
       "jira_description": "As a system administrator, I want booking and cancellation events to be recorded with timestamps and relevant identifiers so that system activities can be audited.",
       "original_jira_sprints": [
         {
           "id": 107,
           "name": "RTRS Sprint 6",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "Audit, security and quality implementation delivered in the existing 3 November code baseline. Administrative closure recorded on 13 November 2026 after reconciling current tickets with merged PR 12 and verification refreshed on 12 November. Human UAT, videos and product acceptance are separate actions.",
+          "startDate": "2026-11-03T12:06:00.754Z",
+          "endDate": "2026-11-10T12:06:47.000Z",
+          "completeDate": "2026-11-13T05:20:13.204Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-34",
@@ -854,7 +942,7 @@
       "planned_start": "2026-11-02",
       "planned_end": "2026-11-06",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "a34e76768761287133fa35f9ea9b84707739a3dc",
       "actual_commit_date": "2026-11-03T18:06:23+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -862,20 +950,24 @@
         12
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-34",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Keep 90th percentile booking responses within three seconds",
       "jira_description": "As a user, I want normal system requests to respond within the required time so that the application provides acceptable performance.",
       "original_jira_sprints": [
         {
           "id": 107,
           "name": "RTRS Sprint 6",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "Audit, security and quality implementation delivered in the existing 3 November code baseline. Administrative closure recorded on 13 November 2026 after reconciling current tickets with merged PR 12 and verification refreshed on 12 November. Human UAT, videos and product acceptance are separate actions.",
+          "startDate": "2026-11-03T12:06:00.754Z",
+          "endDate": "2026-11-10T12:06:47.000Z",
+          "completeDate": "2026-11-13T05:20:13.204Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-35",
@@ -887,7 +979,7 @@
       "planned_start": "2026-11-02",
       "planned_end": "2026-11-06",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "b2dde09dea4a99c44bcc75fc004d46b50d162b5b",
       "actual_commit_date": "2026-11-03T18:07:27+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -895,20 +987,24 @@
         12
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-35",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Serialize seat allocation and reject duplicate seat assignments",
       "jira_description": "As a passenger, I want seat allocation to remain consistent during concurrent bookings so that the same seat is not allocated to multiple passengers.",
       "original_jira_sprints": [
         {
           "id": 107,
           "name": "RTRS Sprint 6",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "Audit, security and quality implementation delivered in the existing 3 November code baseline. Administrative closure recorded on 13 November 2026 after reconciling current tickets with merged PR 12 and verification refreshed on 12 November. Human UAT, videos and product acceptance are separate actions.",
+          "startDate": "2026-11-03T12:06:00.754Z",
+          "endDate": "2026-11-10T12:06:47.000Z",
+          "completeDate": "2026-11-13T05:20:13.204Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-36",
@@ -920,7 +1016,7 @@
       "planned_start": "2026-11-02",
       "planned_end": "2026-11-06",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "05e5fa6c4eda4760cf389614db9b3760691edafc",
       "actual_commit_date": "2026-11-03T18:08:31+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -928,20 +1024,24 @@
         12
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-36",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Return safe error messages without internal details",
       "jira_description": "As a user, I want the system to display safe and understandable error messages so that failures do not expose sensitive technical information.",
       "original_jira_sprints": [
         {
           "id": 107,
           "name": "RTRS Sprint 6",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "Audit, security and quality implementation delivered in the existing 3 November code baseline. Administrative closure recorded on 13 November 2026 after reconciling current tickets with merged PR 12 and verification refreshed on 12 November. Human UAT, videos and product acceptance are separate actions.",
+          "startDate": "2026-11-03T12:06:00.754Z",
+          "endDate": "2026-11-10T12:06:47.000Z",
+          "completeDate": "2026-11-13T05:20:13.204Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-37",
@@ -953,7 +1053,7 @@
       "planned_start": "2026-11-02",
       "planned_end": "2026-11-06",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "2b57f358c646a1c59b51978585b6f4f958609a36",
       "actual_commit_date": "2026-11-03T18:10:46+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -961,20 +1061,24 @@
         12
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-37",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Enforce strong password hashing and immediate access revocation",
       "jira_description": "As a system administrator, I want passwords to be securely stored and access to be controlled based on user roles so that unauthorized users cannot access protected functions.",
       "original_jira_sprints": [
         {
           "id": 107,
           "name": "RTRS Sprint 6",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "Audit, security and quality implementation delivered in the existing 3 November code baseline. Administrative closure recorded on 13 November 2026 after reconciling current tickets with merged PR 12 and verification refreshed on 12 November. Human UAT, videos and product acceptance are separate actions.",
+          "startDate": "2026-11-03T12:06:00.754Z",
+          "endDate": "2026-11-10T12:06:47.000Z",
+          "completeDate": "2026-11-13T05:20:13.204Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-38",
@@ -986,7 +1090,7 @@
       "planned_start": "2026-11-02",
       "planned_end": "2026-11-06",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "a8351cfb5a4ede729300e3bc145e42f4d1d0fca1",
       "actual_commit_date": "2026-11-03T18:12:34+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -994,20 +1098,24 @@
         12
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-38",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Support TLS transport and add security response headers",
       "jira_description": "As a user, I want communication between the application and server to be secured so that sensitive information is protected during transmission.",
       "original_jira_sprints": [
         {
           "id": 107,
           "name": "RTRS Sprint 6",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "Audit, security and quality implementation delivered in the existing 3 November code baseline. Administrative closure recorded on 13 November 2026 after reconciling current tickets with merged PR 12 and verification refreshed on 12 November. Human UAT, videos and product acceptance are separate actions.",
+          "startDate": "2026-11-03T12:06:00.754Z",
+          "endDate": "2026-11-10T12:06:47.000Z",
+          "completeDate": "2026-11-13T05:20:13.204Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-39",
@@ -1019,7 +1127,7 @@
       "planned_start": "2026-11-02",
       "planned_end": "2026-11-06",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "3bd89dd1dd8fdce680793bec02f50244ed5693f1",
       "actual_commit_date": "2026-11-03T18:14:51+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -1027,20 +1135,24 @@
         12
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-39",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Validate and bound all user-supplied input",
       "jira_description": "As a system, I want user inputs to be validated so that invalid or potentially harmful data cannot be processed.",
       "original_jira_sprints": [
         {
           "id": 107,
           "name": "RTRS Sprint 6",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "Audit, security and quality implementation delivered in the existing 3 November code baseline. Administrative closure recorded on 13 November 2026 after reconciling current tickets with merged PR 12 and verification refreshed on 12 November. Human UAT, videos and product acceptance are separate actions.",
+          "startDate": "2026-11-03T12:06:00.754Z",
+          "endDate": "2026-11-10T12:06:47.000Z",
+          "completeDate": "2026-11-13T05:20:13.204Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     },
     {
       "key": "RTRS-40",
@@ -1052,7 +1164,7 @@
       "planned_start": "2026-11-02",
       "planned_end": "2026-11-06",
       "story_points": 5,
-      "estimate_basis": "Retrospective estimate added for submission reconstruction; original Jira estimate not yet verified",
+      "estimate_basis": "Retrospective submission estimate recorded in Jira/GitHub on 13 Nov; not an original sprint planning estimate",
       "commit": "760c5c1c6fc051ed0f03c943374d02b83fc06405",
       "actual_commit_date": "2026-11-03T18:16:31+05:30",
       "commit_author": "Deeptanshu Kumar",
@@ -1060,20 +1172,24 @@
         12
       ],
       "jira_url": "https://amarworkspace.atlassian.net/browse/RTRS-40",
-      "migration_basis": "Original Jira description/sprint membership from13Oct snapshot; delivered status/owner from later repository evidence",
+      "migration_basis": "Jira metadata reconciled against live API on 13 Nov and original delivery commits/PRs; historical 13 Oct snapshot retained",
       "implementation_title": "Keep credentials and sensitive data out of access logs",
       "jira_description": "As a system administrator, I want sensitive user information to be protected from being exposed in logs so that confidential data remains secure.",
       "original_jira_sprints": [
         {
           "id": 107,
           "name": "RTRS Sprint 6",
-          "state": "future",
-          "boardId": 67
+          "state": "closed",
+          "boardId": 67,
+          "goal": "Audit, security and quality implementation delivered in the existing 3 November code baseline. Administrative closure recorded on 13 November 2026 after reconciling current tickets with merged PR 12 and verification refreshed on 12 November. Human UAT, videos and product acceptance are separate actions.",
+          "startDate": "2026-11-03T12:06:00.754Z",
+          "endDate": "2026-11-10T12:06:47.000Z",
+          "completeDate": "2026-11-13T05:20:13.204Z"
         }
       ],
-      "original_jira_status_at_capture": "To Do",
-      "original_jira_assignee_at_capture": null,
-      "jira_snapshot_date": "2026-10-13"
+      "original_jira_status_at_capture": "Done",
+      "original_jira_assignee_at_capture": "Deeptanshu Kumar",
+      "jira_snapshot_date": "2026-11-13"
     }
   ]
 }
