@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-13T05:33:34.822767+00:00",
+  "checked_at": "2026-11-13T05:44:29.437931+00:00",
   "status": "PASS",
   "checks": [
     {
@@ -228,13 +228,12 @@
         "delivery board exists": true,
         "three course sprint boards exist": true,
         "original Jira table exists": true,
-        "current PR remains in review": true
+        "submission PR status matches live state": true
       }
     }
   ],
   "external_actions_pending": [
     "Friend uploads 60-second and 120-second videos",
-    "Amar performs final human acceptance and reviews/merges submission",
     "Product owner/mentor record actual acceptance"
   ],
   "meaning": "Artifact consistency only; pending external actions prevent claiming the whole course submission accepted"

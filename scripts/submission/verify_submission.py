@@ -31,7 +31,7 @@ def main():
     n=z.read('word/document.xml').count(b'<wp:inline')+z.read('word/document.xml').count(b'<wp:anchor')
    check(file+' embedded diagrams',n>=min_images,n)
  board=ROOT/'docs/evidence/github-project-import.json'
- human=['Friend uploads 60-second and 120-second videos','Amar performs final human acceptance and reviews/merges submission','Product owner/mentor record actual acceptance']
+ human=['Friend uploads 60-second and 120-second videos','Product owner/mentor record actual acceptance']
  if not board.exists():human.append('Grant GitHub Projects scope and run visual board importer')
  jira=ROOT/'docs/evidence/jira-current.json'
  if jira.exists():
