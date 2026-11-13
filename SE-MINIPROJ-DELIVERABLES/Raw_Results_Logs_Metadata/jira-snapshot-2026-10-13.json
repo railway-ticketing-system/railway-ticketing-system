@@ -1,0 +1,739 @@
+{
+  "captured_on": "2026-10-13",
+  "recovered_on": "2026-11-12",
+  "source": "Saved Jira search response from original project session; filtered to RTRS only and account identifiers omitted",
+  "original_response_sha256": "3ee981f2cbe4747966de920ed3d6a239f9f740014886b85b5b0e5ee4e083d1dd",
+  "is_current": false,
+  "issues": [
+    {
+      "key": "RTRS-3",
+      "summary": "User Authentication & Management",
+      "description": "Manage user registration, login, logout, authentication, and user profile details for the railway ticket reservation system.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:07:55.974+0530",
+      "updated_at_capture": "2026-09-07T11:07:56.620+0530",
+      "type": "Epic",
+      "parent": null,
+      "sprints_at_capture": [],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-4",
+      "summary": "Train Search & Availability",
+      "description": "Manage train search, route selection, train schedules, seat availability, and fare information for users.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:10:13.901+0530",
+      "updated_at_capture": "2026-09-07T11:10:14.493+0530",
+      "type": "Epic",
+      "parent": null,
+      "sprints_at_capture": [],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-5",
+      "summary": "Ticket Booking",
+      "description": "Manage the complete ticket booking process, including passenger details, seat selection, fare calculation, and booking confirmation.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:10:43.727+0530",
+      "updated_at_capture": "2026-09-07T11:10:44.207+0530",
+      "type": "Epic",
+      "parent": null,
+      "sprints_at_capture": [],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-6",
+      "summary": "Ticket Cancellation & Refund",
+      "description": "Manage ticket cancellation requests, cancellation rules, refund calculation, and refund processing.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:11:06.958+0530",
+      "updated_at_capture": "2026-09-07T11:11:07.388+0530",
+      "type": "Epic",
+      "parent": null,
+      "sprints_at_capture": [],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-7",
+      "summary": "Admin & System Management",
+      "description": "Provide administrators with features to manage trains, routes, schedules, users, bookings, and system operations.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:11:30.337+0530",
+      "updated_at_capture": "2026-09-07T11:11:30.922+0530",
+      "type": "Epic",
+      "parent": null,
+      "sprints_at_capture": [],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-8",
+      "summary": "Security, Audit & Quality",
+      "description": "Ensure system security, data validation, audit logging, error handling, testing, and overall system reliability.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:11:53.035+0530",
+      "updated_at_capture": "2026-09-07T11:11:53.495+0530",
+      "type": "Epic",
+      "parent": null,
+      "sprints_at_capture": [],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-9",
+      "summary": "User Registration",
+      "description": "As a new user, I want to register an account using my personal details so that I can access the railway ticket reservation system.",
+      "status_at_capture": "In Progress",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:13:34.010+0530",
+      "updated_at_capture": "2026-10-13T21:45:24.003+0530",
+      "type": "Story",
+      "parent": "RTRS-3",
+      "sprints_at_capture": [
+        {
+          "id": 102,
+          "name": "RTRS Sprint 1",
+          "state": "active",
+          "boardId": 67,
+          "goal": "**Sprint 1 Goal:**\n\nTo implement and test the core user authentication and account management features, including user registration, login, logout, and profile management, so that passengers can securely access and manage their accounts.",
+          "startDate": "2026-10-13T15:48:37.877Z",
+          "endDate": "2026-10-20T15:48:33.000Z"
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-10",
+      "summary": "User Login",
+      "description": "As a registered user, I want to log in securely so that I can access my account and use the reservation system.",
+      "status_at_capture": "In Progress",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:14:21.493+0530",
+      "updated_at_capture": "2026-10-13T21:45:29.593+0530",
+      "type": "Story",
+      "parent": "RTRS-3",
+      "sprints_at_capture": [
+        {
+          "id": 102,
+          "name": "RTRS Sprint 1",
+          "state": "active",
+          "boardId": 67,
+          "goal": "**Sprint 1 Goal:**\n\nTo implement and test the core user authentication and account management features, including user registration, login, logout, and profile management, so that passengers can securely access and manage their accounts.",
+          "startDate": "2026-10-13T15:48:37.877Z",
+          "endDate": "2026-10-20T15:48:33.000Z"
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-11",
+      "summary": "User Logout",
+      "description": "As a logged-in user, I want to log out of my account so that my session is securely terminated.",
+      "status_at_capture": "In Progress",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:14:55.158+0530",
+      "updated_at_capture": "2026-10-13T21:45:33.217+0530",
+      "type": "Story",
+      "parent": "RTRS-3",
+      "sprints_at_capture": [
+        {
+          "id": 102,
+          "name": "RTRS Sprint 1",
+          "state": "active",
+          "boardId": 67,
+          "goal": "**Sprint 1 Goal:**\n\nTo implement and test the core user authentication and account management features, including user registration, login, logout, and profile management, so that passengers can securely access and manage their accounts.",
+          "startDate": "2026-10-13T15:48:37.877Z",
+          "endDate": "2026-10-20T15:48:33.000Z"
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-12",
+      "summary": "Manage User Profile",
+      "description": "As a user, I want to view and update my profile information so that my personal details remain accurate.",
+      "status_at_capture": "In Progress",
+      "assignee_at_capture": "Deeptanshu Kumar",
+      "created": "2026-09-07T11:15:34.045+0530",
+      "updated_at_capture": "2026-10-13T21:45:36.730+0530",
+      "type": "Story",
+      "parent": "RTRS-3",
+      "sprints_at_capture": [
+        {
+          "id": 102,
+          "name": "RTRS Sprint 1",
+          "state": "active",
+          "boardId": 67,
+          "goal": "**Sprint 1 Goal:**\n\nTo implement and test the core user authentication and account management features, including user registration, login, logout, and profile management, so that passengers can securely access and manage their accounts.",
+          "startDate": "2026-10-13T15:48:37.877Z",
+          "endDate": "2026-10-20T15:48:33.000Z"
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-13",
+      "summary": "Search Trains",
+      "description": "As a user, I want to search for trains between a source and destination on a selected date so that I can find suitable trains.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:17:38.649+0530",
+      "updated_at_capture": "2026-09-07T11:41:35.427+0530",
+      "type": "Story",
+      "parent": "RTRS-4",
+      "sprints_at_capture": [
+        {
+          "id": 103,
+          "name": "RTRS Sprint 2",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-14",
+      "summary": "View Train Schedule",
+      "description": "As a user, I want to view train departure and arrival times so that I can choose a convenient train.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:18:08.361+0530",
+      "updated_at_capture": "2026-09-07T11:41:35.639+0530",
+      "type": "Story",
+      "parent": "RTRS-4",
+      "sprints_at_capture": [
+        {
+          "id": 103,
+          "name": "RTRS Sprint 2",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-15",
+      "summary": "Check Seat Availability",
+      "description": "As a user, I want to check the availability of seats in different classes so that I can decide whether to book a train.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:18:40.716+0530",
+      "updated_at_capture": "2026-09-07T11:41:35.824+0530",
+      "type": "Story",
+      "parent": "RTRS-4",
+      "sprints_at_capture": [
+        {
+          "id": 103,
+          "name": "RTRS Sprint 2",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-16",
+      "summary": "View Fare Details",
+      "description": "\u200c\n\n> As a user, I want to view the fare for different travel classes so that I can select an appropriate option.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:19:20.547+0530",
+      "updated_at_capture": "2026-09-07T11:41:35.991+0530",
+      "type": "Story",
+      "parent": "RTRS-4",
+      "sprints_at_capture": [
+        {
+          "id": 103,
+          "name": "RTRS Sprint 2",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-17",
+      "summary": "Filter and Sort Trains",
+      "description": "As a user, I want to filter and sort available trains based on relevant criteria so that I can quickly find the most suitable train.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:19:47.314+0530",
+      "updated_at_capture": "2026-09-07T11:41:36.165+0530",
+      "type": "Story",
+      "parent": "RTRS-4",
+      "sprints_at_capture": [
+        {
+          "id": 103,
+          "name": "RTRS Sprint 2",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-18",
+      "summary": "Enter Passenger Details",
+      "description": "As a passenger, I want to enter the required passenger details for a selected train so that I can proceed with my ticket booking.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:20:37.577+0530",
+      "updated_at_capture": "2026-09-07T11:41:05.132+0530",
+      "type": "Story",
+      "parent": "RTRS-5",
+      "sprints_at_capture": [
+        {
+          "id": 104,
+          "name": "RTRS Sprint 3",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-19",
+      "summary": "Validate Passenger Details",
+      "description": "As a passenger, I want the system to validate my passenger details so that invalid information is not submitted for booking.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:21:10.226+0530",
+      "updated_at_capture": "2026-09-07T11:41:05.367+0530",
+      "type": "Story",
+      "parent": "RTRS-5",
+      "sprints_at_capture": [
+        {
+          "id": 104,
+          "name": "RTRS Sprint 3",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-20",
+      "summary": "Verify Seat Availability Before Booking",
+      "description": "As a passenger, I want the system to verify seat availability before confirming my booking so that I cannot book an unavailable seat",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:21:38.653+0530",
+      "updated_at_capture": "2026-09-07T11:41:05.581+0530",
+      "type": "Story",
+      "parent": "RTRS-5",
+      "sprints_at_capture": [
+        {
+          "id": 104,
+          "name": "RTRS Sprint 3",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-21",
+      "summary": "Confirm Ticket Booking",
+      "description": "As a passenger, I want to confirm my ticket booking after providing valid details so that my reservation is successfully created.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:22:04.882+0530",
+      "updated_at_capture": "2026-09-07T11:41:05.800+0530",
+      "type": "Story",
+      "parent": "RTRS-5",
+      "sprints_at_capture": [
+        {
+          "id": 104,
+          "name": "RTRS Sprint 3",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-22",
+      "summary": "Generate PNR",
+      "description": "As a passenger, I want to receive a unique PNR number after successful booking so that I can identify and track my reservation.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:22:32.682+0530",
+      "updated_at_capture": "2026-09-07T11:41:06.028+0530",
+      "type": "Story",
+      "parent": "RTRS-5",
+      "sprints_at_capture": [
+        {
+          "id": 104,
+          "name": "RTRS Sprint 3",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-23",
+      "summary": "View Confirmed Ticket",
+      "description": "As a passenger, I want to view my confirmed ticket with journey and booking details so that I have a record of my reservation.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:22:56.191+0530",
+      "updated_at_capture": "2026-09-07T11:41:03.889+0530",
+      "type": "Story",
+      "parent": "RTRS-5",
+      "sprints_at_capture": [
+        {
+          "id": 104,
+          "name": "RTRS Sprint 3",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-24",
+      "summary": "View Booking History",
+      "description": "As a passenger, I want to view my active and previous bookings so that I can track my reservations",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:23:25.013+0530",
+      "updated_at_capture": "2026-09-07T11:41:04.196+0530",
+      "type": "Story",
+      "parent": "RTRS-5",
+      "sprints_at_capture": [
+        {
+          "id": 104,
+          "name": "RTRS Sprint 3",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-25",
+      "summary": "Cancel Eligible Ticket",
+      "description": "As a passenger, I want to cancel an eligible booking before the configured cancellation cutoff so that I can cancel my reservation when I no longer need it.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:24:57.720+0530",
+      "updated_at_capture": "2026-09-07T11:42:25.494+0530",
+      "type": "Story",
+      "parent": "RTRS-6",
+      "sprints_at_capture": [
+        {
+          "id": 105,
+          "name": "RTRS Sprint 4",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-26",
+      "summary": "Calculate and Display Refund",
+      "description": "As a passenger, I want to see the applicable refund amount before confirming cancellation so that I know the refund I will receive.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:25:31.157+0530",
+      "updated_at_capture": "2026-09-07T11:42:25.801+0530",
+      "type": "Story",
+      "parent": "RTRS-6",
+      "sprints_at_capture": [
+        {
+          "id": 105,
+          "name": "RTRS Sprint 4",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-27",
+      "summary": "Restore Seats After Cancellation",
+      "description": "As a system, I want cancelled seat quantities to be restored to available inventory so that those seats can be booked again.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:25:57.979+0530",
+      "updated_at_capture": "2026-09-07T11:42:26.012+0530",
+      "type": "Story",
+      "parent": "RTRS-6",
+      "sprints_at_capture": [
+        {
+          "id": 105,
+          "name": "RTRS Sprint 4",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-28",
+      "summary": "Prevent Unauthorized Cancellation",
+      "description": "As a passenger, I should only be able to cancel my own eligible booking so that another passenger's reservation cannot be cancelled.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:26:30.753+0530",
+      "updated_at_capture": "2026-09-07T11:42:26.239+0530",
+      "type": "Story",
+      "parent": "RTRS-6",
+      "sprints_at_capture": [
+        {
+          "id": 105,
+          "name": "RTRS Sprint 4",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-29",
+      "summary": "Admin Authentication",
+      "description": "As an administrator, I want to authenticate using authorized credentials so that only authorized users can access administrative functions.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:27:26.465+0530",
+      "updated_at_capture": "2026-09-07T11:42:58.199+0530",
+      "type": "Story",
+      "parent": "RTRS-7",
+      "sprints_at_capture": [
+        {
+          "id": 106,
+          "name": "RTRS Sprint 5",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-30",
+      "summary": "Add Train and Schedule Record",
+      "description": "As an administrator, I want to add train and schedule records so that new train services can be made available in the system.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:27:55.586+0530",
+      "updated_at_capture": "2026-09-07T11:42:58.436+0530",
+      "type": "Story",
+      "parent": "RTRS-7",
+      "sprints_at_capture": [
+        {
+          "id": 106,
+          "name": "RTRS Sprint 5",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-31",
+      "summary": "Update Train and Schedule Record",
+      "description": "As an administrator, I want to update train and schedule records so that changes to train services can be reflected in the system.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:28:20.423+0530",
+      "updated_at_capture": "2026-09-07T11:42:58.589+0530",
+      "type": "Story",
+      "parent": "RTRS-7",
+      "sprints_at_capture": [
+        {
+          "id": 106,
+          "name": "RTRS Sprint 5",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-32",
+      "summary": "Deactivate Train and Schedule Record",
+      "description": "As an administrator, I want to deactivate train and schedule records so that unavailable train services are not offered for booking.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:28:44.691+0530",
+      "updated_at_capture": "2026-09-07T11:42:58.765+0530",
+      "type": "Story",
+      "parent": "RTRS-7",
+      "sprints_at_capture": [
+        {
+          "id": 106,
+          "name": "RTRS Sprint 5",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-33",
+      "summary": "Audit Booking and Cancellation Events",
+      "description": "As a system administrator, I want booking and cancellation events to be recorded with timestamps and relevant identifiers so that system activities can be audited.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:29:31.733+0530",
+      "updated_at_capture": "2026-09-07T11:43:26.646+0530",
+      "type": "Story",
+      "parent": "RTRS-8",
+      "sprints_at_capture": [
+        {
+          "id": 107,
+          "name": "RTRS Sprint 6",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-34",
+      "summary": "Meet Response Time Requirement",
+      "description": "As a user, I want normal system requests to respond within the required time so that the application provides acceptable performance.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:29:53.885+0530",
+      "updated_at_capture": "2026-09-07T11:43:26.849+0530",
+      "type": "Story",
+      "parent": "RTRS-8",
+      "sprints_at_capture": [
+        {
+          "id": 107,
+          "name": "RTRS Sprint 6",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-35",
+      "summary": "Prevent Double Seat Allocation",
+      "description": "As a passenger, I want seat allocation to remain consistent during concurrent bookings so that the same seat is not allocated to multiple passengers.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:30:22.388+0530",
+      "updated_at_capture": "2026-09-07T11:43:27.060+0530",
+      "type": "Story",
+      "parent": "RTRS-8",
+      "sprints_at_capture": [
+        {
+          "id": 107,
+          "name": "RTRS Sprint 6",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-36",
+      "summary": "Provide Safe Error Messages",
+      "description": "As a user, I want the system to display safe and understandable error messages so that failures do not expose sensitive technical information.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:30:53.663+0530",
+      "updated_at_capture": "2026-09-07T11:43:27.254+0530",
+      "type": "Story",
+      "parent": "RTRS-8",
+      "sprints_at_capture": [
+        {
+          "id": 107,
+          "name": "RTRS Sprint 6",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-37",
+      "summary": "Secure Passwords and Access",
+      "description": "As a system administrator, I want passwords to be securely stored and access to be controlled based on user roles so that unauthorized users cannot access protected functions.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:31:20.581+0530",
+      "updated_at_capture": "2026-09-07T11:43:27.431+0530",
+      "type": "Story",
+      "parent": "RTRS-8",
+      "sprints_at_capture": [
+        {
+          "id": 107,
+          "name": "RTRS Sprint 6",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-38",
+      "summary": "Secure Communication",
+      "description": "As a user, I want communication between the application and server to be secured so that sensitive information is protected during transmission.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:31:50.664+0530",
+      "updated_at_capture": "2026-09-07T11:43:27.610+0530",
+      "type": "Story",
+      "parent": "RTRS-8",
+      "sprints_at_capture": [
+        {
+          "id": 107,
+          "name": "RTRS Sprint 6",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-39",
+      "summary": "Validate User Input",
+      "description": "As a system, I want user inputs to be validated so that invalid or potentially harmful data cannot be processed.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:32:19.575+0530",
+      "updated_at_capture": "2026-09-07T11:43:27.785+0530",
+      "type": "Story",
+      "parent": "RTRS-8",
+      "sprints_at_capture": [
+        {
+          "id": 107,
+          "name": "RTRS Sprint 6",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    },
+    {
+      "key": "RTRS-40",
+      "summary": "Protect Sensitive Information in Logs",
+      "description": "As a system administrator, I want sensitive user information to be protected from being exposed in logs so that confidential data remains secure.",
+      "status_at_capture": "To Do",
+      "assignee_at_capture": null,
+      "created": "2026-09-07T11:32:49.032+0530",
+      "updated_at_capture": "2026-09-07T11:43:27.959+0530",
+      "type": "Story",
+      "parent": "RTRS-8",
+      "sprints_at_capture": [
+        {
+          "id": 107,
+          "name": "RTRS Sprint 6",
+          "state": "future",
+          "boardId": 67
+        }
+      ],
+      "story_points_at_capture": null
+    }
+  ]
+}

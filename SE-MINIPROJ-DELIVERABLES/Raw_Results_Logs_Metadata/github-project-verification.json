@@ -1,0 +1,75 @@
+{
+  "checked_at": "2026-11-13T05:44:34.509534+00:00",
+  "status": "PASS",
+  "project_url": "https://github.com/orgs/railway-ticketing-system/projects/1",
+  "checks": {
+    "32 source stories present": true,
+    "public project": true,
+    "repository linked": true,
+    "no duplicate content URLs": true,
+    "story status Done": true,
+    "story assignees correct": true,
+    "estimates match": true,
+    "course dates match": true,
+    "original Jira dates match": true,
+    "original sprint memberships match": true,
+    "PR links match": true,
+    "commit links match": true,
+    "delivery board exists": true,
+    "three course sprint boards exist": true,
+    "original Jira table exists": true,
+    "submission PR status matches live state": true
+  },
+  "total_items": 44,
+  "stories": 32,
+  "course_counts": {
+    "Course Sprint 1": 16,
+    "Course Sprint 2": 4,
+    "Course Sprint 3": 12
+  },
+  "views": [
+    {
+      "id": "PVTV_lADOE2hEGM4BraCnzgMiZ5Y",
+      "name": "Backlog and sprint dates",
+      "number": 1,
+      "layout": "TABLE_LAYOUT",
+      "filter": ""
+    },
+    {
+      "id": "PVTV_lADOE2hEGM4BraCnzgMiaEQ",
+      "name": "Delivery board",
+      "number": 2,
+      "layout": "BOARD_LAYOUT",
+      "filter": ""
+    },
+    {
+      "id": "PVTV_lADOE2hEGM4BraCnzgMiaK4",
+      "name": "Course Sprint 1",
+      "number": 3,
+      "layout": "BOARD_LAYOUT",
+      "filter": "milestone:\"Course Sprint 1\""
+    },
+    {
+      "id": "PVTV_lADOE2hEGM4BraCnzgMiaLA",
+      "name": "Course Sprint 2",
+      "number": 4,
+      "layout": "BOARD_LAYOUT",
+      "filter": "milestone:\"Course Sprint 2\""
+    },
+    {
+      "id": "PVTV_lADOE2hEGM4BraCnzgMiaLI",
+      "name": "Course Sprint 3",
+      "number": 5,
+      "layout": "BOARD_LAYOUT",
+      "filter": "milestone:\"Course Sprint 3\""
+    },
+    {
+      "id": "PVTV_lADOE2hEGM4BraCnzgMiaiA",
+      "name": "Original Jira sprints",
+      "number": 6,
+      "layout": "TABLE_LAYOUT",
+      "filter": "is:issue"
+    }
+  ],
+  "note": "Date columns are original scheduled values; creation/activity timestamps remain actual import time."
+}

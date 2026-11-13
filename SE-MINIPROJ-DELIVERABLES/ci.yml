@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [test, main]
+  pull_request:
+    branches: [test, main]
+
+jobs:
+  build-and-test:
+    name: Build, unit tests, coverage
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install tools
+        run: sudo apt-get update && sudo apt-get install -y cmake g++ libssl-dev gcovr
+      - name: Configure (coverage on)
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DRTRS_COVERAGE=ON
+      - name: Build
+        run: cmake --build build -j"$(nproc)"
+      - name: Run unit tests
+        run: |
+          mkdir -p coverage
+          ./build/rtrs_tests --gtest_output=xml:coverage/unit-tests.xml
+      - name: Coverage report (line + branch)
+        run: |
+          mkdir -p coverage
+          gcovr -r . --filter 'src/' --exclude 'src/main.cpp' --gcov-ignore-parse-errors negative_hits.warn_once_per_file \
+                --html-details coverage/index.html --json coverage/coverage.json \
+                --json-summary coverage/coverage-summary.json --txt coverage/line-coverage.txt --print-summary
+          gcovr -r . --filter 'src/' --exclude 'src/main.cpp' --gcov-ignore-parse-errors negative_hits.warn_once_per_file \
+                --txt-metric branch --txt coverage/branch-coverage.txt --print-summary
+      - name: Validate complete application workflows
+        run: python3 scripts/submission/system_validation.py --binary build/rtrs_server
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: |
+            coverage/
+            docs/reports/system_validation.json
+            docs/reports/System_Validation_Report.md
+
+  static-analysis:
+    name: Static analysis (cppcheck)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y cppcheck
+      - name: cppcheck
+        run: cppcheck --enable=warning,performance,portability --std=c++17 --error-exitcode=1 --inline-suppr -I src src tests
+
+  docker-build:
+    name: Docker image builds
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t rtrs:ci .
+      - name: Smoke test container
+        run: |
+          docker run -d --name rtrs -p 8080:8080 rtrs:ci
+          for i in $(seq 1 20); do curl -fsS localhost:8080/api/health && exit 0; sleep 1; done
+          docker logs rtrs; exit 1
