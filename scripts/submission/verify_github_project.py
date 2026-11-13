@@ -23,7 +23,9 @@ def main():
  checks['delivery board exists']=views.get('Delivery board',{}).get('layout')=='BOARD_LAYOUT'
  checks['three course sprint boards exist']=all(views.get('Course Sprint '+str(n),{}).get('filter')=='milestone:"Course Sprint '+str(n)+'"'for n in range(1,4))
  checks['original Jira table exists']=views.get('Original Jira sprints',{}).get('layout')=='TABLE_LAYOUT'
- checks['current PR remains in review']=any(i['content'].get('url','').endswith('/pull/45')and i.get('status')=='In Progress'for i in items)
+ pr=gh('pr','view','45','--json','state')
+ expected_status='In Progress' if pr['state']=='OPEN' else 'Done'
+ checks['submission PR status matches live state']=any(i['content'].get('url','').endswith('/pull/45')and i.get('status')==expected_status for i in items)
  result={'checked_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'status':'PASS'if all(checks.values())else'FAIL','project_url':project['url'],'checks':checks,'total_items':len(items),'stories':len(bytitle),'course_counts':dict(collections.Counter(i.get('course sprint')for i in bytitle.values())),'views':meta['views']['nodes'],'note':'Date columns are original scheduled values; creation/activity timestamps remain actual import time.'}
  (ROOT/'docs/evidence/github-project-verification.json').write_text(json.dumps(result,indent=2)+'\n')
  print(result['status'],sum(checks.values()),'/',len(checks),'project checks;',len(items),'items')

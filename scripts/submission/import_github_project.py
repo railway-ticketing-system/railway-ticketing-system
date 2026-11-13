@@ -69,7 +69,10 @@ def main():
  for n in list(range(2,13))+[45]:
   url=f'https://github.com/{REPO}/pull/{n}'
   pritem=existing.get(url) or gh('project','item-add',number,'--owner',owner,'--url',url,'--format','json')
-  if n==45:batch(pritem,{'Status':{'singleSelectOptionId':next(o['id'] for o in fields['Status']['options'] if o['name'].lower().replace(' ','')=='inprogress')}})
+  if n==45:
+   state=gh('pr','view','45','--json','state')['state']
+   status='In Progress' if state=='OPEN' else 'Done'
+   batch(pritem,{'Status':{'singleSelectOptionId':next(o['id'] for o in fields['Status']['options'] if o['name']==status)}})
  project=gh('project','view',number,'--owner',owner,'--format','json')
  result={'project':project,'imported_items':exported,'creation_time_is_actual_import_time':True}
  (ROOT/'docs/evidence/github-project-import.json').write_text(json.dumps(result,indent=2)+'\n')

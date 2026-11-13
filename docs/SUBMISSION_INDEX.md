@@ -54,7 +54,7 @@ Local system performance: search p90 **2.256 ms**, booking p90 **6.130 ms**, eac
 ## Remaining team actions
 
 1. Friend records/uploads the 60-second and 120-second videos.
-2. Amar reviews [PR 45](https://github.com/railway-ticketing-system/railway-ticketing-system/pull/45), performs final human acceptance and integrates the package through test into main.
+2. Acceptance and integration were delegated to Deeptanshu by Amar, as reported by Deeptanshu on 13 November. See the [developer acceptance record](reports/Developer_Acceptance_Record.md). Integration uses Deeptanshu’s account; an independent review by Amar is not recorded.
 3. Aaryaprasad/mentor record genuine requirements, policy and document acceptance; signature fields remain pending until actual approval.
 
 Jira was accessed directly through its REST API on 13 November; an MCP connection is not required. The [sanitized live snapshot](evidence/jira-current.json) verifies 32 Done stories, six Done implementation epics, six closed sprints, preserved original start/end/creation dates, and the new labelled estimates and GitHub links. No credential is included in the repository.
