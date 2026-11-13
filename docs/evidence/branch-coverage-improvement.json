@@ -1,0 +1,25 @@
+{
+  "measured_at": "2026-11-13T06:01:17.071836+00:00",
+  "source_commit": "65b9d211941a21f1a9dc1320e1152b28793abb3e",
+  "scope": "src/ excluding src/main.cpp; compiler exception/cleanup branches included; unchanged coverage filters",
+  "unit_tests": 210,
+  "failures": 0,
+  "errors": 0,
+  "before": {
+    "branch_covered": 3162,
+    "branch_total": 6778,
+    "branch_percent": 46.7,
+    "line_covered": 1476,
+    "line_total": 1558,
+    "line_percent": 94.7
+  },
+  "after": {
+    "branch_covered": 3182,
+    "branch_total": 6778,
+    "branch_percent": 46.9,
+    "line_covered": 1487,
+    "line_total": 1558,
+    "line_percent": 95.4
+  },
+  "note": "Follow-up measurement of nine added negative-path tests. Existing final-submission reports remain the original dated baseline; this evidence does not rewrite their results."
+}

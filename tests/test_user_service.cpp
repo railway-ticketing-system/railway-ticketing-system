@@ -59,3 +59,16 @@ TEST_F(UserServiceTest, SqlInjectionInNameIsRejectedAndTableSurvives) {
     EXPECT_EQ(svc.registerUser(valid).status, Status::ValidationFailed);
     EXPECT_NO_THROW(db.query("SELECT * FROM users"));
 }
+
+TEST_F(UserServiceTest, MissingCredentialsReturnNoAccount) {
+    EXPECT_FALSE(svc.findCredentials("missing@example.com").has_value());
+    EXPECT_FALSE(svc.findById(-1).has_value());
+}
+
+TEST_F(UserServiceTest, DatabaseWriteFailurePropagatesWithoutCreatingAccount) {
+    db.execute("CREATE TRIGGER reject_registration BEFORE INSERT ON users BEGIN SELECT RAISE(ABORT, 'write rejected'); END");
+    EXPECT_THROW(svc.registerUser(valid), std::runtime_error);
+    EXPECT_FALSE(svc.findCredentials("asha@example.com").has_value());
+    db.execute("DROP TRIGGER reject_registration");
+    EXPECT_EQ(svc.registerUser(valid).status, Status::Created);
+}
