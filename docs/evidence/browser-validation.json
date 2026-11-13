@@ -1,0 +1,58 @@
+{
+  "recorded_at": "2026-11-12T16:50:34.124145+00:00",
+  "application_commit": "6b5464298c949806ebba0b7bd1d903c962b5255d",
+  "url": "http://127.0.0.1:18081/",
+  "database": "isolated /tmp/rtrs-submission/ui/demo.db; synthetic data only",
+  "browser": "Chrome DevTools isolated context railway-submission",
+  "viewports": [
+    {
+      "width": 1366,
+      "height": 900,
+      "scenarios": [
+        "registration",
+        "login",
+        "search results"
+      ],
+      "page_overflow": false
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "mobile": true,
+      "scenarios": [
+        "login",
+        "search results",
+        "schedule and availability",
+        "booking preview",
+        "confirmed ticket",
+        "cancellation quote",
+        "cancelled ticket"
+      ],
+      "page_overflow": false
+    }
+  ],
+  "journey": {
+    "source": "Pune Jn",
+    "destination": "Mumbai CSMT",
+    "date": "2026-11-15",
+    "train": "11007 Deccan Express",
+    "class": "SL",
+    "passengers": 1,
+    "fare": 190,
+    "pnr": "6690010819",
+    "refund": 171,
+    "final_status": "CANCELLED"
+  },
+  "screenshots": [
+    "ui-desktop-search.png",
+    "ui-mobile-search.png",
+    "ui-mobile-booking.png",
+    "ui-mobile-ticket.png",
+    "ui-mobile-cancelled.png"
+  ],
+  "limits": [
+    "Selected synthetic flow only; not a full accessibility audit",
+    "Desktop complete booking flow not independently repeated",
+    "No claim of physical-device or cross-browser validation"
+  ]
+}

@@ -1,0 +1,45 @@
+6b5464298c949806ebba0b7bd1d903c962b5255d	2026-11-03T18:24:41+05:30	Deeptanshu Kumar	CI: Ignore gcov negative-hit artifacts in coverage reports
+760c5c1c6fc051ed0f03c943374d02b83fc06405	2026-11-03T18:16:31+05:30	Deeptanshu Kumar	RTRS-40: Keep credentials and sensitive data out of access logs
+3bd89dd1dd8fdce680793bec02f50244ed5693f1	2026-11-03T18:14:51+05:30	Deeptanshu Kumar	RTRS-39: Validate and bound all user-supplied input
+a8351cfb5a4ede729300e3bc145e42f4d1d0fca1	2026-11-03T18:12:34+05:30	Deeptanshu Kumar	RTRS-38: Support TLS transport and add security response headers
+2b57f358c646a1c59b51978585b6f4f958609a36	2026-11-03T18:10:46+05:30	Deeptanshu Kumar	RTRS-37: Enforce strong password hashing and immediate access revocation
+05e5fa6c4eda4760cf389614db9b3760691edafc	2026-11-03T18:08:31+05:30	Deeptanshu Kumar	RTRS-36: Return safe error messages without internal details
+b2dde09dea4a99c44bcc75fc004d46b50d162b5b	2026-11-03T18:07:27+05:30	Deeptanshu Kumar	RTRS-35: Serialize seat allocation and reject duplicate seat assignments
+a34e76768761287133fa35f9ea9b84707739a3dc	2026-11-03T18:06:23+05:30	Deeptanshu Kumar	RTRS-34: Keep 90th percentile booking responses within three seconds
+8f4d9572ea61c90bf6a2c7fa3d8d4aa69c855468	2026-11-03T18:04:36+05:30	Deeptanshu Kumar	RTRS-33: Record timestamped audit events for bookings and cancellations
+dbf0b23137bc0f34ed73e5adcada4b3f7f807712	2026-11-03T11:46:12+05:30	Deeptanshu Kumar	RTRS-32: Deactivate train services and prevent new reservations
+f2a393827af5f47bb7e2de11c23caf456e0dd43d	2026-11-03T11:42:15+05:30	Deeptanshu Kumar	RTRS-31: Update train schedules without invalidating existing reservations
+274f0dd3f6e0b6cd705cc0a4d9c83c8fd30a2d51	2026-11-03T11:40:51+05:30	Deeptanshu Kumar	RTRS-30: Add validated train schedules fares and seat capacities
+db1f25c9cfa65cf5a315ebf15cfdd725f4822d09	2026-11-03T11:37:10+05:30	Deeptanshu Kumar	RTRS-29: Authenticate administrators and protect administrative access
+7c5abfcc993c7e1c74c2fd4b1aea80be86fc869c	2026-10-29T11:24:22+05:30	Deeptanshu Kumar	RTRS-28: Enforce booking ownership for cancellation and refund previews
+5410dcbc4fb9999244299d9d0ae9d1e0bcdc49b6	2026-10-29T11:22:00+05:30	Deeptanshu Kumar	RTRS-27: Restore cancelled seats atomically and reuse free seat numbers
+6b4a213b1a3a3d260437f919c09c5a61cc173de3	2026-10-29T11:20:56+05:30	Deeptanshu Kumar	RTRS-26: Preview and record configurable cancellation refunds
+94a302c08b8a783b976fdb23cc2ec57065b7ffa8	2026-10-29T11:18:31+05:30	Deeptanshu Kumar	RTRS-25: Cancel eligible bookings before configured cutoff
+f54ab03a8bfcb680b4cf7092b0b236e35bb6ad0d	2026-10-20T23:22:24+05:30	Deeptanshu Kumar	RTRS-24: View booking history
+61476eba3a1626fc2813f4ff9442023e4b7c9c8d	2026-10-20T23:19:15+05:30	Deeptanshu Kumar	RTRS-23: View confirmed ticket
+fed8f36daf9c0cdeccf2ff1d7a9b433b67019d6f	2026-10-20T23:15:36+05:30	Deeptanshu Kumar	RTRS-22: Generate unique PNR
+bfa3c147fdf85f1821fc1c783a88475d3c81536a	2026-10-20T23:14:02+05:30	Deeptanshu Kumar	RTRS-21: Confirm ticket booking
+dc37ecc8f6aa3e75c0b1072d7304af051afbe7bb	2026-10-20T23:09:45+05:30	Deeptanshu Kumar	RTRS-20: Verify seat availability before booking
+02274d90b4b3aeea8c8e072efbd1f8cc9e2fa67e	2026-10-20T23:08:26+05:30	Deeptanshu Kumar	RTRS-19: Validate passenger details
+7dc5c1cdb5e8958b06395be72ae83540479088a2	2026-10-20T23:06:56+05:30	Deeptanshu Kumar	RTRS-18: Add passenger details entry for booking
+1b522323588b774cc660a7594bdcb46ea250b3ba	2026-10-20T11:57:25+05:30	Deeptanshu Kumar	Fix profile form error rendering when a field has no error slot
+c2f21d844f94766f9baf5058a7916b52cfc86144	2026-10-20T11:53:35+05:30	Deeptanshu Kumar	RTRS-17: Add train filters and sorting
+c74ee667338741f833033c2c1240ae768273171a	2026-10-20T11:51:48+05:30	Deeptanshu Kumar	RTRS-16: Add fare details per travel class
+c592bf90397e4eebdb1c2db85f11b720d5052ae7	2026-10-20T11:50:12+05:30	Deeptanshu Kumar	RTRS-15: Add class-wise seat availability
+5eeee4665ebdef21965f5a14959b15d415540b71	2026-10-20T11:46:54+05:30	Deeptanshu Kumar	RTRS-14: Add train schedule view
+401093057a3d661d93504851132d7f3ce583ef37	2026-10-20T11:43:02+05:30	Deeptanshu Kumar	RTRS-13: Add train search by source, destination and date
+79b80292b8458ac7e78c1c1fb64589394217dad7	2026-10-15T12:20:01+05:30	Deeptanshu Kumar	Merge pull request #6 from railway-ticketing-system/RTRS-12-manage-profile
+99367b1ed7f33bc08247c29d9b738fd26e0fb4f3	2026-10-13T23:04:23+05:30	Deeptanshu Kumar	RTRS-12: Add profile view/edit and password change
+2a845148f7f080baec67eec7fa4005ad1c480559	2026-10-15T12:15:09+05:30	Deeptanshu Kumar	Merge pull request #5 from railway-ticketing-system/RTRS-11-user-logout
+8733b371ab6e6fdfa33ded9be09a47ab01b7ea38	2026-10-14T00:03:55+05:30	Deeptanshu Kumar	Merge pull request #4 from railway-ticketing-system/RTRS-10-user-login
+4120cf72a21ee1b0704224e371871fe7ad575554	2026-10-13T23:03:31+05:30	Deeptanshu Kumar	RTRS-11: Add user logout that invalidates the session server-side
+f4b8f48d3f43629967913fed1fc7df7f270644e0	2026-10-13T23:02:58+05:30	Deeptanshu Kumar	RTRS-10: Add user login with hashed session tokens and failed-attempt lockout
+1862afd3ee360cf5d9c45e30e51a5b1723dcb16e	2026-10-13T23:49:34+05:30	Deeptanshu Kumar	Merge pull request #3 from railway-ticketing-system/RTRS-9-user-registration
+761058162401dc75ec0c6444d9c1b4fdd4af0ea2	2026-10-13T23:24:29+05:30	Deeptanshu Kumar	Merge pull request #2 from railway-ticketing-system/chore/project-setup-ci-cd
+4994d0255c70e517931aa547aff58940a2c809bf	2026-10-13T23:01:41+05:30	Deeptanshu Kumar	RTRS-9: Add user registration (API, validation, PBKDF2 hashing, UI, tests)
+8250f4a556eadb321114e0f853c702db5c2cdc41	2026-10-13T22:46:25+05:30	Deeptanshu Kumar	Set up C++ project skeleton, SQLite layer, Docker and CI/CD pipelines
+9eb6371b5305ecda823069488604acdb378d0047	2026-09-29T18:57:51+05:30	Amar	Update product owner and testing names in README
+704559de230cde533e606002eb9aba535ace6ef2	2026-09-29T18:52:21+05:30	Amar1919	Added SAD and Test Plan documents
+561cc2f4479a200659c8caa9be8c07eec67138b6	2026-09-06T16:44:20+05:30	deeptanshukumar	added srs
+4cc3d9dae4a4d00937368e8552af9633449efa97	2026-09-06T16:36:27+05:30	deeptanshukumar	added folders
+fe053eecf06d3f184d4fb9b898560bd7c785b152	2026-09-06T16:21:07+05:30	Deeptanshu Kumar	Initial commit

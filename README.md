@@ -82,3 +82,8 @@ Train payloads contain `number` (five-digit string), `name`, `stops`, and `class
 4. Merge to `main` publishes the Docker image (CD).
 
 Commit messages start with the Jira key, e.g. `RTRS-9: Add user registration`.
+
+
+## Final submission artifacts
+
+Start with the [submission checklist](docs/SUBMISSION_INDEX.md) for the revised SRS/SAD/Test Plan, UML diagrams, four printable testing reports, source coverage, backlog and sprint evidence, and demo/viva preparation. Videos remain assigned to the team's friend. The checklist identifies account-access and human-review actions still required.
